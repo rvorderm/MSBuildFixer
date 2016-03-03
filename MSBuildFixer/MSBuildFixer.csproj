@@ -33,6 +33,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FeatureToggle, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FeatureToggle.3.3.0\lib\net40\FeatureToggle.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FeatureToggle.Core, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FeatureToggle.Core.3.3.0\lib\portable-net40+sl50+wp81+wpa+win\FeatureToggle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Build, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -42,14 +50,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FeatureToggles\OutputPathToggle.cs" />
+    <Compile Include="FeatureToggles\HintPathToggle.cs" />
+    <Compile Include="FeatureToggles\CopyLocalToggle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectFixer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="FeatureToggles\CopyToOutputDirectoryToggle.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
