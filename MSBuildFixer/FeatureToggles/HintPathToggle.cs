@@ -9,8 +9,14 @@ namespace MSBuildFixer.SampleFeatureToggles
 		private static readonly Lazy<HintPathToggle> Lazy =
 		new Lazy<HintPathToggle>(() => new HintPathToggle());
 
+		private static bool _enabled = Instance.FeatureEnabled;
+
 		public static HintPathToggle Instance => Lazy.Value;
 
-		public static bool Enabled => Instance.FeatureEnabled;
+		public static bool Enabled
+		{
+			get { return _enabled; }
+			set { _enabled = value; }
+		}
 	}
 }

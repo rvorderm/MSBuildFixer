@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Construction;
+using MSBuildFixer.SampleFeatureToggles;
 using static System.Configuration.ConfigurationManager;
 
 namespace MSBuildFixer
@@ -28,7 +29,8 @@ namespace MSBuildFixer
 			if (!Directory.Exists(libraryPath))
 			{
 				Console.WriteLine($"LibraryFolder did not exist: {libraryPath}");
-				return;
+				Console.WriteLine($"Hint path option will not be executed");
+				HintPathToggle.Enabled = false;
 			}
 
 			Console.WriteLine($"Opening {fullSolutionPath}");
