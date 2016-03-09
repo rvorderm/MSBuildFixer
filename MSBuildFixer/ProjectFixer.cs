@@ -153,11 +153,20 @@ namespace MSBuildFixer
 
 		public void FixOutputPath(ProjectPropertyElement projectPropertyElement, string propertyGroupCondition)
 		{
-			if (!OutputPathToggle.Enabled) return;
-			if (projectPropertyElement.Name.Equals("OutputPath"))
+			if (OutputPathToggle.Enabled && projectPropertyElement.Name.Equals("OutputPath"))
 			{
 				FixOutputProperty(projectPropertyElement, propertyGroupCondition);
 			}
+
+			if (RunPostBuildEventToggle.Enabled && projectPropertyElement.Name.Equals("RunPostBuildEvent"))
+			{
+				FixRunPostBuildEvent(projectPropertyElement);
+			}
+		}
+
+		private void FixRunPostBuildEvent(ProjectPropertyElement projectPropertyElement)
+		{
+			projectPropertyElement.Value = "OnOutputUpdated";
 		}
 
 		public void FixOutputProperty(ProjectPropertyElement projectPropertyElement, string propertyGroupCondition)
