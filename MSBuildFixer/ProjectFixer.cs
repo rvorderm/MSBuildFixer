@@ -118,11 +118,9 @@ namespace MSBuildFixer
 		private static void TryFixHintPath(ProjectMetadataElement projectMetadataElement, string libraryDirectory)
 		{
 			if (!HintPathToggle.Enabled) return;
-			if (string.IsNullOrEmpty(libraryDirectory)
-			    || projectMetadataElement.Value.Contains(".lib\\")) return;
-
+			if (string.IsNullOrEmpty(libraryDirectory)) return;
 			var fileName = Path.GetFileName(projectMetadataElement.Value);
-			var libraryPath = Directory.EnumerateFiles(libraryDirectory, fileName, SearchOption.AllDirectories).FirstOrDefault();
+			var libraryPath = Directory.EnumerateFiles(libraryDirectory, fileName, SearchOption.AllDirectories).LastOrDefault();
 			if (libraryPath != null)
 			{
 				projectMetadataElement.Value = MakeRelativePath(projectMetadataElement.ContainingProject.FullPath, libraryPath);
