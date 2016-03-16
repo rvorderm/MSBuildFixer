@@ -92,7 +92,13 @@ namespace MSBuildFixer
 			{
 				FixMetadataElement(projectElement, libraryDirectory);
 			}
-			if (projectItemElement.Metadata.Any()
+			AddMissingMetadataElements(projectItemElement);
+		}
+
+		private static void AddMissingMetadataElements(ProjectItemElement projectItemElement)
+		{
+			if (CopyLocalToggle.Enabled 
+				&& projectItemElement.Metadata.Any()
 			    && !projectItemElement.Metadata.Any(x => x.Name.Equals("Private"))
 			    && !(projectItemElement.Include.StartsWith("System.")
 			         || projectItemElement.Include.StartsWith("Microsoft")))
