@@ -10,58 +10,73 @@ namespace MSBuildFixer
 {
 	public class ProjectFixer
 	{
-		public void FixSolution(string solutionDirectory, string solutionFilename, string libraryFolder)
-		{
-			if(string.IsNullOrEmpty(solutionDirectory)) throw new ArgumentNullException(nameof(solutionDirectory));
-			if(string.IsNullOrEmpty(solutionFilename)) throw new ArgumentNullException(nameof(solutionFilename));
-			if(string.IsNullOrEmpty(libraryFolder)) throw new ArgumentNullException(nameof(libraryFolder));
+		private readonly string _libraryDirectory;
+		private readonly SolutionFile _solutionFile;
+		private readonly string _solutionDirectory;
 
-			var libraryDirectory = Path.Combine(solutionDirectory, libraryFolder);
+		internal ProjectFixer()
+		{
 			
-			var solutionFile = SolutionFile.Parse(Path.Combine(solutionDirectory, solutionFilename));
-			if (solutionFile == null) return;
-			FixProjects(solutionFile.ProjectsInOrder, libraryDirectory);
 		}
 
-		public void FixProjects(IReadOnlyList<ProjectInSolution> projects, string libraryDirectory)
+		public ProjectFixer(string solutionDirectory, string solutionFilename, string libraryFolder)
+		{
+			if (string.IsNullOrEmpty(solutionDirectory)) throw new ArgumentNullException(nameof(solutionDirectory));
+			if (string.IsNullOrEmpty(solutionFilename)) throw new ArgumentNullException(nameof(solutionFilename));
+			if (string.IsNullOrEmpty(libraryFolder)) throw new ArgumentNullException(nameof(libraryFolder));
+
+			_solutionDirectory = solutionDirectory;
+			_libraryDirectory = Path.Combine(_solutionDirectory, libraryFolder);
+
+			_solutionFile = SolutionFile.Parse(Path.Combine(_solutionDirectory, solutionFilename));
+			if(_solutionFile == null) throw new Exception("Unable to open solution file");
+		}
+
+		public void FixSolution()
+		{
+			if(_solutionFile == null) throw new ArgumentNullException(nameof(_solutionFile));
+			FixProjects(_solutionFile.ProjectsInOrder);
+		}
+
+		public void FixProjects(IReadOnlyList<ProjectInSolution> projects)
 		{
 			foreach (var projectInSolution in projects)
 			{
-				var projectRootElement = FixProject(projectInSolution, libraryDirectory);
+				var projectRootElement = FixProject(projectInSolution);
 				projectRootElement?.Save();
 			}
 		}
 
-		public ProjectRootElement FixProject(ProjectInSolution project, string libraryDirectory)
+		public ProjectRootElement FixProject(ProjectInSolution project)
 		{
 			if (project.ProjectType == SolutionProjectType.SolutionFolder) return null;
 			var projectRootElement = ProjectRootElement.Open(project.AbsolutePath);
 			FixPropertyGroups(projectRootElement);
-			FixProjectItemGroups(projectRootElement, libraryDirectory);
+			FixProjectItemGroups(projectRootElement);
 			return projectRootElement;
 		}
 
-		private void FixProjectItemGroups(ProjectRootElement projectRootElement, string libraryDirectory)
+		private void FixProjectItemGroups(ProjectRootElement projectRootElement)
 		{
 			foreach (var projectItemGroupElement in projectRootElement.ItemGroups)
 			{
-				FixProjectItemGroup(projectItemGroupElement, libraryDirectory);
+				FixProjectItemGroup(projectItemGroupElement);
 			}
 		}
 
-		private void FixProjectItemGroup(ProjectItemGroupElement projectItemGroupElement, string libraryDirectory)
+		private void FixProjectItemGroup(ProjectItemGroupElement projectItemGroupElement)
 		{
 			foreach (var projectItemElement in projectItemGroupElement.Items)
 			{
-				FixProjectItemElement(projectItemElement, libraryDirectory);
+				FixProjectItemElement(projectItemElement);
 			}
 		}
 
-		private void FixProjectItemElement(ProjectItemElement projectItemElement, string libraryDirectory)
+		private void FixProjectItemElement(ProjectItemElement projectItemElement)
 		{
 			if (projectItemElement.ItemType.Equals("Reference"))
 			{
-				FixProjectItemElementReference(projectItemElement, libraryDirectory);
+				FixProjectItemElementReference(projectItemElement);
 			}
 
 			if (projectItemElement.ItemType.Equals("None"))
@@ -86,11 +101,11 @@ namespace MSBuildFixer
 			}
 		}
 
-		private void FixProjectItemElementReference(ProjectItemElement projectItemElement, string libraryDirectory)
+		private void FixProjectItemElementReference(ProjectItemElement projectItemElement)
 		{
 			foreach (var projectElement in projectItemElement.Metadata)
 			{
-				FixMetadataElement(projectElement, libraryDirectory);
+				FixMetadataElement(projectElement);
 			}
 			AddMissingMetadataElements(projectItemElement);
 		}
@@ -107,7 +122,7 @@ namespace MSBuildFixer
 			}
 		}
 
-		private void FixMetadataElement(ProjectMetadataElement projectMetadataElement, string libraryDirectory)
+		private void FixMetadataElement(ProjectMetadataElement projectMetadataElement)
 		{
 			if (projectMetadataElement == null) return;
 			switch (projectMetadataElement.Name)
@@ -116,20 +131,20 @@ namespace MSBuildFixer
 					MakePrivate(projectMetadataElement);
 					break;
 				case "HintPath":
-					TryFixHintPath(projectMetadataElement, libraryDirectory);
+					TryFixHintPath(projectMetadataElement);
 					break;
 			}
 		}
 
-		private static void TryFixHintPath(ProjectMetadataElement projectMetadataElement, string libraryDirectory)
+		private void TryFixHintPath(ProjectMetadataElement projectMetadataElement)
 		{
 			if (!HintPathToggle.Enabled) return;
-			if (string.IsNullOrEmpty(libraryDirectory)) return;
+			if (string.IsNullOrEmpty(_libraryDirectory)) throw new ArgumentException("Must specify a library directory to try fixing the hint path", nameof(_libraryDirectory));
 			var fileName = Path.GetFileName(projectMetadataElement.Value);
-			var libraryPath = Directory.EnumerateFiles(libraryDirectory, fileName, SearchOption.AllDirectories).LastOrDefault();
+			var libraryPath = Directory.EnumerateFiles(_libraryDirectory, fileName, SearchOption.AllDirectories).LastOrDefault();
 			if (libraryPath != null)
 			{
-				projectMetadataElement.Value = MakeRelativePath(projectMetadataElement.ContainingProject.FullPath, libraryPath);
+				projectMetadataElement.Value = libraryPath.Replace(_solutionDirectory, "$(SolutionDir)");
 			}
 		}
 
