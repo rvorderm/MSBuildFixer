@@ -11,26 +11,6 @@ namespace MSBuildFixerTests
 	public class ProgramTests
 	{
 		[TestClass]
-		public class GetConfigurationTests
-		{
-			[TestMethod]
-			public void Debug()
-			{
-				var input = @"'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'";
-				var result = ProjectFixer.GetConfiguration(input);
-				Assert.AreEqual("Debug", result);
-			}
-
-			[TestMethod]
-			public void Release()
-			{
-				var input = @"'$(Configuration)|$(Platform)' == 'Release|AnyCPU'";
-				var result = ProjectFixer.GetConfiguration(input);
-				Assert.AreEqual("Release", result);
-			}
-		}
-
-		[TestClass]
 		public class FixOutputPropertyTests
 		{
 			[TestMethod]

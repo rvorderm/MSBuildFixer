@@ -190,20 +190,7 @@ namespace MSBuildFixer
 
 		public void FixOutputProperty(ProjectPropertyElement projectPropertyElement, string propertyGroupCondition)
 		{
-			var configuration = GetConfiguration(propertyGroupCondition);
-			projectPropertyElement.Value = Path.Combine("$(SolutionDir)", "bin", configuration);
-		}
-
-		public static string GetConfiguration(string propertyGroupCondition)
-		{
-			/* 
-			Complicated regex that I want to match the configuration word and nothing else.
-			For example, I want to find Debug in:
-			'$(Configuration)|$(Platform)' == 'Debug|AnyCPU' 
-			 */
-			var match = Regex.Match(propertyGroupCondition, @"(?:\'\$\(Configuration\)\|\$\(Platform\)\' == \')(.*)(?:\|(?:.*)\')");
-			if (match.Groups.Count < 2) return string.Empty;
-			return match?.Groups[1].Value;
+			projectPropertyElement.Value = Path.Combine("$(SolutionDir)", "bin", "$(Configuration)");
 		}
 	}
 }
