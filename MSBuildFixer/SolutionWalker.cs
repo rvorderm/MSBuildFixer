@@ -8,9 +8,9 @@ using MSBuildFixer.SampleFeatureToggles;
 
 namespace MSBuildFixer
 {
-	public class ProjectFixer
+	public class SolutionWalker
 	{
-		public void FixSolution(string solutionDirectory, string solutionFilename, string libraryFolder)
+		public void VisitSolution(string solutionDirectory, string solutionFilename, string libraryFolder)
 		{
 			if(string.IsNullOrEmpty(solutionDirectory)) throw new ArgumentNullException(nameof(solutionDirectory));
 			if(string.IsNullOrEmpty(solutionFilename)) throw new ArgumentNullException(nameof(solutionFilename));
@@ -20,44 +20,50 @@ namespace MSBuildFixer
 			
 			var solutionFile = SolutionFile.Parse(Path.Combine(solutionDirectory, solutionFilename));
 			if (solutionFile == null) return;
-			FixProjects(solutionFile.ProjectsInOrder, libraryDirectory);
+			VisitProjects(solutionFile.ProjectsInOrder, libraryDirectory);
 		}
 
-		public void FixProjects(IReadOnlyList<ProjectInSolution> projects, string libraryDirectory)
+		public void VisitProjects(IReadOnlyList<ProjectInSolution> projects, string libraryDirectory)
 		{
 			foreach (var projectInSolution in projects)
 			{
-				var projectRootElement = FixProject(projectInSolution, libraryDirectory);
+				var projectRootElement = VisitProject(projectInSolution, libraryDirectory);
 				projectRootElement?.Save();
 			}
 		}
 
-		public ProjectRootElement FixProject(ProjectInSolution project, string libraryDirectory)
+		public ProjectRootElement VisitProject(ProjectInSolution project, string libraryDirectory)
 		{
 			if (project.ProjectType == SolutionProjectType.SolutionFolder) return null;
 			var projectRootElement = ProjectRootElement.Open(project.AbsolutePath);
-			FixPropertyGroups(projectRootElement);
-			FixProjectItemGroups(projectRootElement, libraryDirectory);
+			if (projectRootElement == null) return null;
+			VisitPropertyGroups(projectRootElement.PropertyGroups);
+			VisitProjectItemGroups(projectRootElement.ItemGroups, libraryDirectory);
 			return projectRootElement;
 		}
 
-		private void FixProjectItemGroups(ProjectRootElement projectRootElement, string libraryDirectory)
+		private void VisitProjectItemGroups(ICollection<ProjectItemGroupElement> projectItemGroupElements, string libraryDirectory)
 		{
-			foreach (var projectItemGroupElement in projectRootElement.ItemGroups)
+			foreach (var projectItemGroupElement in projectItemGroupElements)
 			{
-				FixProjectItemGroup(projectItemGroupElement, libraryDirectory);
+				VisitProjectItemGroup(projectItemGroupElement, libraryDirectory);
 			}
 		}
 
-		private void FixProjectItemGroup(ProjectItemGroupElement projectItemGroupElement, string libraryDirectory)
+		private void VisitProjectItemGroup(ProjectItemGroupElement projectItemGroupElement, string libraryDirectory)
 		{
-			foreach (var projectItemElement in projectItemGroupElement.Items)
+			VisitProjectItems(projectItemGroupElement.Items, libraryDirectory);
+		}
+
+		private void VisitProjectItems(ICollection<ProjectItemElement> projectItemElements, string libraryDirectory)
+		{
+			foreach (var projectItemElement in projectItemElements)
 			{
-				FixProjectItemElement(projectItemElement, libraryDirectory);
+				VisitProjectItemElement(projectItemElement, libraryDirectory);
 			}
 		}
 
-		private void FixProjectItemElement(ProjectItemElement projectItemElement, string libraryDirectory)
+		private void VisitProjectItemElement(ProjectItemElement projectItemElement, string libraryDirectory)
 		{
 			if (projectItemElement.ItemType.Equals("Reference"))
 			{
@@ -139,27 +145,32 @@ namespace MSBuildFixer
 			projectMetadataElement.Value = false.ToString();
 		}
 
-		public void FixPropertyGroups(ProjectRootElement projectRootElement)
+		public void VisitPropertyGroups(ICollection<ProjectPropertyGroupElement> projectPropertyGroupElements)
 		{
-			foreach (var projectPropertyGroupElement in projectRootElement.PropertyGroups)
+			foreach (var projectPropertyGroupElement in projectPropertyGroupElements)
 			{
-				FixPropertyGroup(projectPropertyGroupElement);
+				VisitPropertyGroups(projectPropertyGroupElement);
 			}
 		}
 
-		public void FixPropertyGroup(ProjectPropertyGroupElement projectPropertyGroupElement)
+		public void VisitPropertyGroups(ProjectPropertyGroupElement projectPropertyGroupElement)
 		{
-			foreach (var projectPropertyElement in projectPropertyGroupElement.Properties)
+			VisitProperties(projectPropertyGroupElement, projectPropertyGroupElement.Properties);
+		}
+
+		private void VisitProperties(ProjectPropertyGroupElement projectPropertyGroupElement, ICollection<ProjectPropertyElement> projectPropertyElements)
+		{
+			foreach (var projectPropertyElement in projectPropertyElements)
 			{
-				FixOutputPath(projectPropertyElement, projectPropertyGroupElement.Condition);
+				VisitProperty(projectPropertyElement);
 			}
 		}
 
-		public void FixOutputPath(ProjectPropertyElement projectPropertyElement, string propertyGroupCondition)
+		public void VisitProperty(ProjectPropertyElement projectPropertyElement)
 		{
 			if (OutputPathToggle.Enabled && projectPropertyElement.Name.Equals("OutputPath"))
 			{
-				FixOutputProperty(projectPropertyElement, propertyGroupCondition);
+				FixOutputProperty(projectPropertyElement);
 			}
 
 			if (RunPostBuildEventToggle.Enabled && projectPropertyElement.Name.Equals("RunPostBuildEvent"))
@@ -173,7 +184,7 @@ namespace MSBuildFixer
 			projectPropertyElement.Value = "OnOutputUpdated";
 		}
 
-		public void FixOutputProperty(ProjectPropertyElement projectPropertyElement, string propertyGroupCondition)
+		public void FixOutputProperty(ProjectPropertyElement projectPropertyElement)
 		{
 			projectPropertyElement.Value = Path.Combine("$(SolutionDir)", "bin", "$(Configuration)");
 		}

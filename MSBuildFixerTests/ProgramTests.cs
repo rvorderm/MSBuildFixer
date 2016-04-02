@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,9 +20,9 @@ namespace MSBuildFixerTests
 				var projectRootElement = ProjectRootElement.Create();
 				var projectPropertyGroupElement = projectRootElement.AddPropertyGroup();
 				var projectPropertyElement = projectPropertyGroupElement.AddProperty("Output", string.Empty);
-				var projectFixer = new ProjectFixer();
-				projectFixer.FixOutputProperty(projectPropertyElement, @"'$(Configuration)|$(Platform)' == 'Release|AnyCPU'");
-				Assert.AreEqual("bin\\Release", projectPropertyElement.Value);
+				var projectFixer = new SolutionWalker();
+				projectFixer.FixOutputProperty(projectPropertyElement);
+				Assert.AreEqual(Path.Combine("$(SolutionDir)", "bin", "$(Configuration)"), projectPropertyElement.Value);
 			}
 		}
 

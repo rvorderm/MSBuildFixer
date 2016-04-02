@@ -55,7 +55,7 @@
     <Compile Include="FeatureToggles\HintPathToggle.cs" />
     <Compile Include="FeatureToggles\CopyLocalToggle.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ProjectFixer.cs" />
+    <Compile Include="SolutionWalker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FeatureToggles\CopyToOutputDirectoryToggle.cs" />
   </ItemGroup>
