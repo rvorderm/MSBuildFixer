@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.Build.Construction;
 using MSBuildFixer.SampleFeatureToggles;
 
@@ -166,27 +165,10 @@ namespace MSBuildFixer
 			}
 		}
 
+		public event EventHandler OnVisitProperty;
 		public void VisitProperty(ProjectPropertyElement projectPropertyElement)
 		{
-			if (OutputPathToggle.Enabled && projectPropertyElement.Name.Equals("OutputPath"))
-			{
-				FixOutputProperty(projectPropertyElement);
-			}
-
-			if (RunPostBuildEventToggle.Enabled && projectPropertyElement.Name.Equals("RunPostBuildEvent"))
-			{
-				FixRunPostBuildEvent(projectPropertyElement);
-			}
-		}
-
-		private void FixRunPostBuildEvent(ProjectPropertyElement projectPropertyElement)
-		{
-			projectPropertyElement.Value = "OnOutputUpdated";
-		}
-
-		public void FixOutputProperty(ProjectPropertyElement projectPropertyElement)
-		{
-			projectPropertyElement.Value = Path.Combine("$(SolutionDir)", "bin", "$(Configuration)");
+			OnVisitProperty?.Invoke(projectPropertyElement, new EventArgs());
 		}
 
 		/// <summary>
