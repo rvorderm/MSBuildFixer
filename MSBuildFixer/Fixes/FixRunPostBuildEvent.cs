@@ -11,7 +11,7 @@ namespace MSBuildFixer.Fixes
 		{
 			var projectPropertyElement = sender as ProjectPropertyElement;
 			if (projectPropertyElement == null) return;
-			if (!OutputPathToggle.Enabled) return;
+			if (!RunPostBuildEventToggle.Enabled) return;
 			if (!projectPropertyElement.Name.Equals("RunPostBuildEvent")) return;
 			
 			projectPropertyElement.Value = "OnOutputUpdated";

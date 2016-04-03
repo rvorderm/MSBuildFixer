@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Construction;
+using MSBuildFixer.Fixes;
 using MSBuildFixer.SampleFeatureToggles;
 
 namespace MSBuildFixer
@@ -64,11 +65,6 @@ namespace MSBuildFixer
 
 		private void VisitProjectItemElement(ProjectItemElement projectItemElement, string libraryDirectory)
 		{
-			if (projectItemElement.ItemType.Equals("Reference"))
-			{
-				FixProjectItemElementReference(projectItemElement, libraryDirectory);
-			}
-
 			if (projectItemElement.ItemType.Equals("None"))
 			{
 				FixProjectItemElementNone(projectItemElement);
@@ -91,35 +87,30 @@ namespace MSBuildFixer
 			}
 		}
 
-		private void FixProjectItemElementReference(ProjectItemElement projectItemElement, string libraryDirectory)
+		public event EventHandler OnVisitProjectItem;
+		public void FixProjectItemElementReference(ProjectItemElement projectItemElement, string libraryDirectory)
 		{
-			foreach (var projectElement in projectItemElement.Metadata)
-			{
-				FixMetadataElement(projectElement, libraryDirectory);
-			}
-			AddMissingMetadataElements(projectItemElement);
+			OnVisitProjectItem?.Invoke(projectItemElement, EventArgs.Empty);
+			VisitMetadataCollection(projectItemElement.Metadata, libraryDirectory);
 		}
 
-		private static void AddMissingMetadataElements(ProjectItemElement projectItemElement)
+		public event EventHandler OnVisitMetadataCollection;
+		public void VisitMetadataCollection(ICollection<ProjectMetadataElement> metadata, string libraryDirectory)
 		{
-			if (CopyLocalToggle.Enabled 
-				&& projectItemElement.Metadata.Any()
-			    && !projectItemElement.Metadata.Any(x => x.Name.Equals("Private"))
-			    && !(projectItemElement.Include.StartsWith("System.")
-			         || projectItemElement.Include.StartsWith("Microsoft")))
+			OnVisitMetadataCollection?.Invoke(metadata, EventArgs.Empty);
+			foreach (var projectElement in metadata)
 			{
-				projectItemElement.AddMetadata("Private", false.ToString());
+				VisitMetadata(projectElement, libraryDirectory);
 			}
 		}
 
-		private void FixMetadataElement(ProjectMetadataElement projectMetadataElement, string libraryDirectory)
+		public event EventHandler OnVisitMetadata;
+		public void VisitMetadata(ProjectMetadataElement projectMetadataElement, string libraryDirectory)
 		{
+			OnVisitMetadata?.Invoke(projectMetadataElement, EventArgs.Empty);
 			if (projectMetadataElement == null) return;
 			switch (projectMetadataElement.Name)
 			{
-				case "Private":
-					MakePrivate(projectMetadataElement);
-					break;
 				case "HintPath":
 					TryFixHintPath(projectMetadataElement, libraryDirectory);
 					break;
@@ -136,12 +127,6 @@ namespace MSBuildFixer
 			{
 				projectMetadataElement.Value = MakeRelativePath(projectMetadataElement.ContainingProject.FullPath, libraryPath);
 			}
-		}
-
-		private static void MakePrivate(ProjectMetadataElement projectMetadataElement)
-		{
-			if (!CopyLocalToggle.Enabled) return;
-			projectMetadataElement.Value = false.ToString();
 		}
 
 		public void VisitPropertyGroups(ICollection<ProjectPropertyGroupElement> projectPropertyGroupElements)
@@ -168,7 +153,7 @@ namespace MSBuildFixer
 		public event EventHandler OnVisitProperty;
 		public void VisitProperty(ProjectPropertyElement projectPropertyElement)
 		{
-			OnVisitProperty?.Invoke(projectPropertyElement, new EventArgs());
+			OnVisitProperty?.Invoke(projectPropertyElement, EventArgs.Empty);
 		}
 
 		/// <summary>

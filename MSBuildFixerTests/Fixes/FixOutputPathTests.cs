@@ -23,7 +23,7 @@ namespace MSBuildFixerTests.Fixes
 			[TestMethod]
 			public void SetsValue()
 			{
-				TestSetup.SetOutputPathToggleTo(true);
+				TestSetup.SetToggleTo(OutputPathToggle.Instance, true);
 
 				var projectRootElement = TestSetup.GetTestProject();
 
@@ -38,7 +38,7 @@ namespace MSBuildFixerTests.Fixes
 			[TestMethod]
 			public void ToggleBlocks()
 			{
-				TestSetup.SetOutputPathToggleTo(false);
+				TestSetup.SetToggleTo(OutputPathToggle.Instance, false);
 
 				var projectRootElement = TestSetup.GetTestProject();
 
@@ -59,7 +59,7 @@ namespace MSBuildFixerTests.Fixes
 			[TestMethod]
 			public void NotOutputPath()
 			{
-				TestSetup.SetOutputPathToggleTo(true);
+				TestSetup.SetToggleTo(OutputPathToggle.Instance, true);
 
 				var projectRootElement = TestSetup.GetTestProject();
 

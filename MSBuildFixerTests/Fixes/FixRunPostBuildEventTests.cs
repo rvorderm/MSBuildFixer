@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MSBuildFixer.Fixes;
+using MSBuildFixer.SampleFeatureToggles;
 
 namespace MSBuildFixerTests.Fixes
 {
@@ -18,21 +19,31 @@ namespace MSBuildFixerTests.Fixes
 			[TestMethod]
 			public void SetsValue()
 			{
-				TestSetup.SetOutputPathToggleTo(true);
+				TestSetup.SetToggleTo(RunPostBuildEventToggle.Instance, true);
 
 				var projectRootElement = TestSetup.GetTestProject();
 
-				Assert.Fail();
+				var elements = projectRootElement.Properties.Where(x => x.Name.Equals("RunPostBuildEvent")).ToList();
+				Assert.IsTrue(elements.Any());
+
+				var element = elements[0];
+				FixRunPostBuildEvent.OnVisitProperty(element, new EventArgs());
+				Assert.AreEqual(@"OnOutputUpdated", element.Value);
 			}
 
 			[TestMethod]
 			public void ToggleBlocks()
 			{
-				TestSetup.SetOutputPathToggleTo(false);
+				TestSetup.SetToggleTo(RunPostBuildEventToggle.Instance, false);
 
 				var projectRootElement = TestSetup.GetTestProject();
 
-				Assert.Fail();
+				var elements = projectRootElement.Properties.Where(x => x.Name.Equals("RunPostBuildEvent")).ToList();
+				Assert.IsTrue(elements.Any());
+
+				var element = elements[0];
+				FixRunPostBuildEvent.OnVisitProperty(element, new EventArgs());
+				Assert.AreEqual(@"Always", element.Value);
 			}
 
 			[TestMethod]
@@ -42,13 +53,19 @@ namespace MSBuildFixerTests.Fixes
 			}
 
 			[TestMethod]
-			public void NotOutputPath()
+			public void WrongName()
 			{
-				TestSetup.SetOutputPathToggleTo(true);
+				TestSetup.SetToggleTo(RunPostBuildEventToggle.Instance, true);
 
 				var projectRootElement = TestSetup.GetTestProject();
 
-				Assert.Fail();
+				var elements = projectRootElement.Properties.Where(x => x.Name.Equals("RunPostBuildEvent")).ToList();
+				Assert.IsTrue(elements.Any());
+
+				var element = elements[0];
+				element.Name = "anythingElse";
+				FixRunPostBuildEvent.OnVisitProperty(element, new EventArgs());
+				Assert.AreEqual(@"Always", element.Value);
 			}
 		}
 	}

@@ -3,6 +3,7 @@ using System.Xml;
 using FakeItEasy;
 using FakeItEasy.ExtensionSyntax.Full;
 using FeatureToggle.Core;
+using FeatureToggle.Toggles;
 using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MSBuildFixer.SampleFeatureToggles;
@@ -27,11 +28,11 @@ namespace MSBuildFixerTests.Fixes
 			return _projectRootElement.DeepClone();
 		}
 
-		public static void SetOutputPathToggleTo(bool value)
+		public static void SetToggleTo(SimpleFeatureToggle toggle, bool value)
 		{
 			var booleanToggleValueProvider = A.Fake<IBooleanToggleValueProvider>();
-			booleanToggleValueProvider.CallsTo(x => x.EvaluateBooleanToggleValue(OutputPathToggle.Instance)).Returns(value);
-			OutputPathToggle.Instance.ToggleValueProvider = booleanToggleValueProvider;
+			booleanToggleValueProvider.CallsTo(x => x.EvaluateBooleanToggleValue(toggle)).Returns(value);
+			toggle.ToggleValueProvider = booleanToggleValueProvider;
 		}
 	}
 }

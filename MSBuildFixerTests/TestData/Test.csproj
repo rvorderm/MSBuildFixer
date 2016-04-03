@@ -66,10 +66,12 @@
     <Reference Include="IdeaBlade.Util, Version=3.6.4.1, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\.lib\Ideablade\IdeaBlade.Util.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="IdeaBlade.Verification, Version=3.6.4.1, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\.lib\Ideablade\IdeaBlade.Verification.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
@@ -919,6 +921,6 @@ xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\Services\ReportDelive
 xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\WebSites\InSiteInterfaceService\bin\*.*</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 </Project>
