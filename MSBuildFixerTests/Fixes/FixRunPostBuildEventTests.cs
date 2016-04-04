@@ -27,7 +27,8 @@ namespace MSBuildFixerTests.Fixes
 				Assert.IsTrue(elements.Any());
 
 				var element = elements[0];
-				FixRunPostBuildEvent.OnVisitProperty(element, new EventArgs());
+				var fixRunPostBuildEvent = new FixRunPostBuildEvent();
+				fixRunPostBuildEvent.OnVisitProperty(element, new EventArgs());
 				Assert.AreEqual(@"OnOutputUpdated", element.Value);
 			}
 
@@ -42,14 +43,16 @@ namespace MSBuildFixerTests.Fixes
 				Assert.IsTrue(elements.Any());
 
 				var element = elements[0];
-				FixRunPostBuildEvent.OnVisitProperty(element, new EventArgs());
+				var fixRunPostBuildEvent = new FixRunPostBuildEvent();
+				fixRunPostBuildEvent.OnVisitProperty(element, new EventArgs());
 				Assert.AreEqual(@"Always", element.Value);
 			}
 
 			[TestMethod]
 			public void NullInput()
 			{
-				FixRunPostBuildEvent.OnVisitProperty(null, new EventArgs());
+				var fixRunPostBuildEvent = new FixRunPostBuildEvent();
+				fixRunPostBuildEvent.OnVisitProperty(null, new EventArgs());
 			}
 
 			[TestMethod]
@@ -64,7 +67,8 @@ namespace MSBuildFixerTests.Fixes
 
 				var element = elements[0];
 				element.Name = "anythingElse";
-				FixRunPostBuildEvent.OnVisitProperty(element, new EventArgs());
+				var fixRunPostBuildEvent = new FixRunPostBuildEvent();
+				fixRunPostBuildEvent.OnVisitProperty(element, new EventArgs());
 				Assert.AreEqual(@"Always", element.Value);
 			}
 		}

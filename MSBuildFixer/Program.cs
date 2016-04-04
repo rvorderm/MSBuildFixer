@@ -67,6 +67,12 @@ namespace MSBuildFixer
 				var fixOutputPath = new FixOutputPath();
 				walker.OnVisitProperty += fixOutputPath.OnVisitProperty;
 			}
+
+			if (RunPostBuildEventToggle.Enabled)
+			{
+				var fixRunPostBuildEvent = new FixRunPostBuildEvent();
+				walker.OnVisitProperty += fixRunPostBuildEvent.OnVisitProperty;
+			}
 		}
 	}
 }

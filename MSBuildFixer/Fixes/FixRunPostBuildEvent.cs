@@ -7,7 +7,7 @@ namespace MSBuildFixer.Fixes
 {
 	public class FixRunPostBuildEvent
 	{
-		public static void OnVisitProperty(object sender, EventArgs e)
+		public void OnVisitProperty(object sender, EventArgs e)
 		{
 			var projectPropertyElement = sender as ProjectPropertyElement;
 			if (projectPropertyElement == null) return;
