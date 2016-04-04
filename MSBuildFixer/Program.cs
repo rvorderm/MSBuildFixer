@@ -26,12 +26,6 @@ namespace MSBuildFixer
 			if (!File.Exists(fullSolutionPath)) return;
 
 			var libraryPath = Path.Combine(solutionDirectory, libraryFolder);
-			if (!Directory.Exists(libraryPath))
-			{
-				Console.WriteLine($"LibraryFolder did not exist: {libraryPath}");
-				Console.WriteLine($"Hint path option will not be executed");
-				HintPathToggle.Enabled = false;
-			}
 
 			Console.WriteLine($"Opening {fullSolutionPath}");
 
