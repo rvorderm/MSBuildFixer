@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FeatureToggles\SummarizeXCopyToggle.cs" />
     <Compile Include="FeatureToggles\RunPostBuildEventToggle.cs" />
     <Compile Include="FeatureToggles\OutputPathToggle.cs" />
     <Compile Include="FeatureToggles\HintPathToggle.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Fixes\FixHintPath.cs" />
     <Compile Include="Fixes\FixOutputPath.cs" />
     <Compile Include="Fixes\FixRunPostBuildEvent.cs" />
+    <Compile Include="Fixes\FixXCopy.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SolutionWalker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

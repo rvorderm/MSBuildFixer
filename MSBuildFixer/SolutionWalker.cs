@@ -9,14 +9,20 @@ namespace MSBuildFixer
 {
 	public class SolutionWalker
 	{
+		public event EventHandler OnOpenSolution;
+		public event EventHandler OnAfterVisitSolution;
+
 		public void VisitSolution(string solutionDirectory, string solutionFilename)
 		{
 			if(string.IsNullOrEmpty(solutionDirectory)) throw new ArgumentNullException(nameof(solutionDirectory));
 			if(string.IsNullOrEmpty(solutionFilename)) throw new ArgumentNullException(nameof(solutionFilename));
 
-			var solutionFile = SolutionFile.Parse(Path.Combine(solutionDirectory, solutionFilename));
+			var solutionFilePath = Path.Combine(solutionDirectory, solutionFilename);
+			OnOpenSolution?.Invoke(solutionFilePath, EventArgs.Empty);
+			var solutionFile = SolutionFile.Parse(solutionFilePath);
 			if (solutionFile == null) return;
 			VisitProjects(solutionFile.ProjectsInOrder);
+			OnAfterVisitSolution?.Invoke(solutionFile, EventArgs.Empty);
 		}
 
 		public void VisitProjects(IReadOnlyList<ProjectInSolution> projects)
@@ -28,8 +34,6 @@ namespace MSBuildFixer
 			}
 		}
 
-		public EventHandler OnVisitComplete;
-
 		public ProjectRootElement VisitProject(ProjectInSolution project)
 		{
 			if (project.ProjectType == SolutionProjectType.SolutionFolder) return null;
@@ -37,7 +41,6 @@ namespace MSBuildFixer
 			if (projectRootElement == null) return null;
 			VisitPropertyGroups(projectRootElement.PropertyGroups);
 			VisitProjectItemGroups(projectRootElement.ItemGroups);
-			OnVisitComplete?.Invoke(projectRootElement, EventArgs.Empty);
 			return projectRootElement;
 		}
 

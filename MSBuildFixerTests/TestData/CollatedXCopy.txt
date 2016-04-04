@@ -1,0 +1,6 @@
+:: Common.Model
+xcopy /y $(TargetDir)$(TargetName).* $(SolutionDir)\.out\*.*
+xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\Application\Silverblade\*.*
+xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\Services\QbeService\*.*
+xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\Services\ReportDeliveryService\*.*
+xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\WebSites\InSiteInterfaceService\bin\*.*
