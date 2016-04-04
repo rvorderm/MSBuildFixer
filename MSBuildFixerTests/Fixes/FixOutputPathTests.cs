@@ -31,7 +31,8 @@ namespace MSBuildFixerTests.Fixes
 				Assert.IsTrue(elements.Any());
 
 				var element = elements[0];
-				FixOutputPath.OnVisitProperty(element, EventArgs.Empty);
+				var fixOutputPath = new FixOutputPath();
+				fixOutputPath.OnVisitProperty(element, EventArgs.Empty);
 				Assert.AreEqual(Path.Combine("$(SolutionDir)", "bin", "$(Configuration)"), element.Value);
 			}
 
@@ -46,14 +47,16 @@ namespace MSBuildFixerTests.Fixes
 				Assert.IsTrue(elements.Any());
 
 				var element = elements[0];
-				FixOutputPath.OnVisitProperty(element, EventArgs.Empty);
+				var fixOutputPath = new FixOutputPath();
+				fixOutputPath.OnVisitProperty(element, EventArgs.Empty);
 				Assert.AreEqual(@"bin\Debug", element.Value);
 			}
 
 			[TestMethod]
 			public void NullInput()
 			{
-				FixOutputPath.OnVisitProperty(null, EventArgs.Empty);
+				var fixOutputPath = new FixOutputPath();
+				fixOutputPath.OnVisitProperty(null, EventArgs.Empty);
 			}
 
 			[TestMethod]
@@ -68,7 +71,8 @@ namespace MSBuildFixerTests.Fixes
 
 				var element = elements[0];
 				element.Name = "meow";
-				FixOutputPath.OnVisitProperty(element, EventArgs.Empty);
+				var fixOutputPath = new FixOutputPath();
+				fixOutputPath.OnVisitProperty(element, EventArgs.Empty);
 				Assert.AreEqual(@"bin\Debug", element.Value);
 			}
 		}

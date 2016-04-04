@@ -61,6 +61,12 @@ namespace MSBuildFixer
 				var fixHintPath = new FixHintPath(solutionDirectory, libraryFolder);
 				walker.OnVisitMetadata += fixHintPath.OnVisitMetadata;
 			}
+
+			if (OutputPathToggle.Enabled)
+			{
+				var fixOutputPath = new FixOutputPath();
+				walker.OnVisitProperty += fixOutputPath.OnVisitProperty;
+			}
 		}
 	}
 }
