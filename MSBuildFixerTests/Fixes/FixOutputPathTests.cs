@@ -27,12 +27,12 @@ namespace MSBuildFixerTests.Fixes
 
 				var projectRootElement = TestSetup.GetTestProject();
 
-				var outputPaths = projectRootElement.Properties.Where(x=>x.Name.Equals("OutputPath")).ToList();
-				Assert.IsTrue(outputPaths.Any());
+				var elements = projectRootElement.Properties.Where(x=>x.Name.Equals("OutputPath")).ToList();
+				Assert.IsTrue(elements.Any());
 
-				var outputPath = outputPaths[0];
-				FixOutputPath.OnVisitProperty(outputPath, new EventArgs());
-				Assert.AreEqual(Path.Combine("$(SolutionDir)", "bin", "$(Configuration)"), outputPath.Value);
+				var element = elements[0];
+				FixOutputPath.OnVisitProperty(element, EventArgs.Empty);
+				Assert.AreEqual(Path.Combine("$(SolutionDir)", "bin", "$(Configuration)"), element.Value);
 			}
 
 			[TestMethod]
@@ -42,18 +42,18 @@ namespace MSBuildFixerTests.Fixes
 
 				var projectRootElement = TestSetup.GetTestProject();
 
-				var outputPaths = projectRootElement.Properties.Where(x=>x.Name.Equals("OutputPath")).ToList();
-				Assert.IsTrue(outputPaths.Any());
+				var elements = projectRootElement.Properties.Where(x=>x.Name.Equals("OutputPath")).ToList();
+				Assert.IsTrue(elements.Any());
 
-				var outputPath = outputPaths[0];
-				FixOutputPath.OnVisitProperty(outputPath, new EventArgs());
-				Assert.AreEqual(@"bin\Debug", outputPath.Value);
+				var element = elements[0];
+				FixOutputPath.OnVisitProperty(element, EventArgs.Empty);
+				Assert.AreEqual(@"bin\Debug", element.Value);
 			}
 
 			[TestMethod]
 			public void NullInput()
 			{
-				FixOutputPath.OnVisitProperty(null, new EventArgs());
+				FixOutputPath.OnVisitProperty(null, EventArgs.Empty);
 			}
 
 			[TestMethod]
@@ -63,13 +63,13 @@ namespace MSBuildFixerTests.Fixes
 
 				var projectRootElement = TestSetup.GetTestProject();
 
-				var outputPaths = projectRootElement.Properties.Where(x => x.Name.Equals("OutputPath")).ToList();
-				Assert.IsTrue(outputPaths.Any());
+				var elements = projectRootElement.Properties.Where(x => x.Name.Equals("OutputPath")).ToList();
+				Assert.IsTrue(elements.Any());
 
-				var outputPath = outputPaths[0];
-				outputPath.Name = "meow";
-				FixOutputPath.OnVisitProperty(outputPath, new EventArgs());
-				Assert.AreEqual(@"bin\Debug", outputPath.Value);
+				var element = elements[0];
+				element.Name = "meow";
+				FixOutputPath.OnVisitProperty(element, EventArgs.Empty);
+				Assert.AreEqual(@"bin\Debug", element.Value);
 			}
 		}
 	}
