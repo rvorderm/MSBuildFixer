@@ -15,7 +15,6 @@ namespace MSBuildFixer
 		static void Main(string[] args)
 		{
 			var fullSolutionPath = AppSettings["SolutionPath"];
-			var libraryFolder = AppSettings["LibraryFolder"];
 
 			var solutionDirectory = Path.GetDirectoryName(fullSolutionPath);
 			var solutionFilename = Path.GetFileName(fullSolutionPath);
@@ -27,7 +26,6 @@ namespace MSBuildFixer
 
 			if (!File.Exists(fullSolutionPath)) return;
 
-			var libraryPath = Path.Combine(solutionDirectory, libraryFolder);
 
 			Console.WriteLine($"Opening {fullSolutionPath}");
 
@@ -52,6 +50,16 @@ namespace MSBuildFixer
 			{
 				var fixCopyToOutputDirectory = new FixCopyToOutputDirectory();
 				walker.OnVisitMetadata += fixCopyToOutputDirectory.OnVisitMetadata;
+			}
+
+			if (HintPathToggle.Enabled)
+			{
+				var fullSolutionPath = AppSettings["SolutionPath"];
+				var libraryFolder = AppSettings["LibraryFolder"];
+				var solutionDirectory = Path.GetDirectoryName(fullSolutionPath);
+				
+				var fixHintPath = new FixHintPath(solutionDirectory, libraryFolder);
+				walker.OnVisitMetadata += fixHintPath.OnVisitMetadata;
 			}
 		}
 	}
