@@ -54,6 +54,7 @@
     <Compile Include="FeatureToggles\OutputPathToggle.cs" />
     <Compile Include="FeatureToggles\HintPathToggle.cs" />
     <Compile Include="FeatureToggles\CopyLocalToggle.cs" />
+    <Compile Include="Fixes\FixCopyToOutputDirectory.cs" />
     <Compile Include="Fixes\FixCopyLocal.cs" />
     <Compile Include="Fixes\FixOutputPath.cs" />
     <Compile Include="Fixes\FixRunPostBuildEvent.cs" />

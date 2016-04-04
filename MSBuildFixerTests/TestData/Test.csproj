@@ -841,7 +841,9 @@
     <Compile Include="Utility\PagedQuery.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="TylerIncodeKey.pfx" />
+    <None Include="TylerIncodeKey.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AppHelper\AppHelper.csproj">

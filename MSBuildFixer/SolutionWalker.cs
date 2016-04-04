@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Construction;
-using MSBuildFixer.Fixes;
 using MSBuildFixer.SampleFeatureToggles;
 
 namespace MSBuildFixer
@@ -20,87 +19,64 @@ namespace MSBuildFixer
 			
 			var solutionFile = SolutionFile.Parse(Path.Combine(solutionDirectory, solutionFilename));
 			if (solutionFile == null) return;
-			VisitProjects(solutionFile.ProjectsInOrder, libraryDirectory);
+			VisitProjects(solutionFile.ProjectsInOrder);
 		}
 
-		public void VisitProjects(IReadOnlyList<ProjectInSolution> projects, string libraryDirectory)
+		public void VisitProjects(IReadOnlyList<ProjectInSolution> projects)
 		{
 			foreach (var projectInSolution in projects)
 			{
-				var projectRootElement = VisitProject(projectInSolution, libraryDirectory);
+				var projectRootElement = VisitProject(projectInSolution);
 				projectRootElement?.Save();
 			}
 		}
 
-		public ProjectRootElement VisitProject(ProjectInSolution project, string libraryDirectory)
+		public ProjectRootElement VisitProject(ProjectInSolution project)
 		{
 			if (project.ProjectType == SolutionProjectType.SolutionFolder) return null;
 			var projectRootElement = ProjectRootElement.Open(project.AbsolutePath);
 			if (projectRootElement == null) return null;
 			VisitPropertyGroups(projectRootElement.PropertyGroups);
-			VisitProjectItemGroups(projectRootElement.ItemGroups, libraryDirectory);
+			VisitProjectItemGroups(projectRootElement.ItemGroups);
 			return projectRootElement;
 		}
 
-		private void VisitProjectItemGroups(ICollection<ProjectItemGroupElement> projectItemGroupElements, string libraryDirectory)
+		private void VisitProjectItemGroups(ICollection<ProjectItemGroupElement> projectItemGroup)
 		{
-			foreach (var projectItemGroupElement in projectItemGroupElements)
+			foreach (var projectItemGroupElement in projectItemGroup)
 			{
-				VisitProjectItemGroup(projectItemGroupElement, libraryDirectory);
+				VisitProjectItemGroup(projectItemGroupElement);
 			}
 		}
 
-		private void VisitProjectItemGroup(ProjectItemGroupElement projectItemGroupElement, string libraryDirectory)
+		private void VisitProjectItemGroup(ProjectItemGroupElement projectItemGroupElement)
 		{
-			VisitProjectItems(projectItemGroupElement.Items, libraryDirectory);
+			VisitProjectItems(projectItemGroupElement.Items);
 		}
 
-		private void VisitProjectItems(ICollection<ProjectItemElement> projectItemElements, string libraryDirectory)
+		public void VisitProjectItems(ICollection<ProjectItemElement> projectItem)
 		{
-			foreach (var projectItemElement in projectItemElements)
+			foreach (var projectItemElement in projectItem)
 			{
-				VisitProjectItemElement(projectItemElement, libraryDirectory);
-			}
-		}
-
-		private void VisitProjectItemElement(ProjectItemElement projectItemElement, string libraryDirectory)
-		{
-			if (projectItemElement.ItemType.Equals("None"))
-			{
-				FixProjectItemElementNone(projectItemElement);
-			}
-		}
-
-		/// <summary>
-		/// Things that are set to copy always will cause automatic rebuilds. These should be set to PreserveNewest to prevent that.
-		/// </summary>
-		/// <param name="projectItemElement"></param>
-		private void FixProjectItemElementNone(ProjectItemElement projectItemElement)
-		{
-			if (!CopyToOutputDirectoryToggle.Enabled) return;
-			foreach (var projectElement in projectItemElement.Metadata)
-			{
-				if (projectElement.Name.Equals("CopyToOutputDirectory") && projectElement.Value.Equals("Always"))
-				{
-					projectElement.Value = "PreserveNewest";
-				}
+				VisitProjectItem(projectItemElement);
 			}
 		}
 
 		public event EventHandler OnVisitProjectItem;
-		public void FixProjectItemElementReference(ProjectItemElement projectItemElement, string libraryDirectory)
+
+		private void VisitProjectItem(ProjectItemElement projectItemElement)
 		{
 			OnVisitProjectItem?.Invoke(projectItemElement, EventArgs.Empty);
-			VisitMetadataCollection(projectItemElement.Metadata, libraryDirectory);
+			VisitMetadataCollection(projectItemElement.Metadata);
 		}
 
 		public event EventHandler OnVisitMetadataCollection;
-		public void VisitMetadataCollection(ICollection<ProjectMetadataElement> metadata, string libraryDirectory)
+		public void VisitMetadataCollection(ICollection<ProjectMetadataElement> metadata)
 		{
 			OnVisitMetadataCollection?.Invoke(metadata, EventArgs.Empty);
 			foreach (var projectElement in metadata)
 			{
-				VisitMetadata(projectElement, libraryDirectory);
+				VisitMetadata(projectElement, "libraryDirectory");
 			}
 		}
 

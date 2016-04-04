@@ -69,6 +69,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Fixes\FixCopyLocalTests.cs" />
+    <Compile Include="Fixes\FixCopyToOutputDirectoryTests.cs" />
     <Compile Include="Fixes\FixOutputPathTests.cs" />
     <Compile Include="Fixes\FixRunPostBuildEventTests.cs" />
     <Compile Include="Fixes\TestSetup.cs" />
