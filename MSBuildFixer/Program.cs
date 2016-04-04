@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using FeatureToggle.Core;
 using Microsoft.Build.Construction;
 using MSBuildFixer.FeatureToggles;
 using MSBuildFixer.Fixes;
@@ -40,49 +41,63 @@ namespace MSBuildFixer
 
 		private static void AttachFixes(SolutionWalker walker)
 		{
-			if (CopyLocalToggle.Enabled)
-			{
-				var fixCopyLocal = new FixCopyLocal();
-				walker.OnVisitMetadata += fixCopyLocal.OnVisitMetadata;
-				walker.OnVisitProjectItem += fixCopyLocal.OnVisitProjectItem;
-			}
+			Attach(CopyLocalToggle.Instance, AttachCopyLocal, walker);
+			Attach(CopyToOutputDirectoryToggle.Instance, AttachCopyToOutputDirectory, walker);
+			Attach(HintPathToggle.Instance, AttachHintPath, walker);
+			Attach(OutputPathToggle.Instance, AttachOutputPath, walker);
+			Attach(RunPostBuildEventToggle.Instance, AttachRunPostBuildEvent, walker);
+			Attach(SummarizeXCopyToggle.Instance, AttachXCopy, walker);
+			
+		}
 
-			if (CopyToOutputDirectoryToggle.Enabled)
-			{
-				var fixCopyToOutputDirectory = new FixCopyToOutputDirectory();
-				walker.OnVisitMetadata += fixCopyToOutputDirectory.OnVisitMetadata;
-			}
+		private static void Attach(IFeatureToggle copyLocalToggle, Action<SolutionWalker> attachCopyLocal, SolutionWalker walker)
+		{
+			if (copyLocalToggle.FeatureEnabled) attachCopyLocal(walker);
+		}
 
-			if (HintPathToggle.Enabled)
-			{
-				var fullSolutionPath = AppSettings["SolutionPath"];
-				var libraryFolder = AppSettings["LibraryFolder"];
-				var solutionDirectory = Path.GetDirectoryName(fullSolutionPath);
-				
-				var fixHintPath = new FixHintPath(solutionDirectory, libraryFolder);
-				walker.OnVisitMetadata += fixHintPath.OnVisitMetadata;
-			}
+		private static void AttachCopyLocal(SolutionWalker walker)
+		{
+			var fixCopyLocal = new FixCopyLocal();
+			walker.OnVisitMetadata += fixCopyLocal.OnVisitMetadata;
+			walker.OnVisitProjectItem += fixCopyLocal.OnVisitProjectItem;
+		}
 
-			if (OutputPathToggle.Enabled)
-			{
-				var fixOutputPath = new FixOutputPath();
-				walker.OnVisitProperty += fixOutputPath.OnVisitProperty;
-			}
+		private static void AttachCopyToOutputDirectory(SolutionWalker walker)
+		{
+			var fixCopyToOutputDirectory = new FixCopyToOutputDirectory();
+			walker.OnVisitMetadata += fixCopyToOutputDirectory.OnVisitMetadata;
+		}
 
-			if (RunPostBuildEventToggle.Enabled)
-			{
-				var fixRunPostBuildEvent = new FixRunPostBuildEvent();
-				walker.OnVisitProperty += fixRunPostBuildEvent.OnVisitProperty;
-			}
+		private static void AttachHintPath(SolutionWalker walker)
+		{
+			var fullSolutionPath = AppSettings["SolutionPath"];
+			var libraryFolder = AppSettings["LibraryFolder"];
+			var solutionDirectory = Path.GetDirectoryName(fullSolutionPath);
 
-			if (SummarizeXCopyToggle.Enabled)
-			{
-				var fixXCopy = new FixXCopy();
-				walker.OnVisitMetadata += fixXCopy.OnVisitMetadata;
-				walker.OnVisitProperty += fixXCopy.OnVisitProperty;
-				walker.OnOpenSolution += fixXCopy.OnOpenSolution;
-				walker.OnAfterVisitSolution += fixXCopy.OnAfterVisitSolution;
-			}
+			var fixHintPath = new FixHintPath(solutionDirectory, libraryFolder);
+			walker.OnVisitMetadata += fixHintPath.OnVisitMetadata;
+		}
+
+		private static void AttachOutputPath(SolutionWalker walker)
+		{
+			var fixOutputPath = new FixOutputPath();
+			walker.OnVisitProperty += fixOutputPath.OnVisitProperty;
+		}
+
+		private static void AttachRunPostBuildEvent(SolutionWalker walker)
+		{
+			var fixRunPostBuildEvent = new FixRunPostBuildEvent();
+			walker.OnVisitProperty += fixRunPostBuildEvent.OnVisitProperty;
+		}
+
+		private static void AttachXCopy(SolutionWalker walker)
+		{
+			var fileName = AppSettings["SummarizeXCopyToggle_FileName"];
+			var fixXCopy = new FixXCopy(fileName);
+			walker.OnVisitMetadata += fixXCopy.OnVisitMetadata;
+			walker.OnVisitProperty += fixXCopy.OnVisitProperty;
+			walker.OnOpenSolution += fixXCopy.OnOpenSolution;
+			walker.OnAfterVisitSolution += fixXCopy.OnAfterVisitSolution;
 		}
 	}
 }

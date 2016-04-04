@@ -18,9 +18,11 @@ namespace MSBuildFixer.Fixes
 		private readonly Dictionary<ProjectRootElement, HashSet<string>> _xcopies = new Dictionary<ProjectRootElement, HashSet<string>>();
 		private readonly Dictionary<ProjectRootElement, string> _assemblyNames = new Dictionary<ProjectRootElement, string>();
 		private string _solutionFilePath;
+		private string _fileName;
 
-		public FixXCopy(string excludeReferencesFor = null)
+		public FixXCopy(string fileName = null, string excludeReferencesFor = null)
 		{
+			_fileName = fileName;
 			if (!string.IsNullOrEmpty(excludeReferencesFor))
 			{
 				_excludeReferencesFor = excludeReferencesFor.Split(';');
@@ -83,7 +85,7 @@ namespace MSBuildFixer.Fixes
 			{
 				if (!string.IsNullOrEmpty(_solutionFilePath))
 				{
-					File.WriteAllText(Path.Combine(Path.GetDirectoryName(_solutionFilePath), "AllXCopies.txt"), CollateAllXCopies());
+					File.WriteAllText(Path.Combine(Path.GetDirectoryName(_solutionFilePath), _fileName), CollateAllXCopies());
 				}
 			}
 		}
