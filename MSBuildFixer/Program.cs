@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Construction;
+using MSBuildFixer.FeatureToggles;
 using MSBuildFixer.Fixes;
 using MSBuildFixer.SampleFeatureToggles;
 using static System.Configuration.ConfigurationManager;
@@ -72,6 +73,15 @@ namespace MSBuildFixer
 			{
 				var fixRunPostBuildEvent = new FixRunPostBuildEvent();
 				walker.OnVisitProperty += fixRunPostBuildEvent.OnVisitProperty;
+			}
+
+			if (SummarizeXCopyToggle.Enabled)
+			{
+				var fixXCopy = new FixXCopy();
+				walker.OnVisitMetadata += fixXCopy.OnVisitMetadata;
+				walker.OnVisitProperty += fixXCopy.OnVisitProperty;
+				walker.OnOpenSolution += fixXCopy.OnOpenSolution;
+				walker.OnAfterVisitSolution += fixXCopy.OnAfterVisitSolution;
 			}
 		}
 	}
