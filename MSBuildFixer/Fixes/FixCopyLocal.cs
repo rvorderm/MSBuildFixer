@@ -11,7 +11,7 @@ namespace MSBuildFixer.Fixes
 {
 	public class FixCopyLocal
 	{
-		public static void OnVisitMetadata(object sender, EventArgs eventArgs)
+		public void OnVisitMetadata(object sender, EventArgs eventArgs)
 		{
 			var projectMetadataElement = sender as ProjectMetadataElement;
 			if (projectMetadataElement == null) return;
@@ -21,7 +21,7 @@ namespace MSBuildFixer.Fixes
 			projectMetadataElement.Value = false.ToString();
 		}
 
-		public static void OnVisitProjectItem(object sender, EventArgs eventArgs)
+		public void OnVisitProjectItem(object sender, EventArgs eventArgs)
 		{
 			var projectItemElement = sender as ProjectItemElement;
 			if (projectItemElement == null) return;

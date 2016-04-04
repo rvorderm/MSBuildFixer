@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Mail;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Construction;
+using MSBuildFixer.Fixes;
 using MSBuildFixer.SampleFeatureToggles;
 using static System.Configuration.ConfigurationManager;
 
@@ -31,9 +33,20 @@ namespace MSBuildFixer
 
 			Environment.CurrentDirectory = solutionDirectory;
 			var projectFixer = new SolutionWalker();
+			AttachFixes(projectFixer);
 			projectFixer.VisitSolution(solutionDirectory, solutionFilename);
 
 			Console.WriteLine($"Finished");
+		}
+
+		private static void AttachFixes(SolutionWalker projectFixer)
+		{
+			if (CopyLocalToggle.Enabled)
+			{
+				var fixCopyLocal = new FixCopyLocal();
+				projectFixer.OnVisitMetadata += fixCopyLocal.OnVisitMetadata;
+				projectFixer.OnVisitProjectItem += fixCopyLocal.OnVisitProjectItem;
+			}
 		}
 	}
 }
