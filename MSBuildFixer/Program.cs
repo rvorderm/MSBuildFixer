@@ -39,13 +39,19 @@ namespace MSBuildFixer
 			Console.WriteLine($"Finished");
 		}
 
-		private static void AttachFixes(SolutionWalker projectFixer)
+		private static void AttachFixes(SolutionWalker walker)
 		{
 			if (CopyLocalToggle.Enabled)
 			{
 				var fixCopyLocal = new FixCopyLocal();
-				projectFixer.OnVisitMetadata += fixCopyLocal.OnVisitMetadata;
-				projectFixer.OnVisitProjectItem += fixCopyLocal.OnVisitProjectItem;
+				walker.OnVisitMetadata += fixCopyLocal.OnVisitMetadata;
+				walker.OnVisitProjectItem += fixCopyLocal.OnVisitProjectItem;
+			}
+
+			if (CopyToOutputDirectoryToggle.Enabled)
+			{
+				var fixCopyToOutputDirectory = new FixCopyToOutputDirectory();
+				walker.OnVisitMetadata += fixCopyToOutputDirectory.OnVisitMetadata;
 			}
 		}
 	}

@@ -31,7 +31,8 @@ namespace MSBuildFixerTests.Fixes
 				Assert.IsTrue(elements.Any());
 
 				var element = elements.SelectMany(x => x.Metadata).First(y => y.Name.Equals("CopyToOutputDirectory"));
-				FixCopyToOutputDirectory.OnVisitMetadata(element, EventArgs.Empty);
+				var fixCopyToOutputDirectory = new FixCopyToOutputDirectory();
+				fixCopyToOutputDirectory.OnVisitMetadata(element, EventArgs.Empty);
 				Assert.AreEqual("PreserveNewest", element.Value);
 			}
 
@@ -46,14 +47,16 @@ namespace MSBuildFixerTests.Fixes
 				Assert.IsTrue(elements.Any());
 
 				var element = elements.SelectMany(x => x.Metadata).First(y => y.Name.Equals("CopyToOutputDirectory"));
-				FixCopyToOutputDirectory.OnVisitMetadata(element, EventArgs.Empty);
+				var fixCopyToOutputDirectory = new FixCopyToOutputDirectory();
+				fixCopyToOutputDirectory.OnVisitMetadata(element, EventArgs.Empty);
 				Assert.AreNotEqual("PreserveNewest", element.Value);
 			}
 
 			[TestMethod]
 			public void NullInput()
 			{
-				FixCopyToOutputDirectory.OnVisitMetadata(null, EventArgs.Empty);
+				var fixCopyToOutputDirectory = new FixCopyToOutputDirectory();
+				fixCopyToOutputDirectory.OnVisitMetadata(null, EventArgs.Empty);
 			}
 
 			[TestMethod]
@@ -68,7 +71,8 @@ namespace MSBuildFixerTests.Fixes
 
 				var element = elements.SelectMany(x => x.Metadata).First(y => y.Name.Equals("CopyToOutputDirectory"));
 				element.Name = "NotRight";
-				FixCopyToOutputDirectory.OnVisitMetadata(element, EventArgs.Empty);
+				var fixCopyToOutputDirectory = new FixCopyToOutputDirectory();
+				fixCopyToOutputDirectory.OnVisitMetadata(element, EventArgs.Empty);
 				Assert.AreNotEqual("PreserveNewest", element.Value);
 			}
 		}

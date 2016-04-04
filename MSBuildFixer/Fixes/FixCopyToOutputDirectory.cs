@@ -11,7 +11,7 @@ namespace MSBuildFixer.Fixes
 {
 	public class FixCopyToOutputDirectory
 	{
-		public static void OnVisitMetadata(object sender, EventArgs eventArgs)
+		public void OnVisitMetadata(object sender, EventArgs eventArgs)
 		{
 			var metadataElement = sender as ProjectMetadataElement;
 			if (metadataElement == null) return;
