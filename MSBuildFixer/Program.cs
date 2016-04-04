@@ -31,7 +31,7 @@ namespace MSBuildFixer
 
 			Environment.CurrentDirectory = solutionDirectory;
 			var projectFixer = new SolutionWalker();
-			projectFixer.VisitSolution(solutionDirectory, solutionFilename, libraryFolder);
+			projectFixer.VisitSolution(solutionDirectory, solutionFilename);
 
 			Console.WriteLine($"Finished");
 		}

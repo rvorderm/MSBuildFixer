@@ -9,14 +9,11 @@ namespace MSBuildFixer
 {
 	public class SolutionWalker
 	{
-		public void VisitSolution(string solutionDirectory, string solutionFilename, string libraryFolder)
+		public void VisitSolution(string solutionDirectory, string solutionFilename)
 		{
 			if(string.IsNullOrEmpty(solutionDirectory)) throw new ArgumentNullException(nameof(solutionDirectory));
 			if(string.IsNullOrEmpty(solutionFilename)) throw new ArgumentNullException(nameof(solutionFilename));
-			if(string.IsNullOrEmpty(libraryFolder)) throw new ArgumentNullException(nameof(libraryFolder));
 
-			var libraryDirectory = Path.Combine(solutionDirectory, libraryFolder);
-			
 			var solutionFile = SolutionFile.Parse(Path.Combine(solutionDirectory, solutionFilename));
 			if (solutionFile == null) return;
 			VisitProjects(solutionFile.ProjectsInOrder);
@@ -31,6 +28,8 @@ namespace MSBuildFixer
 			}
 		}
 
+		public EventHandler OnVisitComplete;
+
 		public ProjectRootElement VisitProject(ProjectInSolution project)
 		{
 			if (project.ProjectType == SolutionProjectType.SolutionFolder) return null;
@@ -38,6 +37,7 @@ namespace MSBuildFixer
 			if (projectRootElement == null) return null;
 			VisitPropertyGroups(projectRootElement.PropertyGroups);
 			VisitProjectItemGroups(projectRootElement.ItemGroups);
+			OnVisitComplete?.Invoke(projectRootElement, EventArgs.Empty);
 			return projectRootElement;
 		}
 
@@ -64,7 +64,7 @@ namespace MSBuildFixer
 
 		public event EventHandler OnVisitProjectItem;
 
-		private void VisitProjectItem(ProjectItemElement projectItemElement)
+		public void VisitProjectItem(ProjectItemElement projectItemElement)
 		{
 			OnVisitProjectItem?.Invoke(projectItemElement, EventArgs.Empty);
 			VisitMetadataCollection(projectItemElement.Metadata);
@@ -96,10 +96,10 @@ namespace MSBuildFixer
 
 		public void VisitPropertyGroups(ProjectPropertyGroupElement projectPropertyGroupElement)
 		{
-			VisitProperties(projectPropertyGroupElement, projectPropertyGroupElement.Properties);
+			VisitProperties(projectPropertyGroupElement.Properties);
 		}
 
-		private void VisitProperties(ProjectPropertyGroupElement projectPropertyGroupElement, ICollection<ProjectPropertyElement> projectPropertyElements)
+		private void VisitProperties(ICollection<ProjectPropertyElement> projectPropertyElements)
 		{
 			foreach (var projectPropertyElement in projectPropertyElements)
 			{
