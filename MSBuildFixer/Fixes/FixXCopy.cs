@@ -12,22 +12,16 @@ namespace MSBuildFixer.Fixes
 {
 	public class FixXCopy
 	{
-		private string[] _excludeReferencesFor;
-		private readonly Dictionary<ProjectRootElement, HashSet<string>> _references = new Dictionary<ProjectRootElement, HashSet<string>>();
-		private readonly Dictionary<ProjectRootElement, HashSet<string>> _outputPaths = new Dictionary<ProjectRootElement, HashSet<string>>();
 		private readonly Dictionary<ProjectRootElement, HashSet<string>> _xcopies = new Dictionary<ProjectRootElement, HashSet<string>>();
 		private readonly Dictionary<ProjectRootElement, string> _assemblyNames = new Dictionary<ProjectRootElement, string>();
-		private string _solutionFilePath;
-		private string _fileName;
+		public string SolutionFilePath { get; private set; }
+		private readonly string _fileName;
 
-		public FixXCopy(string fileName = null, string excludeReferencesFor = null)
+		public FixXCopy(string fileName = null)
 		{
 			_fileName = fileName;
-			if (!string.IsNullOrEmpty(excludeReferencesFor))
-			{
-				_excludeReferencesFor = excludeReferencesFor.Split(';');
-			}
 		}
+
 		/// <summary>
 		/// This event will handle parsing the pre/post build event. This will strip and remove
 		/// all the xcopy commands, and collect their destinations.
@@ -47,29 +41,6 @@ namespace MSBuildFixer.Fixes
 			{
 				ProcessBuildEvent(property);
 			}
-
-			if (property.Name.Equals("OutputPath"))
-			{
-				var paths = GetHashSet(property.ContainingProject, _outputPaths);
-				paths.Add(property.Value);
-			}
-		}
-
-		/// <summary>
-		/// The event will collect all the references for given project. The idea is that any reference
-		/// with a HintPath is something that is not installed to the GAC, and therefor needs to be
-		/// copied to all the destinations this assembly is being sent to.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		public void OnVisitMetadata(object sender, EventArgs e)
-		{
-			var metadata = sender as ProjectMetadataElement;
-			if (metadata == null) return;
-			if (!metadata.Name.Equals("HintPath")) return;
-
-			var references = GetHashSet(metadata.ContainingProject, _references);
-			references.Add(metadata.Value);
 		}
 
 		/// <summary>
@@ -81,11 +52,11 @@ namespace MSBuildFixer.Fixes
 		/// <param name="e"></param>
 		public void OnAfterVisitSolution(object sender, EventArgs e)
 		{
-			if (SummarizeXCopyToggle.Enabled)
+			if (FixXCopyToggle.Enabled)
 			{
-				if (!string.IsNullOrEmpty(_solutionFilePath))
+				if (!string.IsNullOrEmpty(SolutionFilePath))
 				{
-					File.WriteAllText(Path.Combine(Path.GetDirectoryName(_solutionFilePath), _fileName), CollateAllXCopies());
+					File.WriteAllText(Path.Combine(Path.GetDirectoryName(SolutionFilePath), _fileName), CollateAllXCopies());
 				}
 			}
 		}
@@ -97,7 +68,7 @@ namespace MSBuildFixer.Fixes
 		/// <param name="e"></param>
 		public void OnOpenSolution(object sender, EventArgs e)
 		{
-			_solutionFilePath = sender as string;
+			SolutionFilePath = sender as string;
 		}
 
 		public string CollateAllXCopies()
@@ -128,36 +99,18 @@ namespace MSBuildFixer.Fixes
 			}
 		}
 
-		public static string GetDestination(string xcopy)
+		public HashSet<string> GetXCopies(ProjectRootElement projectRootElement)
 		{
-			var copySegments = xcopy.Split(new[] { " " }, StringSplitOptions.None);
-			var segments = copySegments.Where(x => !(x.StartsWith("/") || x.Contains("xcopy")));
-			var firstOrDefault = segments.Skip(1).FirstOrDefault();
-			return firstOrDefault;
+			return GetHashSet(projectRootElement, _xcopies);
 		}
 
-		public IEnumerable<string> GetReferences(ProjectRootElement rootElement)
+		public string GetAssembly(ProjectRootElement projectRootElement)
 		{
-			return GetHashSet(rootElement, _references);
+			string result;
+			_assemblyNames.TryGetValue(projectRootElement, out result);
+			return result;
 		}
-
-		public IEnumerable<string> GetXCopies(ProjectRootElement rootElement)
-		{
-			return GetHashSet(rootElement, _xcopies);
-		}
-
-		public string GetAssembly(ProjectRootElement rootElement)
-		{
-			string assemblyName;
-			_assemblyNames.TryGetValue(rootElement, out assemblyName);
-			return assemblyName;
-		}
-
-		public IEnumerable<string> GetOutputPaths(ProjectRootElement rootElement)
-		{
-			return GetHashSet(rootElement, _outputPaths);
-		}
-
+		
 		private HashSet<string> GetHashSet(ProjectRootElement projectRootElement, IDictionary<ProjectRootElement, HashSet<string>> dictionary)
 		{
 			HashSet<string> hashSet;

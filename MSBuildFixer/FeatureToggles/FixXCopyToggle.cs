@@ -7,12 +7,12 @@ using FeatureToggle.Toggles;
 
 namespace MSBuildFixer.FeatureToggles
 {
-	public class SummarizeXCopyToggle : SimpleFeatureToggle
+	public class FixXCopyToggle : SimpleFeatureToggle
 	{
-		private static readonly Lazy<SummarizeXCopyToggle> Lazy =
-		new Lazy<SummarizeXCopyToggle>(() => new SummarizeXCopyToggle());
+		private static readonly Lazy<FixXCopyToggle> Lazy =
+		new Lazy<FixXCopyToggle>(() => new FixXCopyToggle());
 
-		public static SummarizeXCopyToggle Instance => Lazy.Value;
+		public static FixXCopyToggle Instance => Lazy.Value;
 
 		public static bool Enabled => Instance.FeatureEnabled;
 	}

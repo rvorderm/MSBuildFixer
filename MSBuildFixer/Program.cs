@@ -8,6 +8,7 @@ using Microsoft.Build.Construction;
 using MSBuildFixer.FeatureToggles;
 using MSBuildFixer.Fixes;
 using MSBuildFixer.SampleFeatureToggles;
+using MSBuildFixerTests;
 using static System.Configuration.ConfigurationManager;
 
 namespace MSBuildFixer
@@ -46,8 +47,10 @@ namespace MSBuildFixer
 			Attach(HintPathToggle.Instance, AttachHintPath, walker);
 			Attach(OutputPathToggle.Instance, AttachOutputPath, walker);
 			Attach(RunPostBuildEventToggle.Instance, AttachRunPostBuildEvent, walker);
-			Attach(SummarizeXCopyToggle.Instance, AttachXCopy, walker);
-			
+			Attach(FixXCopyToggle.Instance, AttachXCopy, walker);
+			AttachScriptBuilder();
+
+
 		}
 
 		private static void Attach(IFeatureToggle copyLocalToggle, Action<SolutionWalker> attachCopyLocal, SolutionWalker walker)
@@ -94,10 +97,18 @@ namespace MSBuildFixer
 		{
 			var fileName = AppSettings["SummarizeXCopyToggle_FileName"];
 			var fixXCopy = new FixXCopy(fileName);
-			walker.OnVisitMetadata += fixXCopy.OnVisitMetadata;
 			walker.OnVisitProperty += fixXCopy.OnVisitProperty;
 			walker.OnOpenSolution += fixXCopy.OnOpenSolution;
 			walker.OnAfterVisitSolution += fixXCopy.OnAfterVisitSolution;
+		}
+
+		private static void AttachScriptBuilder()
+		{
+			var directoryName = Path.GetDirectoryName(AppSettings["SolutionPath"]);
+			var target = AppSettings["BuildCopyScripts_Target"];
+			var destinations = AppSettings["BuildCopyScripts_Destinations"].Split(';');
+			var scriptBuilder = new ScriptBuilder(directoryName, target, destinations);
+			scriptBuilder.BuildScripts();
 		}
 	}
 }
