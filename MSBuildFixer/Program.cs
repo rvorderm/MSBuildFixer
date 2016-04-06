@@ -108,7 +108,10 @@ namespace MSBuildFixer
 			var target = AppSettings["BuildCopyScripts_Target"];
 			var destinations = AppSettings["BuildCopyScripts_Destinations"].Split(';');
 			var scriptBuilder = new ScriptBuilder(directoryName, target, destinations);
-			scriptBuilder.BuildScripts();
+			if (BuildCopyScriptsToggle.Enabled)
+			{
+				scriptBuilder.BuildScripts();
+			}
 		}
 	}
 }

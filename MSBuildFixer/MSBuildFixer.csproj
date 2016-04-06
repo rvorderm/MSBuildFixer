@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FeatureToggles\BuildCopyScriptsToggle.cs" />
     <Compile Include="FeatureToggles\FixXCopyToggle.cs" />
     <Compile Include="FeatureToggles\RunPostBuildEventToggle.cs" />
     <Compile Include="FeatureToggles\OutputPathToggle.cs" />
