@@ -4,8 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FeatureToggle.Core;
 using Microsoft.Build.Construction;
+using MSBuildFixer.FeatureToggles;
 using MSBuildFixer.SampleFeatureToggles;
+using static System.String;
 
 namespace MSBuildFixer.Fixes
 {

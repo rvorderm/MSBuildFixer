@@ -34,10 +34,13 @@ namespace MSBuildFixer
 			}
 		}
 
+		public event EventHandler OnOpenProjectFile;
 		public ProjectRootElement VisitProject(ProjectInSolution project)
 		{
 			if (project.ProjectType == SolutionProjectType.SolutionFolder) return null;
-			var projectRootElement = ProjectRootElement.Open(project.AbsolutePath);
+			var absolutePath = project.AbsolutePath;
+			OnOpenProjectFile?.Invoke(absolutePath, EventArgs.Empty);
+			var projectRootElement = ProjectRootElement.Open(absolutePath);
 			if (projectRootElement == null) return null;
 			VisitPropertyGroups(projectRootElement.PropertyGroups);
 			VisitProjectItemGroups(projectRootElement.ItemGroups);
