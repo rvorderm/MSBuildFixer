@@ -87,6 +87,7 @@ namespace MSBuildFixer
 
 			var fixHintPath = new FixHintPath(solutionDirectory, libraryFolder);
 			walker.OnVisitMetadata += fixHintPath.OnVisitMetadata;
+			walker.OnVisitProjectItem += fixHintPath.OnVisitProjectItem;
 		}
 
 		private static void AttachOutputPath(SolutionWalker walker)
