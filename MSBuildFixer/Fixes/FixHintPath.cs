@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Construction;
@@ -9,13 +10,42 @@ namespace MSBuildFixer.Fixes
 	public class FixHintPath
 	{
 		private static string _libraryPath;
+		private static string _solutionPath;
 
 		public FixHintPath(string solutionPath, string libraryDirectory)
 		{
 			if(string.IsNullOrEmpty(solutionPath)) throw new ArgumentException(solutionPath);
 			if(string.IsNullOrEmpty(libraryDirectory)) throw new ArgumentException(nameof(libraryDirectory));
 			_libraryPath = Path.Combine(solutionPath, libraryDirectory);
+			_solutionPath = solutionPath;
 			if(!Directory.Exists(_libraryPath)) throw  new ArgumentException("The given library path does not exist");
+		}
+
+		public void OnVisitProjectItem(object sender, EventArgs evetArgs)
+		{
+			var projectItemElement = sender as ProjectItemElement;
+			if (projectItemElement == null) return;
+			if (!projectItemElement.ItemType.Equals("Reference")) return;
+			var metadataCollection = projectItemElement.Metadata;
+			if (!metadataCollection.Any()) return;
+			if (!HintPathToggle.Enabled) return;
+			if (!ShouldInsert(projectItemElement)) return;
+
+			var fileName = Path.GetFileName(projectItemElement.Include.Split(' ').First());
+			fileName = fileName.Substring(0, fileName.Length - 1) + ".dll";
+			var libraryPath = Directory.EnumerateFiles(_libraryPath, fileName, SearchOption.AllDirectories).LastOrDefault();
+			if (libraryPath != null)
+			{
+				projectItemElement.AddMetadata("HintPath", libraryPath.Replace(_solutionPath, @"$(SolutionDir)"));
+			}
+		}
+
+		public bool ShouldInsert(ProjectItemElement element)
+		{
+			if (element.Include.StartsWith("System")) return false;
+			if (element.Include.StartsWith("Microsoft")) return false;
+			if (element.Metadata.Any(x => x.Name.Equals("HintPath"))) return false;
+			return true;
 		}
 
 		public void OnVisitMetadata(object sender, EventArgs eventArgs)
@@ -29,7 +59,8 @@ namespace MSBuildFixer.Fixes
 			var libraryPath = Directory.EnumerateFiles(_libraryPath, fileName, SearchOption.AllDirectories).LastOrDefault();
 			if (libraryPath != null)
 			{
-				projectMetadataElement.Value = MakeRelativePath(projectMetadataElement.ContainingProject.FullPath, libraryPath);
+				projectMetadataElement.Value = libraryPath.Replace(_solutionPath, @"$(SolutionDir)");
+//				projectMetadataElement.Value = MakeRelativePath(projectMetadataElement.ContainingProject.FullPath, libraryPath);
 			}
 		}
 

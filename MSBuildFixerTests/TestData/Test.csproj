@@ -57,7 +57,6 @@
     </Reference>
     <Reference Include="IdeaBlade.Persistence.Rdb, Version=3.6.4.1, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\.lib\Ideablade\IdeaBlade.Persistence.Rdb.dll</HintPath>
     </Reference>
     <Reference Include="IdeaBlade.Rdb, Version=3.6.4.1, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

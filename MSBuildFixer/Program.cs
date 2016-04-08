@@ -42,6 +42,7 @@ namespace MSBuildFixer
 
 		private static void AttachFixes(SolutionWalker walker)
 		{
+			Attach(MergeBinFoldersToggle.Instance, AttachMergeBinFolders, walker);
 			Attach(CopyLocalToggle.Instance, AttachCopyLocal, walker);
 			Attach(CopyToOutputDirectoryToggle.Instance, AttachCopyToOutputDirectory, walker);
 			Attach(HintPathToggle.Instance, AttachHintPath, walker);
@@ -56,6 +57,13 @@ namespace MSBuildFixer
 		private static void Attach(IFeatureToggle copyLocalToggle, Action<SolutionWalker> attachCopyLocal, SolutionWalker walker)
 		{
 			if (copyLocalToggle.FeatureEnabled) attachCopyLocal(walker);
+		}
+
+		private static void AttachMergeBinFolders(SolutionWalker walker)
+		{
+			var mergeBinFolders = new MergeBinFolders();
+			walker.OnOpenSolution += mergeBinFolders.OnOpenSolution;
+			walker.OnOpenProjectFile += mergeBinFolders.OnOpenProjectFile;
 		}
 
 		private static void AttachCopyLocal(SolutionWalker walker)
@@ -79,6 +87,7 @@ namespace MSBuildFixer
 
 			var fixHintPath = new FixHintPath(solutionDirectory, libraryFolder);
 			walker.OnVisitMetadata += fixHintPath.OnVisitMetadata;
+			walker.OnVisitProjectItem += fixHintPath.OnVisitProjectItem;
 		}
 
 		private static void AttachOutputPath(SolutionWalker walker)
@@ -108,7 +117,10 @@ namespace MSBuildFixer
 			var target = AppSettings["BuildCopyScripts_Target"];
 			var destinations = AppSettings["BuildCopyScripts_Destinations"].Split(';');
 			var scriptBuilder = new ScriptBuilder(directoryName, target, destinations);
-			scriptBuilder.BuildScripts();
+			if (BuildCopyScriptsToggle.Enabled)
+			{
+				scriptBuilder.BuildScripts();
+			}
 		}
 	}
 }

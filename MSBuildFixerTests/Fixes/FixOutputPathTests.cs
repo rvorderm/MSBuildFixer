@@ -44,6 +44,7 @@ namespace MSBuildFixerTests.Fixes
 				var projectRootElement = TestSetup.GetTestProject();
 
 				var elements = projectRootElement.Properties.Where(x=>x.Name.Equals("OutputPath")).ToList();
+
 				Assert.IsTrue(elements.Any());
 
 				var element = elements[0];
