@@ -38,6 +38,7 @@ namespace MSBuildFixer.Fixes
 			{
 				var source = new DirectoryInfo(binFolder);
 				CopyAll(source, destination);
+				Directory.Delete(source.FullName, true);
 			}
 		}
 
