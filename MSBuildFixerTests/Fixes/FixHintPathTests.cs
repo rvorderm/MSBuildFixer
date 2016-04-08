@@ -231,7 +231,6 @@ namespace MSBuildFixerTests.Fixes
 		public class OnVisitMetadataTests
 		{
 			[TestMethod]
-			[ExpectedException(typeof(ArgumentNullException))]
 			public void SetsValue()
 			{
 				TestSetup.SetToggleTo(HintPathToggle.Instance, true);
