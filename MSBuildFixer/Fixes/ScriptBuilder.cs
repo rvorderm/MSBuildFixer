@@ -9,13 +9,18 @@ namespace MSBuildFixerTests
 	{
 		private readonly string _solutionDir;
 		private readonly string _target;
+		private readonly string _libraryPath = null;
 		private readonly IEnumerable<string> _destinations;
 
-		public ScriptBuilder(string solutionDir, string target, IEnumerable<string> destinations)
+		public ScriptBuilder(string solutionDir, string target, IEnumerable<string> destinations, string libPath = null)
 		{
 			_solutionDir = solutionDir;
 			_target = target;
 			_destinations = destinations;
+			if (libPath != null)
+			{
+				_libraryPath = Path.Combine(solutionDir, libPath);
+			}
 		}
 
 		public void BuildScripts()
@@ -26,6 +31,14 @@ namespace MSBuildFixerTests
 			var sourceFiles =
 				Directory.EnumerateFiles(_sourceFolder, "*", SearchOption.AllDirectories).ToDictionary(Path.GetFileName, x => x);
 
+			Dictionary<string, List<string>> libraryFiles = null;
+			if (!string.IsNullOrEmpty(_libraryPath))
+			{
+				libraryFiles = Directory.EnumerateFiles(_libraryPath, "*", SearchOption.AllDirectories)
+					.GroupBy(Path.GetFileName)
+					.ToDictionary(x=>x.Key, x => x.ToList());
+			}
+
 			var allFiles = Directory.EnumerateFiles(_solutionDir, "*", SearchOption.AllDirectories)
 				.Where(x => !x.Contains("bin\\Debug") && !InDestination(x, fullDestinations))
 				.GroupBy(Path.GetFileName, x => x)
@@ -33,7 +46,7 @@ namespace MSBuildFixerTests
 
 			foreach (var destination in fullDestinations)
 			{
-				var stringBuilder = BuildScript(destination, sourceFiles, allFiles);
+				var stringBuilder = BuildScript(destination, sourceFiles, libraryFiles, allFiles);
 				var scriptName = GetScriptName(destination);
 				WriteScript(scriptName, stringBuilder);
 			}
@@ -53,7 +66,7 @@ namespace MSBuildFixerTests
 			return copyFile;
 		}
 
-		private StringBuilder BuildScript(string destination, Dictionary<string, string> sourceFiles, Dictionary<string, List<string>> allFiles)
+		private StringBuilder BuildScript(string destination, Dictionary<string, string> sourceFiles, Dictionary<string, List<string>> libraryFiles, Dictionary<string, List<string>> allFiles)
 		{
 			var stringBuilder = new StringBuilder();
 			stringBuilder.AppendLine(@"set Configuration=Debug");
@@ -63,18 +76,19 @@ namespace MSBuildFixerTests
 
 			var destFiles = Directory.EnumerateFiles(destination, "*", SearchOption.AllDirectories).OrderBy(Path.GetFileName);
 
-			AddFilesToScript(destFiles, sourceFiles, allFiles, stringBuilder);
+			AddFilesToScript(destFiles, sourceFiles, libraryFiles, allFiles, stringBuilder);
 			return stringBuilder;
 		}
 
 		private void AddFilesToScript(IEnumerable<string> destFiles, 
 			IReadOnlyDictionary<string, string> sourceFiles, 
+			Dictionary<string, List<string>> libraryFiles, 
 			IReadOnlyDictionary<string, List<string>> allFiles,
 			StringBuilder stringBuilder)
 		{
 			foreach (var destFile in destFiles)
 			{
-				var sourceFilename = GetSourceFile(destFile, sourceFiles, allFiles);
+				var sourceFilename = GetSourceFile(destFile, sourceFiles, libraryFiles, allFiles);
 				var xcopy = BuildXCopy(_target, sourceFilename, destFile);
 				stringBuilder.AppendLine(xcopy);
 			}
@@ -82,6 +96,7 @@ namespace MSBuildFixerTests
 
 		private string GetSourceFile(string destinationFile, 
 			IReadOnlyDictionary<string, string> targetFiles, 
+			Dictionary<string, List<string>> libraryFiles, 
 			IReadOnlyDictionary<string, List<string>> allFiles)
 		{
 			var fileName = Path.GetFileName(destinationFile);
@@ -90,8 +105,19 @@ namespace MSBuildFixerTests
 			if (!inSource)
 			{
 				List<string> allFrom;
-				allFiles.TryGetValue(fileName, out allFrom);
-				sourceFile = allFrom.First();
+				if (libraryFiles != null)
+				{
+					if (libraryFiles.TryGetValue(fileName, out allFrom))
+					{
+						sourceFile = allFrom.FirstOrDefault();
+					}
+				}
+
+				if (string.IsNullOrEmpty(sourceFile))
+				{
+					allFiles.TryGetValue(fileName, out allFrom);
+					sourceFile = allFrom.FirstOrDefault();
+				}
 			}
 
 			if (string.IsNullOrEmpty(sourceFile)) throw new FileNotFoundException(fileName);

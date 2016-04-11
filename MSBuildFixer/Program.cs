@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using FeatureToggle.Core;
@@ -116,7 +117,12 @@ namespace MSBuildFixer
 			var directoryName = Path.GetDirectoryName(AppSettings["SolutionPath"]);
 			var target = AppSettings["BuildCopyScripts_Target"];
 			var destinations = AppSettings["BuildCopyScripts_Destinations"].Split(';');
-			var scriptBuilder = new ScriptBuilder(directoryName, target, destinations);
+			string libPath = null;
+			if (AppSettings.AllKeys.Contains("LibraryFolder"))
+			{
+				libPath = AppSettings["LibraryFolder"];
+			}
+			var scriptBuilder = new ScriptBuilder(directoryName, target, destinations, libPath);
 			if (BuildCopyScriptsToggle.Enabled)
 			{
 				scriptBuilder.BuildScripts();
