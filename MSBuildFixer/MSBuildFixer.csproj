@@ -53,6 +53,8 @@
     <Compile Include="FeatureToggles\BuildCopyScriptsToggle.cs" />
     <Compile Include="FeatureToggles\FixXCopyToggle.cs" />
     <Compile Include="FeatureToggles\MergeBinFoldersToggle.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="FeatureToggles\ScriptXCopyToggle.cs" />
     <Compile Include="FeatureToggles\RunPostBuildEventToggle.cs" />
     <Compile Include="FeatureToggles\OutputPathToggle.cs" />
     <Compile Include="FeatureToggles\HintPathToggle.cs" />
