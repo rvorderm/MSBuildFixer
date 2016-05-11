@@ -27,9 +27,8 @@ namespace MSBuildFixer.Fixes
 			if (projectItemElement == null) return;
 			if (!projectItemElement.ItemType.Equals("Reference")) return;
 			var metadataCollection = projectItemElement.Metadata;
-			if (!metadataCollection.Any()) return;
+			if (metadataCollection.Any(x=>x.Name.Equals("HintPath"))) return;
 			if (!HintPathToggle.Enabled) return;
-			if (!ShouldInsert(projectItemElement)) return;
 
 			var fileName = Path.GetFileName(projectItemElement.Include.Split(' ').First());
 			fileName = fileName.Substring(0, fileName.Length - 1) + ".dll";
@@ -38,14 +37,6 @@ namespace MSBuildFixer.Fixes
 			{
 				projectItemElement.AddMetadata("HintPath", libraryPath.Replace(_solutionPath, @"$(SolutionDir)"));
 			}
-		}
-
-		public bool ShouldInsert(ProjectItemElement element)
-		{
-			if (element.Include.StartsWith("System")) return false;
-			if (element.Include.StartsWith("Microsoft")) return false;
-			if (element.Metadata.Any(x => x.Name.Equals("HintPath"))) return false;
-			return true;
 		}
 
 		public void OnVisitMetadata(object sender, EventArgs eventArgs)

@@ -172,62 +172,6 @@ namespace MSBuildFixerTests.Fixes
 		}
 
 		[TestClass]
-		public class ShouldInsertTests
-		{
-			[TestMethod]
-			public void IsMicroftAssembly()
-			{
-				var projectItemElement = TestSetup.GetTestProject().Items.First();
-				projectItemElement.Include = "Microsoft.VisualBasic";
-
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-				var fixHintPath = new FixHintPath(path, folder);
-
-				Assert.IsFalse(fixHintPath.ShouldInsert(projectItemElement));
-			}
-
-			[TestMethod]
-			public void IsSystemAssembly()
-			{
-				var projectItemElement = TestSetup.GetTestProject().Items.First();
-				projectItemElement.Include = "System";
-
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-				var fixHintPath = new FixHintPath(path, folder);
-
-				Assert.IsFalse(fixHintPath.ShouldInsert(projectItemElement));
-			}
-
-			[TestMethod]
-			public void HasHintPath()
-			{
-				var projectItemElement = TestSetup.GetTestProject().Items.First();
-
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-				var fixHintPath = new FixHintPath(path, folder);
-
-				Assert.IsFalse(fixHintPath.ShouldInsert(projectItemElement));
-			}
-
-			[TestMethod]
-			public void ShouldInsert()
-			{
-				var projectItemElement = TestSetup.GetTestProject().Items.First();
-				var projectMetadataElement = projectItemElement.Metadata.First(x=>x.Name.Equals("HintPath"));
-				projectItemElement.RemoveChild(projectMetadataElement);
-
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-				var fixHintPath = new FixHintPath(path, folder);
-
-				Assert.IsTrue(fixHintPath.ShouldInsert(projectItemElement));
-			}
-		}
-
-		[TestClass]
 		public class OnVisitMetadataTests
 		{
 			[TestMethod]
