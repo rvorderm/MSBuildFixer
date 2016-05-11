@@ -22,6 +22,18 @@ namespace MSBuildFixerTests
 				_libraryPath = Path.Combine(solutionDir, libPath);
 			}
 		}
+		private class Comparer : IEqualityComparer<string>
+		{
+			public bool Equals(string x, string y)
+			{
+				return Path.GetFileName(x).Equals(Path.GetFileName(y));
+			}
+
+			public int GetHashCode(string obj)
+			{
+				return obj.GetHashCode();
+			}
+		}
 
 		public void BuildScripts()
 		{
@@ -29,7 +41,7 @@ namespace MSBuildFixerTests
 			var fullDestinations = _destinations.Select(x => Path.Combine(_solutionDir, x));
 
 			var sourceFiles =
-				Directory.EnumerateFiles(_sourceFolder, "*", SearchOption.AllDirectories).ToDictionary(Path.GetFileName, x => x);
+				Directory.EnumerateFiles(_sourceFolder, "*", SearchOption.AllDirectories).GroupBy(Path.GetFileName).ToDictionary(x=>x.Key, x=>x.First());
 
 			Dictionary<string, List<string>> libraryFiles = null;
 			if (!string.IsNullOrEmpty(_libraryPath))
@@ -66,7 +78,7 @@ namespace MSBuildFixerTests
 			return copyFile;
 		}
 
-		private StringBuilder BuildScript(string destination, Dictionary<string, string> sourceFiles, Dictionary<string, List<string>> libraryFiles, Dictionary<string, List<string>> allFiles)
+		private StringBuilder BuildScript(string destination, IReadOnlyDictionary<string, string> sourceFiles, Dictionary<string, List<string>> libraryFiles, Dictionary<string, List<string>> allFiles)
 		{
 			var stringBuilder = new StringBuilder();
 			stringBuilder.AppendLine(@"set Configuration=Debug");
