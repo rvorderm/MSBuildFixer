@@ -82,8 +82,8 @@ namespace MSBuildFixerTests
 		{
 			var stringBuilder = new StringBuilder();
 			stringBuilder.AppendLine(@"set Configuration=Debug");
-			stringBuilder.AppendLine(@"set _solutionDir=%CD%");
-			stringBuilder.AppendLine(@"set TargetDir=%_solutionDir%\bin\%Configuration%");
+			stringBuilder.AppendLine(@"set solutionDir=%CD%");
+			stringBuilder.AppendLine(@"set TargetDir=%solutionDir%\bin\%Configuration%");
 			stringBuilder.AppendLine();
 
 			var destFiles = Directory.EnumerateFiles(destination, "*", SearchOption.AllDirectories).OrderBy(Path.GetFileName);
@@ -102,6 +102,7 @@ namespace MSBuildFixerTests
 			{
 				var sourceFilename = GetSourceFile(destFile, sourceFiles, libraryFiles, allFiles);
 				var xcopy = BuildXCopy(_target, sourceFilename, destFile);
+				if (string.IsNullOrEmpty(xcopy)) continue;
 				stringBuilder.AppendLine(xcopy);
 			}
 		}
@@ -127,17 +128,18 @@ namespace MSBuildFixerTests
 
 				if (string.IsNullOrEmpty(sourceFile))
 				{
-					allFiles.TryGetValue(fileName, out allFrom);
+					if(!allFiles.TryGetValue(fileName, out allFrom)) return null;
 					sourceFile = allFrom.FirstOrDefault();
 				}
 			}
 
-			if (string.IsNullOrEmpty(sourceFile)) throw new FileNotFoundException(fileName);
+			if (string.IsNullOrEmpty(sourceFile)) return null;
 			return sourceFile;
 		}
 
 		private string BuildXCopy(string targetFolder, string sourceFile, string destinationFile)
 		{
+			if (string.IsNullOrEmpty(sourceFile)) return null;
 			sourceFile = sourceFile.Replace(_solutionDir, string.Empty).Replace(targetFolder, "%TargetDir%");
 			if (sourceFile.StartsWith("\\")) sourceFile = sourceFile.Substring(1);
 			var to = destinationFile.Replace(_solutionDir, "%solutionDir%").Replace(Path.GetFileName(destinationFile), "*.*");

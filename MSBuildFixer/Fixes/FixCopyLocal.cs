@@ -26,7 +26,7 @@ namespace MSBuildFixer.Fixes
 			var projectItemElement = sender as ProjectItemElement;
 			if (projectItemElement == null) return;
 			if (!CopyLocalToggle.Enabled) return;
-			if (!projectItemElement.ItemType.Equals("Reference")) return;
+			if (!(projectItemElement.ItemType.Equals("Reference") || projectItemElement.ItemType.Equals("ProjectReference"))) return;
 			if (IsGacAssembly(projectItemElement)) return;
 			if (HasPrivateMetadata(projectItemElement)) return;
 			
