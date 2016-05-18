@@ -41,14 +41,14 @@ namespace MSBuildFixerTests
 			var fullDestinations = _destinations.Select(x => Path.Combine(_solutionDir, x));
 
 			var sourceFiles =
-				Directory.EnumerateFiles(_sourceFolder, "*", SearchOption.AllDirectories).GroupBy(Path.GetFileName).ToDictionary(x=>x.Key, x=>x.First());
+				Directory.EnumerateFiles(_sourceFolder, "*", SearchOption.AllDirectories).GroupBy(Path.GetFileName).ToDictionary(x => x.Key, x => x.First());
 
 			Dictionary<string, List<string>> libraryFiles = null;
 			if (!string.IsNullOrEmpty(_libraryPath))
 			{
 				libraryFiles = Directory.EnumerateFiles(_libraryPath, "*", SearchOption.AllDirectories)
 					.GroupBy(Path.GetFileName)
-					.ToDictionary(x=>x.Key, x => x.ToList());
+					.ToDictionary(x => x.Key, x => x.ToList());
 			}
 
 			var allFiles = Directory.EnumerateFiles(_solutionDir, "*", SearchOption.AllDirectories)
@@ -88,28 +88,33 @@ namespace MSBuildFixerTests
 
 			var destFiles = Directory.EnumerateFiles(destination, "*", SearchOption.AllDirectories).OrderBy(Path.GetFileName);
 
-			AddFilesToScript(destFiles, sourceFiles, libraryFiles, allFiles, stringBuilder);
+			var orderedEnumerable = GetXCopies(destFiles, sourceFiles, libraryFiles, allFiles);
+			foreach (var xcopy in orderedEnumerable)
+			{
+				stringBuilder.AppendLine(xcopy);
+			}
 			return stringBuilder;
 		}
 
-		private void AddFilesToScript(IEnumerable<string> destFiles, 
-			IReadOnlyDictionary<string, string> sourceFiles, 
-			Dictionary<string, List<string>> libraryFiles, 
-			IReadOnlyDictionary<string, List<string>> allFiles,
-			StringBuilder stringBuilder)
+		private IOrderedEnumerable<string> GetXCopies(IEnumerable<string> destFiles,
+			IReadOnlyDictionary<string, string> sourceFiles,
+			Dictionary<string, List<string>> libraryFiles,
+			IReadOnlyDictionary<string, List<string>> allFiles)
 		{
+			var xcopies = new List<string>();
 			foreach (var destFile in destFiles)
 			{
 				var sourceFilename = GetSourceFile(destFile, sourceFiles, libraryFiles, allFiles);
 				var xcopy = BuildXCopy(_target, sourceFilename, destFile);
 				if (string.IsNullOrEmpty(xcopy)) continue;
-				stringBuilder.AppendLine(xcopy);
+				xcopies.Add(xcopy);
 			}
+			return xcopies.OrderBy(x => x);
 		}
 
-		private string GetSourceFile(string destinationFile, 
-			IReadOnlyDictionary<string, string> targetFiles, 
-			Dictionary<string, List<string>> libraryFiles, 
+		private string GetSourceFile(string destinationFile,
+			IReadOnlyDictionary<string, string> targetFiles,
+			Dictionary<string, List<string>> libraryFiles,
 			IReadOnlyDictionary<string, List<string>> allFiles)
 		{
 			var fileName = Path.GetFileName(destinationFile);
@@ -128,7 +133,7 @@ namespace MSBuildFixerTests
 
 				if (string.IsNullOrEmpty(sourceFile))
 				{
-					if(!allFiles.TryGetValue(fileName, out allFrom)) return null;
+					if (!allFiles.TryGetValue(fileName, out allFrom)) return null;
 					sourceFile = allFrom.FirstOrDefault();
 				}
 			}
@@ -140,7 +145,7 @@ namespace MSBuildFixerTests
 		private string BuildXCopy(string targetFolder, string sourceFile, string destinationFile)
 		{
 			if (string.IsNullOrEmpty(sourceFile)) return null;
-			sourceFile = sourceFile.Replace(_solutionDir, string.Empty).Replace(targetFolder, "%TargetDir%");
+			sourceFile = sourceFile.Replace(_solutionDir, "%_solutionDir%").Replace(targetFolder, "%TargetDir%");
 			if (sourceFile.StartsWith("\\")) sourceFile = sourceFile.Substring(1);
 			var to = destinationFile.Replace(_solutionDir, "%solutionDir%").Replace(Path.GetFileName(destinationFile), "*.*");
 			var xcopy = $"xcopy /Y {sourceFile} {to}";
