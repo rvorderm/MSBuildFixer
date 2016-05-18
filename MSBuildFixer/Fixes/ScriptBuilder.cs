@@ -83,7 +83,7 @@ namespace MSBuildFixerTests
 			var stringBuilder = new StringBuilder();
 			stringBuilder.AppendLine(@"set Configuration=Debug");
 			stringBuilder.AppendLine(@"set solutionDir=%CD%");
-			stringBuilder.AppendLine(@"set TargetDir=%solutionDir%\bin\%Configuration%");
+			stringBuilder.AppendLine(@"set TargetDir=bin\%Configuration%");
 			stringBuilder.AppendLine();
 
 			var destFiles = Directory.EnumerateFiles(destination, "*", SearchOption.AllDirectories).OrderBy(Path.GetFileName);
@@ -144,8 +144,8 @@ namespace MSBuildFixerTests
 
 		private string BuildXCopy(string targetFolder, string sourceFile, string destinationFile)
 		{
-			if (string.IsNullOrEmpty(sourceFile)) return null;
-			sourceFile = sourceFile.Replace(_solutionDir, "%_solutionDir%").Replace(targetFolder, "%TargetDir%");
+			if (string.IsNullOrEmpty(sourceFile)) return $"#source for {sourceFile} couldn't be found to copy to {destinationFile}";
+			sourceFile = sourceFile.Replace(_solutionDir, "%solutionDir%").Replace(targetFolder, "%TargetDir%");
 			if (sourceFile.StartsWith("\\")) sourceFile = sourceFile.Substring(1);
 			var to = destinationFile.Replace(_solutionDir, "%solutionDir%").Replace(Path.GetFileName(destinationFile), "*.*");
 			var xcopy = $"xcopy /Y {sourceFile} {to}";
