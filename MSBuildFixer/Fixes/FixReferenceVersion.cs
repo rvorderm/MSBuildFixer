@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,7 +16,7 @@ namespace MSBuildFixer.Fixes
 			_solutionDirectory = solutionDirectory;
 		}
 
-		public void OnVisitProjectItem(object sender, EventArgs evetArgs)
+		public void OnVisitProjectItem(object sender, EventArgs eventArgs)
 		{
 			var projectItemElement = sender as ProjectItemElement;
 			if (projectItemElement == null) return;
@@ -29,7 +28,7 @@ namespace MSBuildFixer.Fixes
 
 			var fileName = GetFileName(hintPath);
 			if (!File.Exists(fileName)) return;
-			FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(fileName);
+			var versionInfo = FileVersionInfo.GetVersionInfo(fileName);
 			var referenceVersion = GetVersion(projectItemElement.Include);
 			if (string.IsNullOrEmpty(referenceVersion)) return;
 			if ( referenceVersion.Equals(versionInfo.FileVersion)) return;
@@ -44,14 +43,17 @@ namespace MSBuildFixer.Fixes
 			}
 			if(Path.IsPathRooted(hintPath.Value)) return hintPath.Value;
 
-			return Path.Combine(Path.GetDirectoryName(hintPath.ContainingProject.FullPath), hintPath.Value);
+			var directoryName = Path.GetDirectoryName(hintPath.ContainingProject.FullPath);
+			if (directoryName == null) return hintPath.Value;
+			return Path.Combine(directoryName, hintPath.Value);
 		}
 
 		private string GetVersion(string include)
 		{
-			var indexOfVersion = include.IndexOf("Version=");
+			if (string.IsNullOrEmpty(include)) return null;
+			var indexOfVersion = include.IndexOf("Version=", StringComparison.InvariantCulture);
 			if (indexOfVersion < 0) return null;
-			var indexOfComma = include.IndexOf(",", indexOfVersion);
+			var indexOfComma = include.IndexOf(",", indexOfVersion, StringComparison.InvariantCulture);
 			if (indexOfComma < 0) return null;
 
 			var substring = include.Substring(indexOfVersion + 8, indexOfComma-indexOfVersion-8);
