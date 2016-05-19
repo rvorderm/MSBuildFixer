@@ -55,12 +55,14 @@
     <Compile Include="FeatureToggles\MergeBinFoldersToggle.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FeatureToggles\ProjectReferencesToggle.cs" />
+    <Compile Include="FeatureToggles\ReferenceVersionToggle.cs" />
     <Compile Include="FeatureToggles\RunPostBuildEventToggle.cs" />
     <Compile Include="FeatureToggles\OutputPathToggle.cs" />
     <Compile Include="FeatureToggles\HintPathToggle.cs" />
     <Compile Include="FeatureToggles\CopyLocalToggle.cs" />
     <Compile Include="Fixes\FixCopyToOutputDirectory.cs" />
     <Compile Include="Fixes\FixCopyLocal.cs" />
+    <Compile Include="Fixes\FixReferenceVersion.cs" />
     <Compile Include="Fixes\FixHintPath.cs" />
     <Compile Include="Fixes\FixOutputPath.cs" />
     <Compile Include="Fixes\FixProjectRefences.cs" />

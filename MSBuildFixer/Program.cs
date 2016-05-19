@@ -50,6 +50,7 @@ namespace MSBuildFixer
 			Attach(OutputPathToggle.Instance, AttachOutputPath, walker);
 			Attach(RunPostBuildEventToggle.Instance, AttachRunPostBuildEvent, walker);
 			Attach(ProjectReferencesToggle.Instance, AttachProjectReferences, walker);
+			Attach(ReferenceVersionToggle.Instance, AttachReferenceVersion, walker);
 			Attach(FixXCopyToggle.Instance, AttachXCopy, walker);
 			AttachScriptBuilder();
 
@@ -59,6 +60,14 @@ namespace MSBuildFixer
 		private static void Attach(IFeatureToggle copyLocalToggle, Action<SolutionWalker> attachCopyLocal, SolutionWalker walker)
 		{
 			if (copyLocalToggle.FeatureEnabled) attachCopyLocal(walker);
+		}
+
+		private static void AttachReferenceVersion(SolutionWalker walker)
+		{
+			var fullSolutionPath = AppSettings["SolutionPath"];
+			var solutionDirectory = Path.GetDirectoryName(fullSolutionPath);
+			var fixReferenceVersion = new FixReferenceVersion(solutionDirectory);
+			walker.OnVisitProjectItem += fixReferenceVersion.OnVisitProjectItem;
 		}
 
 		private static void AttachMergeBinFolders(SolutionWalker walker)
