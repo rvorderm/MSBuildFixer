@@ -49,6 +49,7 @@ namespace MSBuildFixer
 			Attach(HintPathToggle.Instance, AttachHintPath, walker);
 			Attach(OutputPathToggle.Instance, AttachOutputPath, walker);
 			Attach(RunPostBuildEventToggle.Instance, AttachRunPostBuildEvent, walker);
+			Attach(ProjectReferencesToggle.Instance, AttachProjectReferences, walker);
 			Attach(FixXCopyToggle.Instance, AttachXCopy, walker);
 			AttachScriptBuilder();
 
@@ -101,6 +102,13 @@ namespace MSBuildFixer
 		{
 			var fixRunPostBuildEvent = new FixRunPostBuildEvent();
 			walker.OnVisitProperty += fixRunPostBuildEvent.OnVisitProperty;
+		}
+
+		private static void AttachProjectReferences(SolutionWalker walker)
+		{
+			var projectRefences = new FixProjectRefences();
+			walker.OnVisitProjects += projectRefences.VisitProjects;
+			walker.OnVisitProjectItem += projectRefences.VisitProjectItem;
 		}
 
 		private static void AttachXCopy(SolutionWalker walker)

@@ -51,6 +51,11 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Reporting.Model, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b8761d376eb50bae, processorArchitecture=MSIL">
+        <SpecificVersion>False</SpecificVersion>
+        <HintPath>$(SolutionDir)\.lib\Tyler\Reporting.Model.dll</HintPath>
+        <Private>False</Private>
+    </Reference>
     <Reference Include="IdeaBlade.Persistence, Version=3.6.4.1, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\.lib\Ideablade\IdeaBlade.Persistence.dll</HintPath>

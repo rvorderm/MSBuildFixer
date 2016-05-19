@@ -72,6 +72,7 @@
     <Compile Include="Fixes\FixCopyToOutputDirectoryTests.cs" />
     <Compile Include="Fixes\FixHintPathTests.cs" />
     <Compile Include="Fixes\FixOutputPathTests.cs" />
+    <Compile Include="Fixes\FixProjectReferencesTests.cs" />
     <Compile Include="Fixes\FixRunPostBuildEventTests.cs" />
     <Compile Include="Fixes\FixXCopyTests.cs" />
     <Compile Include="Fixes\MergeBinFolderTests.cs" />

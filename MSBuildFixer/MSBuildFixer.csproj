@@ -54,7 +54,7 @@
     <Compile Include="FeatureToggles\FixXCopyToggle.cs" />
     <Compile Include="FeatureToggles\MergeBinFoldersToggle.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="FeatureToggles\ScriptXCopyToggle.cs" />
+    <Compile Include="FeatureToggles\ProjectReferencesToggle.cs" />
     <Compile Include="FeatureToggles\RunPostBuildEventToggle.cs" />
     <Compile Include="FeatureToggles\OutputPathToggle.cs" />
     <Compile Include="FeatureToggles\HintPathToggle.cs" />
@@ -63,6 +63,7 @@
     <Compile Include="Fixes\FixCopyLocal.cs" />
     <Compile Include="Fixes\FixHintPath.cs" />
     <Compile Include="Fixes\FixOutputPath.cs" />
+    <Compile Include="Fixes\FixProjectRefences.cs" />
     <Compile Include="Fixes\FixRunPostBuildEvent.cs" />
     <Compile Include="Fixes\FixXCopy.cs" />
     <Compile Include="Fixes\MergeBinFolders.cs" />

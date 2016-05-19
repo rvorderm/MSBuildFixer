@@ -25,8 +25,10 @@ namespace MSBuildFixer
 			OnAfterVisitSolution?.Invoke(solutionFile, EventArgs.Empty);
 		}
 
+		public event EventHandler OnVisitProjects;
 		public void VisitProjects(IReadOnlyList<ProjectInSolution> projects)
 		{
+			OnVisitProjects?.Invoke(projects, EventArgs.Empty);
 			foreach (var projectInSolution in projects)
 			{
 				var projectRootElement = VisitProject(projectInSolution);
