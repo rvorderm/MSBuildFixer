@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MSBuildFixer.Fixes
 {
-	public class MergeBinFolders
+	public class MergeBinFolders : IFix
 	{
 		private string _solutionFile;
 
@@ -18,7 +14,7 @@ namespace MSBuildFixer.Fixes
 
 		public void OnOpenProjectFile(object sender, EventArgs eventArgs)
 		{
-			if (string.IsNullOrEmpty(_solutionFile)) return;
+			if (String.IsNullOrEmpty(_solutionFile)) return;
 			var projectFile = sender as string;
 			if (projectFile == null) return;
 			var root = Path.GetDirectoryName(_solutionFile);
@@ -44,7 +40,7 @@ namespace MSBuildFixer.Fixes
 
 		public static void CopyAll(DirectoryInfo source, DirectoryInfo target)
 		{
-			if (string.Equals(source.FullName, target.FullName, StringComparison.CurrentCultureIgnoreCase))
+			if (String.Equals(source.FullName, target.FullName, StringComparison.CurrentCultureIgnoreCase))
 			{
 				return;
 			}
@@ -68,6 +64,12 @@ namespace MSBuildFixer.Fixes
 					target.CreateSubdirectory(diSourceSubDir.Name);
 				CopyAll(diSourceSubDir, nextTargetSubDir);
 			}
+		}
+
+		public void AttachTo(SolutionWalker walker)
+		{
+			walker.OnOpenSolution += OnOpenSolution;
+			walker.OnOpenProjectFile += OnOpenProjectFile;
 		}
 	}
 }

@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FeatureToggle.Core;
-using Microsoft.Build.Construction;
-using MSBuildFixer.FeatureToggles;
+﻿using Microsoft.Build.Construction;
 using MSBuildFixer.SampleFeatureToggles;
-using static System.String;
+using System;
+using System.IO;
 
 namespace MSBuildFixer.Fixes
 {
-	public class FixOutputPath
+	public class FixOutputPath : IFix
 	{
 		public void OnVisitProperty(object sender, EventArgs e)
 		{
@@ -22,6 +15,11 @@ namespace MSBuildFixer.Fixes
 			if (!projectPropertyElement.Name.Equals("OutputPath")) return;
 
 			projectPropertyElement.Value = Path.Combine("$(SolutionDir)", "bin", "$(Configuration)");
+		}
+
+		public void AttachTo(SolutionWalker walker)
+		{
+			walker.OnVisitProperty += OnVisitProperty;
 		}
 	}
 }

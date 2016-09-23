@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Channels;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Build.Construction;
+﻿using Microsoft.Build.Construction;
 using MSBuildFixer.SampleFeatureToggles;
+using System;
 
 namespace MSBuildFixer.Fixes
 {
-	public class FixCopyToOutputDirectory
+	public class FixCopyToOutputDirectory : IFix
 	{
 		public void OnVisitMetadata(object sender, EventArgs eventArgs)
 		{
@@ -19,6 +14,11 @@ namespace MSBuildFixer.Fixes
 			if (!metadataElement.Name.Equals("CopyToOutputDirectory")) return;
 
 			metadataElement.Value = "PreserveNewest";
+		}
+
+		public void AttachTo(SolutionWalker walker)
+		{
+			walker.OnVisitMetadata += OnVisitMetadata;
 		}
 	}
 }

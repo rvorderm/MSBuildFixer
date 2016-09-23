@@ -1,25 +1,24 @@
-﻿using System;
+﻿using Microsoft.Build.Construction;
+using MSBuildFixer.FeatureToggles;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Build.Construction;
-using Microsoft.Build.Evaluation;
-using MSBuildFixer.FeatureToggles;
+using static System.Configuration.ConfigurationManager;
 
 namespace MSBuildFixer.Fixes
 {
-	public class FixXCopy
+	public class FixXCopy : IFix
 	{
 		private readonly Dictionary<ProjectRootElement, HashSet<string>> _xcopies = new Dictionary<ProjectRootElement, HashSet<string>>();
 		private readonly Dictionary<ProjectRootElement, string> _assemblyNames = new Dictionary<ProjectRootElement, string>();
 		public string SolutionFilePath { get; private set; }
 		private readonly string _fileName;
 
-		public FixXCopy(string fileName = null)
+		public FixXCopy()
 		{
-			_fileName = fileName;
+			_fileName = AppSettings["SummarizeXCopyToggle_FileName"];
 		}
 
 		/// <summary>
@@ -54,7 +53,7 @@ namespace MSBuildFixer.Fixes
 		{
 			if (FixXCopyToggle.Enabled)
 			{
-				if (!string.IsNullOrEmpty(SolutionFilePath))
+				if (!String.IsNullOrEmpty(SolutionFilePath))
 				{
 					File.WriteAllText(Path.Combine(Path.GetDirectoryName(SolutionFilePath), _fileName), CollateAllXCopies());
 				}
@@ -91,7 +90,7 @@ namespace MSBuildFixer.Fixes
 			var lines = property.Value.Split(new[] {Environment.NewLine, "\n"}, StringSplitOptions.None);
 			var xcopies = lines.Where(x => x.Contains("xcopy"));
 			lines = lines.Except(xcopies).ToArray();
-			property.Value = string.Join(Environment.NewLine, lines);
+			property.Value = String.Join(Environment.NewLine, lines);
 			var hashSet = GetHashSet(property.ContainingProject, _xcopies);
 			foreach (var xcopy in xcopies)
 			{
@@ -118,6 +117,13 @@ namespace MSBuildFixer.Fixes
 			hashSet = new HashSet<string>();
 			dictionary[projectRootElement] = hashSet;
 			return hashSet;
+		}
+
+		public void AttachTo(SolutionWalker walker)
+		{
+			walker.OnVisitProperty += OnVisitProperty;
+			walker.OnOpenSolution += OnOpenSolution;
+			walker.OnAfterVisitSolution += OnAfterVisitSolution;
 		}
 	}
 }

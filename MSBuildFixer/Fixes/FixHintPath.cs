@@ -1,24 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.Build.Construction;
+using MSBuildFixer.SampleFeatureToggles;
+using System;
 using System.IO;
 using System.Linq;
-using Microsoft.Build.Construction;
-using MSBuildFixer.SampleFeatureToggles;
+using static System.Configuration.ConfigurationManager;
 
 namespace MSBuildFixer.Fixes
 {
-	public class FixHintPath
+	public class FixHintPath : IFix
 	{
 		private static string _libraryPath;
 		private static string _solutionPath;
 
+		public FixHintPath()
+			: this(Path.GetDirectoryName(AppSettings["SolutionPath"]), AppSettings["LibraryFolder"])
+		{
+		}
+
 		public FixHintPath(string solutionPath, string libraryDirectory)
 		{
-			if(string.IsNullOrEmpty(solutionPath)) throw new ArgumentException(solutionPath);
-			if(string.IsNullOrEmpty(libraryDirectory)) throw new ArgumentException(nameof(libraryDirectory));
+			if (string.IsNullOrEmpty(solutionPath)) throw new ArgumentException(solutionPath);
+			if (string.IsNullOrEmpty(libraryDirectory)) throw new ArgumentException(nameof(libraryDirectory));
 			_libraryPath = Path.Combine(solutionPath, libraryDirectory);
 			_solutionPath = solutionPath;
-			if(!Directory.Exists(_libraryPath)) throw  new ArgumentException("The given library path does not exist");
+			if (!Directory.Exists(_libraryPath)) throw new ArgumentException("The given library path does not exist");
 		}
 
 		public void OnVisitProjectItem(object sender, EventArgs evetArgs)
@@ -86,6 +91,12 @@ namespace MSBuildFixer.Fixes
 			}
 
 			return relativePath;
+		}
+
+		public void AttachTo(SolutionWalker walker)
+		{
+			walker.OnVisitMetadata += OnVisitMetadata;
+			walker.OnVisitProjectItem += OnVisitProjectItem;
 		}
 	}
 }

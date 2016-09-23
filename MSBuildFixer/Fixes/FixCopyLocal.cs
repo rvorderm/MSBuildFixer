@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Channels;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Build.Construction;
+﻿using Microsoft.Build.Construction;
 using MSBuildFixer.SampleFeatureToggles;
+using System;
+using System.Linq;
 
 namespace MSBuildFixer.Fixes
 {
-	public class FixCopyLocal
+	public class FixCopyLocal : IFix
 	{
 		public void OnVisitMetadata(object sender, EventArgs eventArgs)
 		{
@@ -42,6 +38,12 @@ namespace MSBuildFixer.Fixes
 		{
 			return projectItemElement.Include.StartsWith("System")
 			       || projectItemElement.Include.StartsWith("Microsoft");
+		}
+
+		public void AttachTo(SolutionWalker walker)
+		{
+			walker.OnVisitMetadata += OnVisitMetadata;
+			walker.OnVisitProjectItem += OnVisitProjectItem;
 		}
 	}
 }

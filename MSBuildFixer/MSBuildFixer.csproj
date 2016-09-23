@@ -71,6 +71,7 @@
     <Compile Include="Fixes\FixXCopy.cs" />
     <Compile Include="Fixes\MergeBinFolders.cs" />
     <Compile Include="Fixes\ScriptBuilder.cs" />
+    <Compile Include="IFix.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SolutionWalker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

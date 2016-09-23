@@ -1,11 +1,10 @@
-﻿using System;
-using System.IO;
-using Microsoft.Build.Construction;
+﻿using Microsoft.Build.Construction;
 using MSBuildFixer.SampleFeatureToggles;
+using System;
 
 namespace MSBuildFixer.Fixes
 {
-	public class FixRunPostBuildEvent
+	public class FixRunPostBuildEvent : IFix
 	{
 		public void OnVisitProperty(object sender, EventArgs e)
 		{
@@ -15,6 +14,11 @@ namespace MSBuildFixer.Fixes
 			if (!projectPropertyElement.Name.Equals("RunPostBuildEvent")) return;
 			
 			projectPropertyElement.Value = "OnOutputUpdated";
+		}
+
+		public void AttachTo(SolutionWalker walker)
+		{
+			walker.OnVisitProperty += OnVisitProperty;
 		}
 	}
 }

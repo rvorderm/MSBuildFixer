@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using static System.Configuration.ConfigurationManager;
 
-namespace MSBuildFixerTests
+namespace MSBuildFixer.Fixes
 {
 	public class ScriptBuilder
 	{
@@ -12,8 +13,16 @@ namespace MSBuildFixerTests
 		private readonly string _libraryPath;
 		private readonly IEnumerable<string> _destinations;
 
-		public ScriptBuilder(string solutionDir, string target, IEnumerable<string> destinations, string libPath = null)
+		public ScriptBuilder()
 		{
+			var solutionDir = Path.GetDirectoryName(AppSettings["SolutionPath"]);
+			var target = AppSettings["BuildCopyScripts_Target"];
+			string[] destinations = AppSettings["BuildCopyScripts_Destinations"].Split(';');
+			string libPath = null;
+			if (AppSettings.AllKeys.Contains("LibraryFolder"))
+			{
+				libPath = AppSettings["LibraryFolder"];
+			}
 			_solutionDir = solutionDir;
 			_target = target;
 			_destinations = destinations;

@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Microsoft.Build.Construction;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Build.Construction;
 
 namespace MSBuildFixer.Fixes
 {
-	public class FixProjectRefences
+	public class FixProjectRefences : IFix
 	{
 		private List<Dictionary<string, ProjectInSolution>> projectSets = new List<Dictionary<string, ProjectInSolution>>();
 		public void VisitProjects(object sender, EventArgs e)
@@ -52,6 +50,12 @@ namespace MSBuildFixer.Fixes
 				return include.Substring(0, indexOf);
 			}
 			return include;
+		}
+
+		public void AttachTo(SolutionWalker walker)
+		{
+			walker.OnVisitProjects += VisitProjects;
+			walker.OnVisitProjectItem += VisitProjectItem;
 		}
 	}
 }

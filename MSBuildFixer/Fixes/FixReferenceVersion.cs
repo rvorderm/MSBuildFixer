@@ -1,18 +1,21 @@
-﻿using System;
+﻿using Microsoft.Build.Construction;
+using MSBuildFixer.SampleFeatureToggles;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Microsoft.Build.Construction;
-using MSBuildFixer.SampleFeatureToggles;
+using static System.Configuration.ConfigurationManager;
 
 namespace MSBuildFixer.Fixes
 {
-	public class FixReferenceVersion
+	public class FixReferenceVersion : IFix
 	{
 		private readonly string _solutionDirectory;
 
-		public FixReferenceVersion(string solutionDirectory)
+		public FixReferenceVersion()
 		{
+			var fullSolutionPath = AppSettings["SolutionPath"];
+			var solutionDirectory = Path.GetDirectoryName(fullSolutionPath);
 			_solutionDirectory = solutionDirectory;
 		}
 
@@ -30,7 +33,7 @@ namespace MSBuildFixer.Fixes
 			if (!File.Exists(fileName)) return;
 			var versionInfo = FileVersionInfo.GetVersionInfo(fileName);
 			var referenceVersion = GetVersion(projectItemElement.Include);
-			if (string.IsNullOrEmpty(referenceVersion)) return;
+			if (String.IsNullOrEmpty(referenceVersion)) return;
 			if ( referenceVersion.Equals(versionInfo.FileVersion)) return;
 			projectItemElement.Include = projectItemElement.Include.Replace(referenceVersion, versionInfo.FileVersion);
 		}
@@ -50,7 +53,7 @@ namespace MSBuildFixer.Fixes
 
 		private string GetVersion(string include)
 		{
-			if (string.IsNullOrEmpty(include)) return null;
+			if (String.IsNullOrEmpty(include)) return null;
 			var indexOfVersion = include.IndexOf("Version=", StringComparison.InvariantCulture);
 			if (indexOfVersion < 0) return null;
 			var indexOfComma = include.IndexOf(",", indexOfVersion, StringComparison.InvariantCulture);
@@ -58,6 +61,11 @@ namespace MSBuildFixer.Fixes
 
 			var substring = include.Substring(indexOfVersion + 8, indexOfComma-indexOfVersion-8);
 			return substring;
+		}
+
+		public void AttachTo(SolutionWalker walker)
+		{
+			walker.OnVisitProjectItem += OnVisitProjectItem;
 		}
 	}
 }
