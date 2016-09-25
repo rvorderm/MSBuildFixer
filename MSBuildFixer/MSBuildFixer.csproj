@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FeatureToggles\BuildCopyScriptsToggle.cs" />
+    <Compile Include="FeatureToggles\FixTargetFrameworkToggle.cs" />
     <Compile Include="FeatureToggles\FixXCopyToggle.cs" />
     <Compile Include="FeatureToggles\HintPathToggle_UseRelative.cs" />
     <Compile Include="FeatureToggles\MergeBinFoldersToggle.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Fixes\FixXCopy.cs" />
     <Compile Include="Fixes\MergeBinFolders.cs" />
     <Compile Include="Fixes\ScriptBuilder.cs" />
+    <Compile Include="Fixes\FixTargetFramework.cs" />
     <Compile Include="IFix.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SolutionWalker.cs" />

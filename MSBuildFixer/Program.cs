@@ -46,6 +46,7 @@ namespace MSBuildFixer
 			Attach<FixProjectRefences>(ProjectReferencesToggle.Instance, walker);
 			Attach<FixReferenceVersion>(ReferenceVersionToggle.Instance, walker);
 			Attach<FixXCopy>(FixXCopyToggle.Instance, walker);
+			Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
 			AttachScriptBuilder();
 
 
