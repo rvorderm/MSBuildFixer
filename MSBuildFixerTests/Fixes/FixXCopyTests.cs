@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Build.Construction;
+﻿using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MSBuildFixer.Fixes;
 using MSBuildFixerTests.Properties;
+using System;
+using System.Linq;
 
 namespace MSBuildFixerTests.Fixes
 {

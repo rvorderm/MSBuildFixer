@@ -1,16 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Xml;
-using FakeItEasy;
-using FakeItEasy.ExtensionSyntax.Full;
-using FeatureToggle.Core;
+﻿using FakeItEasy;
 using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MSBuildFixer;
 using MSBuildFixer.Fixes;
 using MSBuildFixer.SampleFeatureToggles;
-using MSBuildFixerTests.Properties;
+using System;
+using System.Linq;
 
 namespace MSBuildFixerTests.Fixes
 {
@@ -37,22 +31,6 @@ namespace MSBuildFixerTests.Fixes
 			}
 
 			[TestMethod]
-			public void ToggleBlocks()
-			{
-				TestSetup.SetToggleTo(CopyLocalToggle.Instance, false);
-
-				var projectRootElement = TestSetup.GetTestProject();
-
-				var metadataElements = projectRootElement.AllChildren.OfType<ProjectMetadataElement>().Where(x => x.Name.Equals("Private")).ToList();
-				Assert.IsTrue(metadataElements.Any());
-
-				var element = metadataElements[0];
-				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitMetadata(element, EventArgs.Empty);
-				Assert.AreEqual(true.ToString(), element.Value);
-			}
-
-			[TestMethod]
 			public void NullInput()
 			{
 				var fixCopyLocal = new FixCopyLocal();
@@ -66,7 +44,7 @@ namespace MSBuildFixerTests.Fixes
 
 				var projectRootElement = TestSetup.GetTestProject();
 
-				var metadataElements = projectRootElement.AllChildren.OfType<ProjectMetadataElement>().Where(x => x.Name.Equals("Private")).ToList();
+				var metadataElements = projectRootElement.AllChildren.OfType<ProjectMetadataElement>().Where(x => x.Name.Equals("Private") && x.Value.Equals(true.ToString())).ToList();
 				Assert.IsTrue(metadataElements.Any());
 
 				var element = metadataElements[0];
@@ -87,28 +65,13 @@ namespace MSBuildFixerTests.Fixes
 
 				var projectRootElement = TestSetup.GetTestProject();
 
-				var element = projectRootElement.Items.First(x => x.ItemType.Equals("Reference"));
+				var element = projectRootElement.Items.First(x => x.ItemType.Equals("Reference") && !x.Metadata.Any(y=>y.Name.Equals("Private")));
 				Assert.IsFalse(element.Metadata.Any(x=>x.Name.Equals("Private")));
 
 				var fixCopyLocal = new FixCopyLocal();
 				fixCopyLocal.OnVisitProjectItem(element, EventArgs.Empty);
 				Assert.IsTrue(element.Metadata.Any(x => x.Name.Equals("Private")));
 				Assert.AreEqual(false.ToString(), element.Metadata.First(x => x.Name.Equals("Private")).Value);
-			}
-
-			[TestMethod]
-			public void ToggleBlocks()
-			{
-				TestSetup.SetToggleTo(CopyLocalToggle.Instance, false);
-
-				var projectRootElement = TestSetup.GetTestProject();
-
-				var element = projectRootElement.Items.First(x => x.ItemType.Equals("Reference"));
-				Assert.IsFalse(element.Metadata.Any(x => x.Name.Equals("Private")));
-
-				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitProjectItem(element, EventArgs.Empty);
-				Assert.IsFalse(element.Metadata.Any(x => x.Name.Equals("Private")));
 			}
 
 			[TestMethod]
@@ -155,7 +118,7 @@ namespace MSBuildFixerTests.Fixes
 
 				var projectRootElement = TestSetup.GetTestProject();
 
-				var element = projectRootElement.Items.First(x => x.ItemType.Equals("Reference"));
+				var element = projectRootElement.Items.First(x => x.ItemType.Equals("Reference") && !x.Metadata.Any(y=>y.Name.Equals("Private")));
 				element.ItemType = "NotReference";
 				Assert.IsFalse(element.Metadata.Any(x => x.Name.Equals("Private")));
 

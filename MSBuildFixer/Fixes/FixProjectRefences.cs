@@ -7,12 +7,14 @@ namespace MSBuildFixer.Fixes
 {
 	public class FixProjectRefences : IFix
 	{
-		private List<Dictionary<string, ProjectInSolution>> projectSets = new List<Dictionary<string, ProjectInSolution>>();
+		public List<Dictionary<string, ProjectInSolution>> ProjectSets { get; } =
+			new List<Dictionary<string, ProjectInSolution>>();
+
 		public void VisitProjects(object sender, EventArgs e)
 		{
 			var projectInSolution = sender as ICollection<ProjectInSolution>;
 			if (projectInSolution == null) return;
-			projectSets.Add(projectInSolution.Where(x=>x.ProjectType != SolutionProjectType.SolutionFolder).ToDictionary(x=>x.ProjectName));
+			ProjectSets.Add(projectInSolution.Where(x=>x.ProjectType != SolutionProjectType.SolutionFolder).ToDictionary(x=>x.ProjectName));
 		}
 
 		public void VisitProjectItem(object sender, EventArgs e)
@@ -21,7 +23,7 @@ namespace MSBuildFixer.Fixes
 			if (projectItemElement == null) return;
 			if (!projectItemElement.ItemType.Equals("Reference")) return;
 
-			foreach (var projectSet in projectSets)
+			foreach (var projectSet in ProjectSets)
 			{
 				var assembly = GetAssemblyFrom(projectItemElement.Include);
 				ProjectInSolution project;
