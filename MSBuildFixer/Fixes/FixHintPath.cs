@@ -9,25 +9,15 @@ namespace MSBuildFixer.Fixes
 {
 	public class FixHintPath : IFix
 	{
-		private static string _libraryPath;
-		private static string _solutionPath;
+		public string LibraryPath { get; set; } = AppSettings["LibraryFolder"];
 
-		public FixHintPath()
-			: this(Path.GetDirectoryName(AppSettings["SolutionPath"]), AppSettings["LibraryFolder"])
-		{
-		}
-
-		public FixHintPath(string solutionPath, string libraryDirectory)
-		{
-			if (string.IsNullOrEmpty(solutionPath)) throw new ArgumentException(solutionPath);
-			if (string.IsNullOrEmpty(libraryDirectory)) throw new ArgumentException(nameof(libraryDirectory));
-			_libraryPath = Path.Combine(solutionPath, libraryDirectory);
-			_solutionPath = solutionPath;
-			if (!Directory.Exists(_libraryPath)) throw new ArgumentException("The given library path does not exist");
-		}
+		public string SolutionPath { get; set; }
+		
 
 		public void OnVisitProjectItem(object sender, EventArgs evetArgs)
 		{
+			if (string.IsNullOrEmpty(SolutionPath)) throw new ArgumentException(SolutionPath);
+			if (string.IsNullOrEmpty(LibraryPath)) throw new ArgumentException(nameof(LibraryPath));
 			var projectItemElement = sender as ProjectItemElement;
 			if (projectItemElement == null) return;
 			if (!projectItemElement.ItemType.Equals("Reference")) return;
@@ -37,27 +27,30 @@ namespace MSBuildFixer.Fixes
 
 			var fileName = Path.GetFileName(projectItemElement.Include.Split(' ').First());
 			fileName = fileName.Substring(0, fileName.Length - 1) + ".dll";
-			var libraryPath = Directory.EnumerateFiles(_libraryPath, fileName, SearchOption.AllDirectories).LastOrDefault();
+			if (!Directory.Exists(LibraryPath)) throw new ArgumentException("The given library path does not exist");
+			var libraryPath = Directory.EnumerateFiles(LibraryPath, fileName, SearchOption.AllDirectories).LastOrDefault();
 			if (libraryPath != null)
 			{
-				projectItemElement.AddMetadata("HintPath", libraryPath.Replace(_solutionPath, @"$(SolutionDir)"));
+				projectItemElement.AddMetadata("HintPath", libraryPath.Replace(SolutionPath, @"$(SolutionDir)"));
 			}
 		}
 
 		public void OnVisitMetadata(object sender, EventArgs eventArgs)
 		{
+			if (string.IsNullOrEmpty(SolutionPath)) throw new ArgumentException(SolutionPath);
+			if (string.IsNullOrEmpty(LibraryPath)) throw new ArgumentException(nameof(LibraryPath));
 			var projectMetadataElement = sender as ProjectMetadataElement;
 			if (projectMetadataElement == null) return;
 			if (!HintPathToggle.Enabled) return;
 			if (!projectMetadataElement.Name.Equals("HintPath")) return;
 
 			var fileName = Path.GetFileName(projectMetadataElement.Value);
-			var libraryPath = Directory.EnumerateFiles(_libraryPath, fileName, SearchOption.AllDirectories).LastOrDefault();
+			var libraryPath = Directory.EnumerateFiles(LibraryPath, fileName, SearchOption.AllDirectories).LastOrDefault();
 			if (libraryPath != null)
 			{
 				projectMetadataElement.Value = HintPathToggle_UseRelative.Enabled 
 					? MakeRelativePath(projectMetadataElement.ContainingProject.FullPath, libraryPath) 
-					: libraryPath.Replace(_solutionPath, @"$(SolutionDir)");
+					: libraryPath.Replace(SolutionPath, @"$(SolutionDir)");
 			}
 		}
 
@@ -93,8 +86,15 @@ namespace MSBuildFixer.Fixes
 			return relativePath;
 		}
 
+		private void OnOpenSolution(object sender, EventArgs e)
+		{
+			SolutionPath = sender as string;
+			if(SolutionPath == null) throw new NotImplementedException();
+		}
+
 		public void AttachTo(SolutionWalker walker)
 		{
+			walker.OnOpenSolution += OnOpenSolution;
 			walker.OnVisitMetadata += OnVisitMetadata;
 			walker.OnVisitProjectItem += OnVisitProjectItem;
 		}

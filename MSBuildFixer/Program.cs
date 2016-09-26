@@ -3,7 +3,9 @@ using MSBuildFixer.FeatureToggles;
 using MSBuildFixer.Fixes;
 using MSBuildFixer.SampleFeatureToggles;
 using System;
+using System.Configuration;
 using System.IO;
+using MSBuildFixer.Configuration;
 using static System.Configuration.ConfigurationManager;
 
 namespace MSBuildFixer
@@ -12,30 +14,33 @@ namespace MSBuildFixer
 	{
 		static void Main(string[] args)
 		{
-			var fullSolutionPath = AppSettings["SolutionPath"];
+			SolutionConfiguration solutionConfiguration = (dynamic)GetSection("solutionConfiguration");
 
-			var solutionDirectory = Path.GetDirectoryName(fullSolutionPath);
-			var solutionFilename = Path.GetFileName(fullSolutionPath);
-			if (solutionDirectory == null || !Directory.Exists(solutionDirectory))
+			foreach (var fullSolutionPath in solutionConfiguration.Solutions)
 			{
-				Console.WriteLine($"SolutionPath null or directory did not exist: {fullSolutionPath}");
-				return;
+				var solutionDirectory = Path.GetDirectoryName(fullSolutionPath);
+				var solutionFilename = Path.GetFileName(fullSolutionPath);
+				if (solutionDirectory == null || !Directory.Exists(solutionDirectory))
+				{
+					Console.WriteLine($"SolutionPath null or directory did not exist: {fullSolutionPath}");
+					return;
+				}
+
+				if (!File.Exists(fullSolutionPath)) return;
+
+
+				Console.WriteLine($"Opening {fullSolutionPath}");
+
+				Environment.CurrentDirectory = solutionDirectory;
+				var projectFixer = new SolutionWalker();
+				AttachFixes(projectFixer, fullSolutionPath);
+				projectFixer.VisitSolution(solutionDirectory, solutionFilename);
 			}
-
-			if (!File.Exists(fullSolutionPath)) return;
-
-
-			Console.WriteLine($"Opening {fullSolutionPath}");
-
-			Environment.CurrentDirectory = solutionDirectory;
-			var projectFixer = new SolutionWalker();
-			AttachFixes(projectFixer);
-			projectFixer.VisitSolution(solutionDirectory, solutionFilename);
 
 			Console.WriteLine($"Finished");
 		}
 
-		private static void AttachFixes(SolutionWalker walker)
+		private static void AttachFixes(SolutionWalker walker, string solutionPath)
 		{
 			Attach<MergeBinFolders>(MergeBinFoldersToggle.Instance, walker);
 			Attach<FixCopyLocal>(CopyLocalToggle.Instance, walker);
@@ -48,8 +53,6 @@ namespace MSBuildFixer
 			Attach<FixXCopy>(FixXCopyToggle.Instance, walker);
 			Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
 			AttachScriptBuilder();
-
-
 		}
 
 		private static void Attach<T>(IFeatureToggle copyLocalToggle, SolutionWalker walker)
