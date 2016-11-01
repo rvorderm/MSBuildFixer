@@ -48,7 +48,7 @@ namespace MSBuildFixer.Fixes
 			var libraryPath = Directory.EnumerateFiles(LibraryPath, fileName, SearchOption.AllDirectories).LastOrDefault();
 			if (libraryPath != null)
 			{
-				projectMetadataElement.Value = HintPathToggle_UseRelative.Enabled 
+				projectMetadataElement.Value = UseRelativePathing.Enabled 
 					? MakeRelativePath(projectMetadataElement.ContainingProject.FullPath, libraryPath) 
 					: libraryPath.Replace(SolutionPath, @"$(SolutionDir)");
 			}

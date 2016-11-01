@@ -58,7 +58,7 @@
     <Compile Include="FeatureToggles\BuildCopyScriptsToggle.cs" />
     <Compile Include="FeatureToggles\FixTargetFrameworkToggle.cs" />
     <Compile Include="FeatureToggles\FixXCopyToggle.cs" />
-    <Compile Include="FeatureToggles\HintPathToggle_UseRelative.cs" />
+    <Compile Include="FeatureToggles\UseRelativePathing.cs" />
     <Compile Include="FeatureToggles\MergeBinFoldersToggle.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FeatureToggles\ProjectReferencesToggle.cs" />
