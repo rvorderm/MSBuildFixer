@@ -40,7 +40,7 @@ namespace MSBuildFixer.Fixes
 			var containingProject = projectItemElement.ContainingProject;
 
 			var itemElement = containingProject.AddItem("ProjectReference", project.RelativePath);
-			itemElement.AddMetadata("Project", "{" + project.ProjectGuid + "}");
+			itemElement.AddMetadata("Project", project.ProjectGuid);
 			itemElement.AddMetadata("Name", project.ProjectName);
 		}
 

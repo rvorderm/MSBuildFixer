@@ -41,6 +41,7 @@ namespace MSBuildFixer
 		{
 			if (project.ProjectType == SolutionProjectType.SolutionFolder) return null;
 			var absolutePath = project.AbsolutePath;
+			if (project.ProjectType == SolutionProjectType.WebProject) return null;
 			OnOpenProjectFile?.Invoke(absolutePath, EventArgs.Empty);
 			var projectRootElement = ProjectRootElement.Open(absolutePath);
 			if (projectRootElement == null) return null;
