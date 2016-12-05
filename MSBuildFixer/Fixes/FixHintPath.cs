@@ -9,6 +9,24 @@ namespace MSBuildFixer.Fixes
 {
 	public class FixHintPath : IFix
 	{
+		private ILookup<string, string> _library;
+
+		public ILookup<string, string> Library
+		{
+			get
+			{
+				if (!Directory.Exists(LibraryPath)) throw new ArgumentException("The given library path does not exist");
+				if (Library == null)
+				{
+					Library =
+						Directory.EnumerateFiles(Path.GetFullPath(LibraryPath), "*", SearchOption.AllDirectories)
+							.ToLookup(Path.GetFileName);
+				}
+				return _library;
+			}
+			private set { _library = value; }
+		}
+
 		public string LibraryPath { get; set; } = AppSettings["LibraryFolder"];
 
 		public string SolutionPath { get; set; }
@@ -25,14 +43,12 @@ namespace MSBuildFixer.Fixes
 			if (metadataCollection.Any(x=>x.Name.Equals("HintPath"))) return;
 			if (!HintPathToggle.Enabled) return;
 
-			var fileName = Path.GetFileName(projectItemElement.Include.Split(' ').First());
+			string fileName = Path.GetFileName(projectItemElement.Include.Split(' ').First());
 			fileName = fileName.Substring(0, fileName.Length - 1) + ".dll";
-			if (!Directory.Exists(LibraryPath)) throw new ArgumentException("The given library path does not exist");
-			var libraryPath = Directory.EnumerateFiles(LibraryPath, fileName, SearchOption.AllDirectories).LastOrDefault();
-			if (libraryPath != null)
-			{
-				projectItemElement.AddMetadata("HintPath", libraryPath.Replace(SolutionPath, @"$(SolutionDir)"));
-			}
+			
+			if (!Library.Contains(fileName)) return;
+			string libraryPath = Library[fileName].Last();
+			projectItemElement.AddMetadata("HintPath", libraryPath.Replace(SolutionPath, @"$(SolutionDir)"));
 		}
 
 		public void OnVisitMetadata(object sender, EventArgs eventArgs)
@@ -44,8 +60,8 @@ namespace MSBuildFixer.Fixes
 			if (!HintPathToggle.Enabled) return;
 			if (!projectMetadataElement.Name.Equals("HintPath")) return;
 
-			var fileName = Path.GetFileName(projectMetadataElement.Value);
-			var libraryPath = Directory.EnumerateFiles(LibraryPath, fileName, SearchOption.AllDirectories).LastOrDefault();
+			string fileName = Path.GetFileName(projectMetadataElement.Value);
+			string libraryPath = Directory.EnumerateFiles(LibraryPath, fileName, SearchOption.AllDirectories).LastOrDefault();
 			if (libraryPath != null)
 			{
 				projectMetadataElement.Value = UseRelativePathing.Enabled 
