@@ -21,19 +21,19 @@ namespace MSBuildFixer
 			OnOpenSolution?.Invoke(solutionFilePath, EventArgs.Empty);
 			var solutionFile = SolutionFile.Parse(solutionFilePath);
 			if (solutionFile == null) return;
-			VisitProjects(solutionFile.ProjectsInOrder);
-			OnAfterVisitSolution?.Invoke(solutionFile, EventArgs.Empty);
+		    var projectRootElements = VisitProjects(solutionFile.ProjectsInOrder);
+            OnAfterVisitSolution?.Invoke(solutionFile, EventArgs.Empty);
+		    foreach (var projectRootElement in projectRootElements)
+		    {
+		        projectRootElement?.Save();
+		    }
 		}
 
 		public event EventHandler OnVisitProjects;
-		public void VisitProjects(IReadOnlyList<ProjectInSolution> projects)
+		public IEnumerable<ProjectRootElement> VisitProjects(IReadOnlyList<ProjectInSolution> projects)
 		{
 			OnVisitProjects?.Invoke(projects, EventArgs.Empty);
-			foreach (var projectInSolution in projects)
-			{
-				var projectRootElement = VisitProject(projectInSolution);
-				projectRootElement?.Save();
-			}
+		    return projects.Select(VisitProject);
 		}
 
 		public event EventHandler OnOpenProjectFile;
