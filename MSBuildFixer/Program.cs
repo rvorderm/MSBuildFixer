@@ -53,6 +53,7 @@ namespace MSBuildFixer
 			Attach<FixXCopy>(FixXCopyToggle.Instance, walker);
 			//Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
 			//AttachScriptBuilder();
+			new ListUntrackedProjectFiles(solutionPath).AttachTo(walker);
 		}
 
 		private static void Attach<T>(IFeatureToggle copyLocalToggle, SolutionWalker walker)

@@ -75,6 +75,7 @@
     <Compile Include="Fixes\FixProjectRefences.cs" />
     <Compile Include="Fixes\FixRunPostBuildEvent.cs" />
     <Compile Include="Fixes\FixXCopy.cs" />
+    <Compile Include="Fixes\ListUntrackedProjectFiles.cs" />
     <Compile Include="Fixes\MergeBinFolders.cs" />
     <Compile Include="Fixes\ScriptBuilder.cs" />
     <Compile Include="Fixes\FixTargetFramework.cs" />

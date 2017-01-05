@@ -33,7 +33,7 @@ namespace MSBuildFixer
 		public IEnumerable<ProjectRootElement> VisitProjects(IReadOnlyList<ProjectInSolution> projects)
 		{
 			OnVisitProjects?.Invoke(projects, EventArgs.Empty);
-		    return projects.Select(VisitProject);
+		    return projects.Select(VisitProject).ToList();
 		}
 
 		public event EventHandler OnOpenProjectFile;
