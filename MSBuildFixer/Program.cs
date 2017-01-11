@@ -1,11 +1,10 @@
 ﻿using FeatureToggle.Core;
+using MSBuildFixer.Configuration;
 using MSBuildFixer.FeatureToggles;
 using MSBuildFixer.Fixes;
 using MSBuildFixer.SampleFeatureToggles;
 using System;
-using System.Configuration;
 using System.IO;
-using MSBuildFixer.Configuration;
 using static System.Configuration.ConfigurationManager;
 
 namespace MSBuildFixer
@@ -54,12 +53,19 @@ namespace MSBuildFixer
 			//Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
 			//AttachScriptBuilder();
 			new ListUntrackedProjectFiles(solutionPath).AttachTo(walker);
+			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ListProjectsWithReferences.ReferenceRegex), walker);
 		}
 
 		private static void Attach<T>(IFeatureToggle copyLocalToggle, SolutionWalker walker)
 			where T : IFix, new()
 		{
-			if (copyLocalToggle.FeatureEnabled) new T().AttachTo(walker);
+			Attach<T>(copyLocalToggle.FeatureEnabled, walker);
+		}
+
+		private static void Attach<T>(bool shouldAttach, SolutionWalker walker)
+			where T : IFix, new()
+		{
+			if (shouldAttach) new T().AttachTo(walker);
 		}
 
 		private static void AttachScriptBuilder()
