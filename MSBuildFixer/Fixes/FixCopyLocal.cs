@@ -128,7 +128,7 @@ namespace MSBuildFixer.Fixes
             walker.OnAfterVisitSolution += Walker_OnAfterVisitSolution;
 		}
 
-        private void Walker_OnAfterVisitSolution(object sender, EventArgs e)
+        private void Walker_OnAfterVisitSolution(SolutionFile solutionFile)
         {
             foreach (var visitedElementsValue in _visitedElements.Values)
             {

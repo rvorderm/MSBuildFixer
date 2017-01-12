@@ -12,11 +12,10 @@ namespace MSBuildFixer.Fixes
 			_solutionFile = sender as string;
 		}
 
-		public void OnOpenProjectFile(object sender, EventArgs eventArgs)
+		public void OnOpenProjectFile(string projectFile)
 		{
-			if (String.IsNullOrEmpty(_solutionFile)) return;
-			var projectFile = sender as string;
-			if (projectFile == null) return;
+			if (string.IsNullOrEmpty(_solutionFile)) return;
+			if (string.IsNullOrEmpty(projectFile)) return;
 			var root = Path.GetDirectoryName(_solutionFile);
 			var project = Path.GetDirectoryName(projectFile);
 

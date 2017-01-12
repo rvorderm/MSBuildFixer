@@ -21,7 +21,7 @@ namespace MSBuildFixer.Fixes
 			walker.OnAfterVisitSolution += Walker_OnAfterVisitSolution;
 		}
 
-		private void Walker_OnAfterVisitSolution(object sender, EventArgs e)
+		private void Walker_OnAfterVisitSolution(SolutionFile solutionFile)
 		{
 			var path = Path.Combine(Environment.CurrentDirectory, "ProjectsWithReference.txt");
 			List<string> list = allFiles.OrderBy(x=>x).ToList();

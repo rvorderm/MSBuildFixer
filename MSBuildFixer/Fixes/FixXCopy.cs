@@ -49,11 +49,11 @@ namespace MSBuildFixer.Fixes
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		public void OnAfterVisitSolution(object sender, EventArgs e)
+		public void OnAfterVisitSolution(SolutionFile solutionFile)
 		{
 			if (FixXCopyToggle.Enabled)
 			{
-				if (!String.IsNullOrEmpty(SolutionFilePath))
+				if (!string.IsNullOrEmpty(SolutionFilePath))
 				{
 					File.WriteAllText(Path.Combine(Path.GetDirectoryName(SolutionFilePath), _fileName), CollateAllXCopies());
 				}

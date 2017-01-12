@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Microsoft.Build.Construction;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Configuration.ConfigurationManager;
 
 namespace MSBuildFixer.Fixes
 {
@@ -26,16 +24,15 @@ namespace MSBuildFixer.Fixes
 		private readonly HashSet<string> visitedPaths = new HashSet<string>();
 		private HashSet<string> allFiles;
 
-		private void Walker_OnAfterVisitSolution(object sender, EventArgs e)
+		private void Walker_OnAfterVisitSolution(SolutionFile solutionFile)
 		{
 			IEnumerable<string> unbuiltFiles = allFiles.Except(visitedPaths).ToList();
 			var path = Path.Combine(Environment.CurrentDirectory, "UnbuiltFiles.txt");
 			File.WriteAllLines(path, unbuiltFiles);
 		}
 
-		private void Walker_OnOpenProjectFile(object sender, EventArgs e)
+		private void Walker_OnOpenProjectFile(string path)
 		{
-			var path = sender as string;
 			visitedPaths.Add(path);
 		}
 	}

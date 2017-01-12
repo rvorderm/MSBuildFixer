@@ -1,16 +1,16 @@
+using Microsoft.Build.Construction;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Build.Construction;
-using MSBuildFixer.SampleFeatureToggles;
 
 namespace MSBuildFixer
 {
 	public class SolutionWalker
 	{
 		public event EventHandler OnOpenSolution;
-		public event EventHandler OnAfterVisitSolution;
+		public delegate void AfterVisitSolutionHandler(SolutionFile solutionFile);
+		public event AfterVisitSolutionHandler OnAfterVisitSolution;
 
 		public void VisitSolution(string solutionDirectory, string solutionFilename)
 		{
@@ -22,7 +22,7 @@ namespace MSBuildFixer
 			var solutionFile = SolutionFile.Parse(solutionFilePath);
 			if (solutionFile == null) return;
 		    var projectRootElements = VisitProjects(solutionFile.ProjectsInOrder);
-            OnAfterVisitSolution?.Invoke(solutionFile, EventArgs.Empty);
+            OnAfterVisitSolution?.Invoke(solutionFile);
 		    foreach (var projectRootElement in projectRootElements)
 		    {
 		        projectRootElement?.Save();
@@ -36,15 +36,19 @@ namespace MSBuildFixer
 		    return projects.Select(VisitProject).ToList();
 		}
 
-		public event EventHandler OnOpenProjectFile;
+		public delegate void VisitProjectFileHandler(string projectPath);
+		public event VisitProjectFileHandler OnOpenProjectFile;
+		public delegate void VisitProjectItemHandler(ProjectRootElement rootElement);
+		public event VisitProjectItemHandler OnVisitProjectRootItem;
 		public ProjectRootElement VisitProject(ProjectInSolution project)
 		{
 			if (project.ProjectType == SolutionProjectType.SolutionFolder) return null;
 			var absolutePath = project.AbsolutePath;
 			if (project.ProjectType == SolutionProjectType.WebProject) return null;
-			OnOpenProjectFile?.Invoke(absolutePath, EventArgs.Empty);
-			var projectRootElement = ProjectRootElement.Open(absolutePath);
+			OnOpenProjectFile?.Invoke(absolutePath);
+			ProjectRootElement projectRootElement = ProjectRootElement.Open(absolutePath);
 			if (projectRootElement == null) return null;
+			OnVisitProjectRootItem?.Invoke(projectRootElement);
 			VisitPropertyGroups(projectRootElement.PropertyGroups);
 			VisitProjectItemGroups(projectRootElement.ItemGroups);
 			return projectRootElement;
