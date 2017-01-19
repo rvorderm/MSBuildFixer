@@ -8,18 +8,27 @@ namespace MSBuildFixer.Fixes
 {
 	class FixAPICore : IFix
 	{
-		private HashSet<string> _projectPaths;
-
-		public FixAPICore()
-		{
-			_projectPaths = new HashSet<string>();
-		}
+		private readonly HashSet<string> _projectPaths = new HashSet<string>();
+		private const string Version = "1.0.1.103";
+		private static readonly string Include = $"Api.Core, Version={Version}, Culture=neutral, PublicKeyToken=b8761d376eb50bae, processorArchitecture=MSIL";
+		private static readonly string HintPath = $@"..\..\packages\Public.API.Core.{Version}\lib\net461\Api.Core.dll";
 
 		public void AttachTo(SolutionWalker walker)
 		{
 			walker.OnAfterVisitSolution += Walker_OnAfterVisitSolution;
 			walker.OnVisitProjectRootItem += replaceAPI;
 			walker.OnVisitProjectRootItem += replaceNewtonSoft;
+			walker.OnVisitProjectItem += Walker_OnVisitProjectItem;
+		}
+
+		private void Walker_OnVisitProjectItem(ProjectItemElement projectItemElement)
+		{
+//			if (!projectItemElement.ItemType.Equals("ProjectReference")) return;
+			if (!projectItemElement.Include.Contains("Api.Core.csproj")) return;
+
+			projectItemElement.Parent.RemoveChild(projectItemElement);
+			ProjectItemElement itemElement = projectItemElement.ContainingProject.AddItem("Reference", Include);
+			AddOrUpdateReference(itemElement);
 		}
 
 		private void Walker_OnAfterVisitSolution(SolutionFile solutionFile)
@@ -37,7 +46,7 @@ namespace MSBuildFixer.Fixes
 				}
 
 				xmlDocument.Load(packageFilePath);
-				AddOrUpdateElement(xmlDocument, "Public.API.Core", "1.0.0.61");
+				AddOrUpdateElement(xmlDocument, "Public.API.Core", Version);
 				AddOrUpdateElement(xmlDocument, "Newtonsoft.Json", "8.0.3");
 				xmlDocument.Save(packageFilePath);
 			}
@@ -109,10 +118,25 @@ namespace MSBuildFixer.Fixes
 			_projectPaths.Add(projectRootElement.FullPath);
 			foreach (ProjectItemElement projectItemElement in oldApiRef)
 			{
-				projectItemElement.Include =
-					"Api.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b8761d376eb50bae, processorArchitecture=MSIL";
-				ProjectMetadataElement hintPath = projectItemElement.Metadata.FirstOrDefault(x=>x.Name.Equals("HintPath"));
-				if (hintPath != null) hintPath.Value = @"..\..\packages\Public.API.Core.1.0.0.61\lib\net461\Api.Core.dll";
+				AddOrUpdateReference(projectItemElement);
+			}
+		}
+
+		private static void AddOrUpdateReference(ProjectItemElement projectItemElement)
+		{
+			projectItemElement.Include = Include;
+			AddOrUpdateMetaData(projectItemElement, "HintPath", HintPath);
+			AddOrUpdateMetaData(projectItemElement, "SpecificVersion", false.ToString());
+		}
+
+		private static void AddOrUpdateMetaData(ProjectItemElement projectItemElement, string name, string value)
+		{
+			ProjectMetadataElement hintPath = projectItemElement.Metadata.FirstOrDefault(x => x.Name.Equals(name));
+			if (hintPath == null)
+				hintPath = projectItemElement.AddMetadata(name, value);
+			else
+			{
+				hintPath.Value = value;
 			}
 		}
 
