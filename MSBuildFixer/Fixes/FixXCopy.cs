@@ -27,10 +27,8 @@ namespace MSBuildFixer.Fixes
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		public void OnVisitProperty(object sender, EventArgs e)
+		public void OnVisitProperty(ProjectPropertyElement property)
 		{
-			var property = sender as ProjectPropertyElement;
-			if (property == null) return;
 			if (property.Name.Equals("AssemblyName"))
 			{
 				_assemblyNames[property.ContainingProject] = property.Value;
@@ -65,9 +63,9 @@ namespace MSBuildFixer.Fixes
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		public void OnOpenSolution(object sender, EventArgs e)
+		public void OnOpenSolution(string solutionPath)
 		{
-			SolutionFilePath = sender as string;
+			SolutionFilePath = solutionPath;
 		}
 
 		public string CollateAllXCopies()

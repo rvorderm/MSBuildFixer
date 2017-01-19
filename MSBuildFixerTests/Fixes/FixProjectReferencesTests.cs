@@ -24,7 +24,7 @@ namespace MSBuildFixerTests.Fixes
 				Assert.IsNotNull(projectItemElement);
 
 				var fixCopyToOutputDirectory = new FixProjectRefences();
-				fixCopyToOutputDirectory.VisitProjectItem(projectItemElement, EventArgs.Empty);
+				fixCopyToOutputDirectory.VisitProjectItem(projectItemElement);
 				Assert.IsNull(CheckForReference(projectRootElement));
 			}
 

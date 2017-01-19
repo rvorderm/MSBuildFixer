@@ -69,7 +69,7 @@ namespace MSBuildFixerTests.Fixes
 				Assert.IsFalse(element.Metadata.Any(x=>x.Name.Equals("Private")));
 
 				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitProjectItem(element, EventArgs.Empty);
+				fixCopyLocal.OnVisitProjectItem(element);
 				Assert.IsTrue(element.Metadata.Any(x => x.Name.Equals("Private")));
 				Assert.AreEqual(false.ToString(), element.Metadata.First(x => x.Name.Equals("Private")).Value);
 			}
@@ -92,7 +92,7 @@ namespace MSBuildFixerTests.Fixes
 				Assert.IsFalse(element.Metadata.Any(x => x.Name.Equals("Private")));
 
 				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitProjectItem(element, EventArgs.Empty);
+				fixCopyLocal.OnVisitProjectItem(element);
 				Assert.IsFalse(element.Metadata.Any(x => x.Name.Equals("Private")));
 			}
 
@@ -107,7 +107,7 @@ namespace MSBuildFixerTests.Fixes
 				var count = element.Metadata.Count;
 
 				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitProjectItem(element, EventArgs.Empty);
+				fixCopyLocal.OnVisitProjectItem(element);
 				Assert.AreEqual(count, element.Metadata.Count);
 			}
 
@@ -123,23 +123,8 @@ namespace MSBuildFixerTests.Fixes
 				Assert.IsFalse(element.Metadata.Any(x => x.Name.Equals("Private")));
 
 				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitProjectItem(element, EventArgs.Empty);
+				fixCopyLocal.OnVisitProjectItem(element);
 				Assert.IsFalse(element.Metadata.Any(x => x.Name.Equals("Private")));
-			}
-
-			[TestMethod]
-			public void NotProjectItem()
-			{
-				TestSetup.SetToggleTo(CopyLocalToggle.Instance, true);
-
-				var projectRootElement = TestSetup.GetTestProject();
-
-				var element = projectRootElement.Items.First(x => x.ItemType.Equals("Reference"));
-				var count = element.Metadata.Count;
-
-				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitProjectItem(element.Metadata.First(), EventArgs.Empty);
-				Assert.AreEqual(count, element.Metadata.Count);
 			}
 		}
 	}

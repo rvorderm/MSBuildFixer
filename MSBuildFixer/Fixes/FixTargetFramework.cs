@@ -1,6 +1,5 @@
 ﻿using Microsoft.Build.Construction;
 using MSBuildFixer.SampleFeatureToggles;
-using System;
 using static System.Configuration.ConfigurationManager;
 
 namespace MSBuildFixer.Fixes
@@ -18,10 +17,8 @@ namespace MSBuildFixer.Fixes
 		{
 		}
 
-		public void OnVisitProperty(object sender, EventArgs e)
+		public void OnVisitProperty(ProjectPropertyElement projectPropertyElement)
 		{
-			var projectPropertyElement = sender as ProjectPropertyElement;
-			if (projectPropertyElement == null) return;
 			if (!FixTargetFrameworkToggle.Enabled) return;
 			if (!projectPropertyElement.Name.Equals("TargetFrameworkVersion")) return;
 

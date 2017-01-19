@@ -29,10 +29,8 @@ namespace MSBuildFixer.Fixes
 			File.WriteAllLines(path, list);
 		}
 
-		private void Walker_OnVisitProjectItem(object sender, EventArgs e)
+		private void Walker_OnVisitProjectItem(ProjectItemElement projectItemElement)
 		{
-			var projectItemElement = sender as ProjectItemElement;
-			if (projectItemElement == null) return;
 			Match match = _regex.Match(projectItemElement.Include);
 			if (match.Success) allFiles.Add(projectItemElement.ContainingProject.FullPath);
 		}

@@ -1,16 +1,13 @@
 ﻿using Microsoft.Build.Construction;
 using MSBuildFixer.SampleFeatureToggles;
-using System;
 using System.IO;
 
 namespace MSBuildFixer.Fixes
 {
 	public class FixOutputPath : IFix
 	{
-		public void OnVisitProperty(object sender, EventArgs e)
+		public void OnVisitProperty(ProjectPropertyElement projectPropertyElement)
 		{
-			var projectPropertyElement = sender as ProjectPropertyElement;
-			if (projectPropertyElement == null) return;
 			if (!OutputPathToggle.Enabled) return;
 			if (!projectPropertyElement.Name.Equals("OutputPath")) return;
 
@@ -26,9 +23,8 @@ namespace MSBuildFixer.Fixes
 		}
 
 		private string solutionFolder;
-		private void OnOpenSolution(Object sender, EventArgs e)
+		private void OnOpenSolution(string path)
 		{
-			var path = sender as string;
 			if (string.IsNullOrEmpty(path)) return;
 			solutionFolder = Path.GetDirectoryName(path);
 			if (!solutionFolder.EndsWith(@"\")) solutionFolder += @"\";

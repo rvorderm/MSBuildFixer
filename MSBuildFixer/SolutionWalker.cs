@@ -1,4 +1,5 @@
 using Microsoft.Build.Construction;
+using MSBuildFixer.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +9,8 @@ namespace MSBuildFixer
 {
 	public class SolutionWalker
 	{
-		public event EventHandler OnOpenSolution;
+		public delegate void OnOpenSolutionHandler(string solutionPath);
+		public event OnOpenSolutionHandler OnOpenSolution;
 		public delegate void AfterVisitSolutionHandler(SolutionFile solutionFile);
 		public event AfterVisitSolutionHandler OnAfterVisitSolution;
 
@@ -16,9 +18,8 @@ namespace MSBuildFixer
 		{
 			if(string.IsNullOrEmpty(solutionDirectory)) throw new ArgumentNullException(nameof(solutionDirectory));
 			if(string.IsNullOrEmpty(solutionFilename)) throw new ArgumentNullException(nameof(solutionFilename));
-
 			var solutionFilePath = Path.Combine(solutionDirectory, solutionFilename);
-			OnOpenSolution?.Invoke(solutionFilePath, EventArgs.Empty);
+			OnOpenSolution?.Invoke(solutionFilePath);
 			var solutionFile = SolutionFile.Parse(solutionFilePath);
 			if (solutionFile == null) return;
 		    var projectRootElements = VisitProjects(solutionFile.ProjectsInOrder);
@@ -29,22 +30,24 @@ namespace MSBuildFixer
 		    }
 		}
 
-		public event EventHandler OnVisitProjects;
+		public delegate void VisitProjectsCollectionHandler(IReadOnlyList<ProjectInSolution> projects);
+		public event VisitProjectsCollectionHandler OnVisitProjects;
 		public IEnumerable<ProjectRootElement> VisitProjects(IReadOnlyList<ProjectInSolution> projects)
 		{
-			OnVisitProjects?.Invoke(projects, EventArgs.Empty);
+			OnVisitProjects?.Invoke(projects);
 		    return projects.Select(VisitProject).ToList();
 		}
 
 		public delegate void VisitProjectFileHandler(string projectPath);
 		public event VisitProjectFileHandler OnOpenProjectFile;
-		public delegate void VisitProjectItemHandler(ProjectRootElement rootElement);
-		public event VisitProjectItemHandler OnVisitProjectRootItem;
+		public delegate void VisitProjectRootElementHandler(ProjectRootElement rootElement);
+		public event VisitProjectRootElementHandler OnVisitProjectRootItem;
 		public ProjectRootElement VisitProject(ProjectInSolution project)
 		{
 			if (project.ProjectType == SolutionProjectType.SolutionFolder) return null;
 			var absolutePath = project.AbsolutePath;
 			if (project.ProjectType == SolutionProjectType.WebProject) return null;
+			if (ExclusionConfiguration.IsExcludedProject(absolutePath)) return null;
 			OnOpenProjectFile?.Invoke(absolutePath);
 			ProjectRootElement projectRootElement = ProjectRootElement.Open(absolutePath);
 			if (projectRootElement == null) return null;
@@ -75,28 +78,31 @@ namespace MSBuildFixer
 			}
 		}
 
-		public event EventHandler OnVisitProjectItem;
+		public delegate void VisitProjectItemHandler(ProjectItemElement projectItemElement);
+		public event VisitProjectItemHandler OnVisitProjectItem;
 
 		public void VisitProjectItem(ProjectItemElement projectItemElement)
 		{
-			OnVisitProjectItem?.Invoke(projectItemElement, EventArgs.Empty);
+			OnVisitProjectItem?.Invoke(projectItemElement);
 			VisitMetadataCollection(projectItemElement.Metadata);
 		}
 
-		public event EventHandler OnVisitMetadataCollection;
+		public delegate void VisitMetadataCollectionHandler(IEnumerable<ProjectMetadataElement> metadata);
+		public event VisitMetadataCollectionHandler OnVisitMetadataCollection;
 		public void VisitMetadataCollection(ICollection<ProjectMetadataElement> metadata)
 		{
-			OnVisitMetadataCollection?.Invoke(metadata, EventArgs.Empty);
+			OnVisitMetadataCollection?.Invoke(metadata);
 			foreach (var projectElement in metadata)
 			{
 				VisitMetadata(projectElement);
 			}
 		}
 
-		public event EventHandler OnVisitMetadata;
+		public delegate void VisitMetadataHandler(ProjectMetadataElement projectMetadataElement);
+		public event VisitMetadataHandler OnVisitMetadata;
 		public void VisitMetadata(ProjectMetadataElement projectMetadataElement)
 		{
-			OnVisitMetadata?.Invoke(projectMetadataElement, EventArgs.Empty);
+			OnVisitMetadata?.Invoke(projectMetadataElement);
 		}
 
 		public void VisitPropertyGroups(ICollection<ProjectPropertyGroupElement> projectPropertyGroupElements)
@@ -120,10 +126,11 @@ namespace MSBuildFixer
 			}
 		}
 
-		public event EventHandler OnVisitProperty;
+		public delegate void VisitPropertyHandler(ProjectPropertyElement projectPropertyElement);
+		public event VisitPropertyHandler OnVisitProperty;
 		public void VisitProperty(ProjectPropertyElement projectPropertyElement)
 		{
-			OnVisitProperty?.Invoke(projectPropertyElement, EventArgs.Empty);
+			OnVisitProperty?.Invoke(projectPropertyElement);
 		}
 	}
 }

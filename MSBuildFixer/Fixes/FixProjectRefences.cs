@@ -10,17 +10,13 @@ namespace MSBuildFixer.Fixes
 		public List<Dictionary<string, ProjectInSolution>> ProjectSets { get; } =
 			new List<Dictionary<string, ProjectInSolution>>();
 
-		public void VisitProjects(object sender, EventArgs e)
+		public void VisitProjects(IReadOnlyList<ProjectInSolution> projectsInSolution)
 		{
-			var projectInSolution = sender as ICollection<ProjectInSolution>;
-			if (projectInSolution == null) return;
-			ProjectSets.Add(projectInSolution.Where(x=>x.ProjectType != SolutionProjectType.SolutionFolder).ToDictionary(x=>x.ProjectName));
+			ProjectSets.Add(projectsInSolution.Where(x=>x.ProjectType != SolutionProjectType.SolutionFolder).ToDictionary(x=>x.ProjectName));
 		}
 
-		public void VisitProjectItem(object sender, EventArgs e)
+		public void VisitProjectItem(ProjectItemElement projectItemElement)
 		{
-			var projectItemElement = sender as ProjectItemElement;
-			if (projectItemElement == null) return;
 			if (!projectItemElement.ItemType.Equals("Reference")) return;
 
 			foreach (var projectSet in ProjectSets)

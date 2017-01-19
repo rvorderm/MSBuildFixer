@@ -32,12 +32,10 @@ namespace MSBuildFixer.Fixes
 		public string SolutionPath { get; set; }
 		
 
-		public void OnVisitProjectItem(object sender, EventArgs evetArgs)
+		public void OnVisitProjectItem(ProjectItemElement projectItemElement)
 		{
 			if (string.IsNullOrEmpty(SolutionPath)) throw new ArgumentException(SolutionPath);
 			if (string.IsNullOrEmpty(LibraryPath)) throw new ArgumentException(nameof(LibraryPath));
-			var projectItemElement = sender as ProjectItemElement;
-			if (projectItemElement == null) return;
 			if (!projectItemElement.ItemType.Equals("Reference")) return;
 			var metadataCollection = projectItemElement.Metadata;
 			if (metadataCollection.Any(x=>x.Name.Equals("HintPath"))) return;
@@ -51,12 +49,10 @@ namespace MSBuildFixer.Fixes
 			projectItemElement.AddMetadata("HintPath", libraryPath.Replace(SolutionPath, @"$(SolutionDir)"));
 		}
 
-		public void OnVisitMetadata(object sender, EventArgs eventArgs)
+		public void OnVisitMetadata(ProjectMetadataElement projectMetadataElement)
 		{
 			if (string.IsNullOrEmpty(SolutionPath)) throw new ArgumentException(SolutionPath);
 			if (string.IsNullOrEmpty(LibraryPath)) throw new ArgumentException(nameof(LibraryPath));
-			var projectMetadataElement = sender as ProjectMetadataElement;
-			if (projectMetadataElement == null) return;
 			if (!HintPathToggle.Enabled) return;
 			if (!projectMetadataElement.Name.Equals("HintPath")) return;
 
@@ -102,9 +98,9 @@ namespace MSBuildFixer.Fixes
 			return relativePath;
 		}
 
-		private void OnOpenSolution(object sender, EventArgs e)
+		private void OnOpenSolution(string solutionPath)
 		{
-			SolutionPath = sender as string;
+			SolutionPath = solutionPath;
 			if(SolutionPath == null) throw new NotImplementedException();
 		}
 

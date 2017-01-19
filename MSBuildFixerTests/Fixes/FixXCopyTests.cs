@@ -17,16 +17,8 @@ namespace MSBuildFixerTests.Fixes
 			public void SendString()
 			{
 				var fixXCopy = new FixXCopy();
-				fixXCopy.OnOpenSolution("fileName", EventArgs.Empty);
+				fixXCopy.OnOpenSolution("fileName");
 				Assert.AreEqual("fileName", fixXCopy.SolutionFilePath);
-			}
-
-			[TestMethod]
-			public void NotString()
-			{
-				var fixXCopy = new FixXCopy();
-				fixXCopy.OnOpenSolution(1, EventArgs.Empty);
-				Assert.IsNull(fixXCopy.SolutionFilePath);
 			}
 		}
 		[TestClass]
@@ -67,18 +59,7 @@ namespace MSBuildFixerTests.Fixes
 			public void Null()
 			{
 				var fixXCopy = new FixXCopy();
-				fixXCopy.OnVisitProperty(null, EventArgs.Empty);
-			}
-
-			[TestMethod]
-			public void WrongType()
-			{
-				var projectRootElement = TestSetup.GetTestProject();
-				var projectItemElement = projectRootElement.Items.First();
-				var fixXCopy = new FixXCopy();
-				fixXCopy.OnVisitProperty(projectItemElement, EventArgs.Empty);
-				Assert.IsFalse(fixXCopy.GetXCopies(projectRootElement).Any());
-				Assert.IsNull(fixXCopy.GetAssembly(projectRootElement));
+				fixXCopy.OnVisitProperty(null);
 			}
 
 			[TestMethod]
@@ -88,7 +69,7 @@ namespace MSBuildFixerTests.Fixes
 				var element = projectRootElement.AllChildren.OfType<ProjectPropertyElement>().First();
 				element.Name = "Invalid";
 				var fixXCopy = new FixXCopy();
-				fixXCopy.OnVisitProperty(element, EventArgs.Empty);
+				fixXCopy.OnVisitProperty(element);
 				Assert.IsFalse(fixXCopy.GetXCopies(projectRootElement).Any());
 				Assert.IsNull(fixXCopy.GetAssembly(projectRootElement));
 			}
@@ -99,7 +80,7 @@ namespace MSBuildFixerTests.Fixes
 				var projectRootElement = TestSetup.GetTestProject();
 				var element = projectRootElement.AllChildren.OfType<ProjectPropertyElement>().First(x=>x.Name.Equals("AssemblyName"));
 				var fixXCopy = new FixXCopy();
-				fixXCopy.OnVisitProperty(element, EventArgs.Empty);
+				fixXCopy.OnVisitProperty(element);
 				Assert.IsFalse(fixXCopy.GetXCopies(projectRootElement).Any());
 				Assert.IsNotNull(fixXCopy.GetAssembly(projectRootElement));
 			}
@@ -110,7 +91,7 @@ namespace MSBuildFixerTests.Fixes
 				var projectRootElement = TestSetup.GetTestProject();
 				var element = projectRootElement.AllChildren.OfType<ProjectPropertyElement>().First(x => x.Name.Equals("OutputPath"));
 				var fixXCopy = new FixXCopy();
-				fixXCopy.OnVisitProperty(element, EventArgs.Empty);
+				fixXCopy.OnVisitProperty(element);
 				Assert.IsFalse(fixXCopy.GetXCopies(projectRootElement).Any());
 				Assert.IsNull(fixXCopy.GetAssembly(projectRootElement));
 			}
@@ -121,7 +102,7 @@ namespace MSBuildFixerTests.Fixes
 				var projectRootElement = TestSetup.GetTestProject();
 				var element = projectRootElement.AllChildren.OfType<ProjectPropertyElement>().First(x => x.Name.Equals("PostBuildEvent"));
 				var fixXCopy = new FixXCopy();
-				fixXCopy.OnVisitProperty(element, EventArgs.Empty);
+				fixXCopy.OnVisitProperty(element);
 				Assert.IsTrue(fixXCopy.GetXCopies(projectRootElement).Any());
 				Assert.IsNull(fixXCopy.GetAssembly(projectRootElement));
 			}
@@ -138,13 +119,13 @@ namespace MSBuildFixerTests.Fixes
 				var assemblyNames = projectRootElement.Properties.Where(x => x.Name.Equals("AssemblyName"));
 				foreach (var assemblyName in assemblyNames)
 				{
-					fixXCopy.OnVisitProperty(assemblyName, EventArgs.Empty);
+					fixXCopy.OnVisitProperty(assemblyName);
 				}
 
 				var postBuilds = projectRootElement.Properties.Where(x => x.Name.Equals("PostBuildEvent"));
 				foreach (var postBuild in postBuilds)
 				{
-					fixXCopy.OnVisitProperty(postBuild, EventArgs.Empty);
+					fixXCopy.OnVisitProperty(postBuild);
 				}
 
 				var collateAllXCopies = fixXCopy.CollateAllXCopies();

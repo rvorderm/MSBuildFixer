@@ -7,9 +7,9 @@ namespace MSBuildFixer.Fixes
 	{
 		private string _solutionFile;
 
-		public void OnOpenSolution(object sender, EventArgs eventArgs)
+		public void OnOpenSolution(string solutionPath)
 		{
-			_solutionFile = sender as string;
+			_solutionFile = solutionPath;
 		}
 
 		public void OnOpenProjectFile(string projectFile)

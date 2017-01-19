@@ -19,12 +19,12 @@ namespace MSBuildFixerTests.Fixes
 			public void InvalidSolutionPath()
 			{
 				var projectRootElement = TestSetup.GetTestProject();
-				var projectItemElement = projectRootElement.Properties.First();
+				var projectItemElement = projectRootElement.Items.First();
 				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
 				var folder = "NotValid";
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder };
-				fixHintPath.OnVisitProjectItem(projectItemElement, EventArgs.Empty);
+				fixHintPath.OnVisitProjectItem(projectItemElement);
 			}
 
 			[TestMethod]
@@ -32,24 +32,12 @@ namespace MSBuildFixerTests.Fixes
 			public void InvalidLibrary()
 			{
 				var projectRootElement = TestSetup.GetTestProject();
-				var projectItemElement = projectRootElement.Properties.First();
+				var projectItemElement = projectRootElement.Items.First();
 				var path = "NotValid";
 				var folder = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder };
-				fixHintPath.OnVisitProjectItem(projectItemElement, EventArgs.Empty);
-			}
-
-			[TestMethod]
-			public void WrongType()
-			{
-				var projectRootElement = TestSetup.GetTestProject();
-				var projectItemElement = projectRootElement.Properties.First();
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitProjectItem(projectItemElement, EventArgs.Empty);
+				fixHintPath.OnVisitProjectItem(projectItemElement);
 			}
 
 			[TestMethod]
@@ -63,7 +51,7 @@ namespace MSBuildFixerTests.Fixes
 				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitProjectItem(projectItemElement, EventArgs.Empty);
+				fixHintPath.OnVisitProjectItem(projectItemElement);
 				Assert.AreEqual(1, projectItemElement.Metadata.Count);
 			}
 
@@ -80,7 +68,7 @@ namespace MSBuildFixerTests.Fixes
 				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitProjectItem(projectItemElement, EventArgs.Empty);
+				fixHintPath.OnVisitProjectItem(projectItemElement);
 				Assert.AreEqual(0, projectItemElement.Metadata.Count);
 			}
 
@@ -96,23 +84,8 @@ namespace MSBuildFixerTests.Fixes
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
 				projectItemElement.ItemType = "NotRef";
-				fixHintPath.OnVisitProjectItem(projectItemElement, EventArgs.Empty);
+				fixHintPath.OnVisitProjectItem(projectItemElement);
 				Assert.AreEqual(1, projectItemElement.Metadata.Count);
-			}
-
-			[TestMethod]
-			public void ParentWrongType()
-			{
-				TestSetup.SetToggleTo(HintPathToggle.Instance, true);
-				var projectRootElement = TestSetup.GetTestProject();
-				var projectItemElement = projectRootElement.Properties.First();
-				
-				
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitProjectItem(projectItemElement, EventArgs.Empty);
 			}
 
 			[TestMethod]
@@ -130,7 +103,7 @@ namespace MSBuildFixerTests.Fixes
 				if (!File.Exists(filePath)) File.Create(filePath).Close();
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitProjectItem(projectItemElement, EventArgs.Empty);
+				fixHintPath.OnVisitProjectItem(projectItemElement);
 				Assert.AreEqual(2, projectItemElement.Metadata.Count);
 				var hintPath = projectItemElement.Metadata.Skip(1).First();
 				Assert.AreEqual("HintPath", hintPath.Name);
@@ -152,7 +125,7 @@ namespace MSBuildFixerTests.Fixes
 				if(!File.Exists(filePath)) File.Create(filePath).Close();
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitProjectItem(projectItemElement, EventArgs.Empty);
+				fixHintPath.OnVisitProjectItem(projectItemElement);
 				Assert.AreEqual(2, projectItemElement.Metadata.Count);
 				var hintPath = projectItemElement.Metadata.Skip(1).First();
 				Assert.AreEqual("HintPath", hintPath.Name);
@@ -181,7 +154,7 @@ namespace MSBuildFixerTests.Fixes
 
 				var element = metadataElements[0];
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitMetadata(element, EventArgs.Empty);
+				fixHintPath.OnVisitMetadata(element);
 				Assert.AreEqual(@"$(SolutionDir)\Temp\IdeaBlade.Persistence.dll", element.Value);
 				//Assert.AreEqual(Path.Combine(Path.GetTempPath(), "IdeaBlade.Persistence.dll"), element.Value);
 			}
@@ -201,34 +174,8 @@ namespace MSBuildFixerTests.Fixes
 
 				var element = metadataElements[0];
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitMetadata(element, EventArgs.Empty);
+				fixHintPath.OnVisitMetadata(element);
 				Assert.AreEqual("..\\.lib\\Ideablade\\IdeaBlade.Persistence.dll", element.Value);
-			}
-
-			[TestMethod]
-			public void NullInput()
-			{
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitMetadata(null, EventArgs.Empty);
-			}
-
-			[TestMethod]
-			public void WrongType()
-			{
-				TestSetup.SetToggleTo(HintPathToggle.Instance, false);
-
-				var projectRootElement = TestSetup.GetTestProject();
-
-				var item = projectRootElement.AllChildren.OfType<ProjectItemElement>().First();
-
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitMetadata(item, EventArgs.Empty);
 			}
 
 			[TestMethod]
@@ -247,7 +194,7 @@ namespace MSBuildFixerTests.Fixes
 				var element = metadataElements[0];
 				element.Name = "Meow";
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitMetadata(element, EventArgs.Empty);
+				fixHintPath.OnVisitMetadata(element);
 				Assert.AreEqual("..\\.lib\\Ideablade\\IdeaBlade.Persistence.dll", element.Value);
 			}
 		}

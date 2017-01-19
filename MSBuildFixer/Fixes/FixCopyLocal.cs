@@ -1,12 +1,11 @@
 ﻿using Microsoft.Build.Construction;
 using MSBuildFixer.SampleFeatureToggles;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace MSBuildFixer.Fixes
 {
-    public enum CopyStyle
+	public enum CopyStyle
     {
         NoCopying,
         FirstOnly,
@@ -18,19 +17,15 @@ namespace MSBuildFixer.Fixes
 		private readonly Dictionary<string, ProjectItemElement> _visitedElements = new Dictionary<string, ProjectItemElement>();
 		public CopyStyle CopyStyle { get; set; } = CopyStyle.NoCopying;
 
-		public void OnVisitMetadata(object sender, EventArgs eventArgs)
+		public void OnVisitMetadata(ProjectMetadataElement projectMetadataElement)
 		{
-			var projectMetadataElement = sender as ProjectMetadataElement;
-			if (projectMetadataElement == null) return;
 			if (!CopyLocalToggle.Enabled) return;
 			if (!projectMetadataElement.Name.Equals("Private")) return;
 			projectMetadataElement.Value = false.ToString();
 		}
 
-		public void OnVisitProjectItem(object sender, EventArgs eventArgs)
+		public void OnVisitProjectItem(ProjectItemElement projectItemElement)
 		{
-			var projectItemElement = sender as ProjectItemElement;
-			if (projectItemElement == null) return;
 			if (!CopyLocalToggle.Enabled) return;
 			if (!(projectItemElement.ItemType.Equals("Reference") || projectItemElement.ItemType.Equals("ProjectReference"))) return;
 			if (IsGacAssembly(projectItemElement)) return;

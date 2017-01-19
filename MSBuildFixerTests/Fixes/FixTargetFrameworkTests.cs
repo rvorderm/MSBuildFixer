@@ -28,7 +28,7 @@ namespace MSBuildFixerTests.Fixes
 				var fixTargetFramework = new FixTargetFramework("v4.6.2");
 				ProjectPropertyElement element = elements.First();
 				Assert.AreNotEqual("v4.6.2", element.Value);
-				fixTargetFramework.OnVisitProperty(element, EventArgs.Empty);
+				fixTargetFramework.OnVisitProperty(element);
 				Assert.AreEqual("v4.6.2", element.Value);
 			}
 
@@ -45,7 +45,7 @@ namespace MSBuildFixerTests.Fixes
 				var fixTargetFramework = new FixTargetFramework("v4.6.2");
 				ProjectPropertyElement element = elements.First();
 				Assert.AreNotEqual("v4.6.2", element.Value);
-				fixTargetFramework.OnVisitProperty(element, EventArgs.Empty);
+				fixTargetFramework.OnVisitProperty(element);
 				Assert.AreNotEqual("v4.6.2", element.Value);
 			}
 
@@ -53,7 +53,7 @@ namespace MSBuildFixerTests.Fixes
 			public void NullInput()
 			{
 				var fixTargetFramework = new FixTargetFramework(string.Empty);
-				fixTargetFramework.OnVisitProperty(null, EventArgs.Empty);
+				fixTargetFramework.OnVisitProperty(null);
 			}
 
 			[TestMethod]
@@ -69,7 +69,7 @@ namespace MSBuildFixerTests.Fixes
 				var fixTargetFramework = new FixTargetFramework("v4.6.2");
 				ProjectPropertyElement element = elements.First();
 				Assert.AreNotEqual("v4.6.2", element.Value);
-				fixTargetFramework.OnVisitProperty(element, EventArgs.Empty);
+				fixTargetFramework.OnVisitProperty(element);
 				Assert.AreNotEqual("v4.6.2", element.Value);
 			}
 		}

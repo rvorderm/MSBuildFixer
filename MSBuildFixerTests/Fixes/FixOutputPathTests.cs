@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using FakeItEasy;
-using FakeItEasy.ExtensionSyntax.Full;
 using FeatureToggle.Core;
 using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,7 +31,7 @@ namespace MSBuildFixerTests.Fixes
 
 				var element = elements[0];
 				var fixOutputPath = new FixOutputPath();
-				fixOutputPath.OnVisitProperty(element, EventArgs.Empty);
+				fixOutputPath.OnVisitProperty(element);
 				Assert.AreEqual(Path.Combine("$(SolutionDir)", "bin", "$(Configuration)"), element.Value);
 			}
 
@@ -49,7 +48,7 @@ namespace MSBuildFixerTests.Fixes
 
 				var element = elements[0];
 				var fixOutputPath = new FixOutputPath();
-				fixOutputPath.OnVisitProperty(element, EventArgs.Empty);
+				fixOutputPath.OnVisitProperty(element);
 				Assert.AreEqual(@"bin\Debug", element.Value);
 			}
 
@@ -57,7 +56,7 @@ namespace MSBuildFixerTests.Fixes
 			public void NullInput()
 			{
 				var fixOutputPath = new FixOutputPath();
-				fixOutputPath.OnVisitProperty(null, EventArgs.Empty);
+				fixOutputPath.OnVisitProperty(null);
 			}
 
 			[TestMethod]
@@ -73,7 +72,7 @@ namespace MSBuildFixerTests.Fixes
 				var element = elements[0];
 				element.Name = "meow";
 				var fixOutputPath = new FixOutputPath();
-				fixOutputPath.OnVisitProperty(element, EventArgs.Empty);
+				fixOutputPath.OnVisitProperty(element);
 				Assert.AreEqual(@"bin\Debug", element.Value);
 			}
 		}

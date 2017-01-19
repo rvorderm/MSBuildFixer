@@ -1,7 +1,6 @@
 using System.IO;
 using System.Xml;
 using FakeItEasy;
-using FakeItEasy.ExtensionSyntax.Full;
 using FeatureToggle.Core;
 using FeatureToggle.Toggles;
 using Microsoft.Build.Construction;
@@ -31,7 +30,11 @@ namespace MSBuildFixerTests.Fixes
 		public static void SetToggleTo(SimpleFeatureToggle toggle, bool value)
 		{
 			var booleanToggleValueProvider = A.Fake<IBooleanToggleValueProvider>();
-			booleanToggleValueProvider.CallsTo(x => x.EvaluateBooleanToggleValue(toggle)).Returns(value);
+			A.CallTo(booleanToggleValueProvider)
+				.Where(call => call.Method.Name.Equals(nameof(booleanToggleValueProvider.EvaluateBooleanToggleValue))).
+				WithReturnType<bool>()
+				.Returns(value);
+			//booleanToggleValueProvider.CallsTo(x => x.EvaluateBooleanToggleValue(toggle)).Returns(value);
 			toggle.ToggleValueProvider = booleanToggleValueProvider;
 		}
 	}

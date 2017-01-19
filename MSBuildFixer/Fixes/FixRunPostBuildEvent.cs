@@ -1,15 +1,12 @@
 ﻿using Microsoft.Build.Construction;
 using MSBuildFixer.SampleFeatureToggles;
-using System;
 
 namespace MSBuildFixer.Fixes
 {
 	public class FixRunPostBuildEvent : IFix
 	{
-		public void OnVisitProperty(object sender, EventArgs e)
+		public void OnVisitProperty(ProjectPropertyElement projectPropertyElement)
 		{
-			var projectPropertyElement = sender as ProjectPropertyElement;
-			if (projectPropertyElement == null) return;
 			if (!RunPostBuildEventToggle.Enabled) return;
 			if (!projectPropertyElement.Name.Equals("RunPostBuildEvent")) return;
 			

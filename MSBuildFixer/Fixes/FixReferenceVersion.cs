@@ -19,10 +19,8 @@ namespace MSBuildFixer.Fixes
 			_solutionDirectory = solutionDirectory;
 		}
 
-		public void OnVisitProjectItem(object sender, EventArgs eventArgs)
+		public void OnVisitProjectItem(ProjectItemElement projectItemElement)
 		{
-			var projectItemElement = sender as ProjectItemElement;
-			if (projectItemElement == null) return;
 			if (!projectItemElement.ItemType.Equals("Reference")) return;
 			var metadataCollection = projectItemElement.Metadata;
 			var hintPath = metadataCollection.FirstOrDefault(x=>x.Name.Equals("HintPath"));
