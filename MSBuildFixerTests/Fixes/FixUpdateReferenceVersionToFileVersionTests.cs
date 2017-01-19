@@ -7,7 +7,7 @@ using System.Linq;
 namespace MSBuildFixerTests.Fixes
 {
 	[TestClass]
-	public class FixProjectReferencesTests
+	public class FixUpdateReferenceVersionToFileVersionTests
 	{
 		[TestClass]
 		public class OnVisitMetadataTests
@@ -19,7 +19,7 @@ namespace MSBuildFixerTests.Fixes
 				ProjectRootElement badProject = walker.VisitSolution(false).First();
 				ProjectItemElement badElement = badProject.Items.FirstOrDefault(x=>x.Include.StartsWith("FakeItEasy, Version=2.3.0"));
 				Assert.IsNotNull(badElement);
-				new FixReferenceVersion().AttachTo(walker);
+				new FixUpdateReferenceVersionToFileVersion().AttachTo(walker);
 				ProjectRootElement fixedProject = walker.VisitSolution(false).First();
 				ProjectItemElement missingElement = fixedProject.Items.FirstOrDefault(x => x.Include.StartsWith("FakeItEasy, Version=2.3.0"));
 				Assert.IsNull(missingElement);

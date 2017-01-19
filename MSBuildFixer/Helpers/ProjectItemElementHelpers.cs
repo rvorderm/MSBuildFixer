@@ -1,4 +1,6 @@
-﻿namespace MSBuildFixer.Helpers
+﻿using System.IO;
+
+namespace MSBuildFixer.Helpers
 {
 	public static class ProjectItemElementHelpers
 	{
@@ -16,6 +18,18 @@
 			int versionLength = "Version=".Length;
 			//Console.Out.Write($"{firstComma}, {secondComma}, {version}, {versionLength}");
 			return firstComma == -1 ? null : include.Substring(version+versionLength, secondComma-(versionLength+version));
+		}
+
+		public static string GetFileName(string solutionDirectory, string projectFullPath, string hintPathValue)
+		{
+			if (hintPathValue.Contains("$(SolutionDir)"))
+			{
+				return hintPathValue.Replace("$(SolutionDir)", solutionDirectory);
+			}
+			if(Path.IsPathRooted(hintPathValue)) return hintPathValue;
+
+			string directoryName = Path.GetDirectoryName(projectFullPath);
+			return directoryName == null ? hintPathValue : Path.Combine(directoryName, hintPathValue);
 		}
 	}
 }

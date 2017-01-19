@@ -162,7 +162,7 @@ namespace MSBuildFixer
 			Attach<FixOutputPath>(OutputPathToggle.Instance, walker);
 			Attach<FixRunPostBuildEvent>(RunPostBuildEventToggle.Instance, walker);
 			Attach<FixProjectRefences>(ProjectReferencesToggle.Instance, walker);
-			Attach<FixReferenceVersion>(ReferenceVersionToggle.Instance, walker);
+			Attach<FixUpdateReferenceVersionToFileVersion>(UpdateReferenceVersionToFileVersionToggle.Instance, walker);
 			Attach<FixXCopy>(FixXCopyToggle.Instance, walker);
 			Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
 			//AttachScriptBuilder();
