@@ -1,6 +1,7 @@
 ﻿using Microsoft.Build.Construction;
 using MSBuildFixer.SampleFeatureToggles;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -10,28 +11,31 @@ namespace MSBuildFixer.Fixes
 {
 	public class FixReferenceVersion : IFix
 	{
-		private readonly string _solutionDirectory;
-
-		public FixReferenceVersion()
+		public void AttachTo(SolutionWalker walker)
 		{
-			var fullSolutionPath = AppSettings["SolutionPath"];
-			var solutionDirectory = Path.GetDirectoryName(fullSolutionPath);
-			_solutionDirectory = solutionDirectory;
+			walker.OnOpenSolution += Walker_OnOpenSolution;
+			walker.OnVisitProjectItem += OnVisitProjectItem;
 		}
+
+		private void Walker_OnOpenSolution(string solutionPath)
+		{
+			_solutionDirectory = Path.GetDirectoryName(solutionPath);
+		}
+
+		private string _solutionDirectory;
 
 		public void OnVisitProjectItem(ProjectItemElement projectItemElement)
 		{
 			if (!projectItemElement.ItemType.Equals("Reference")) return;
-			var metadataCollection = projectItemElement.Metadata;
-			var hintPath = metadataCollection.FirstOrDefault(x=>x.Name.Equals("HintPath"));
+			ICollection<ProjectMetadataElement> metadataCollection = projectItemElement.Metadata;
+			ProjectMetadataElement hintPath = metadataCollection.FirstOrDefault(x=>x.Name.Equals("HintPath"));
 			if (hintPath == null) return;
-			if (!ReferenceVersionToggle.Enabled) return;
 
-			var fileName = GetFileName(hintPath);
+			string fileName = GetFileName(hintPath);
 			if (!File.Exists(fileName)) return;
-			var versionInfo = FileVersionInfo.GetVersionInfo(fileName);
-			var referenceVersion = GetVersion(projectItemElement.Include);
-			if (String.IsNullOrEmpty(referenceVersion)) return;
+			FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(fileName);
+			string referenceVersion = GetVersion(projectItemElement.Include);
+			if (string.IsNullOrEmpty(referenceVersion)) return;
 			if ( referenceVersion.Equals(versionInfo.FileVersion)) return;
 			projectItemElement.Include = projectItemElement.Include.Replace(referenceVersion, versionInfo.FileVersion);
 		}
@@ -44,26 +48,20 @@ namespace MSBuildFixer.Fixes
 			}
 			if(Path.IsPathRooted(hintPath.Value)) return hintPath.Value;
 
-			var directoryName = Path.GetDirectoryName(hintPath.ContainingProject.FullPath);
-			if (directoryName == null) return hintPath.Value;
-			return Path.Combine(directoryName, hintPath.Value);
+			string directoryName = Path.GetDirectoryName(hintPath.ContainingProject.FullPath);
+			return directoryName == null ? hintPath.Value : Path.Combine(directoryName, hintPath.Value);
 		}
 
-		private string GetVersion(string include)
+		private static string GetVersion(string include)
 		{
-			if (String.IsNullOrEmpty(include)) return null;
-			var indexOfVersion = include.IndexOf("Version=", StringComparison.InvariantCulture);
+			if (string.IsNullOrEmpty(include)) return null;
+			int indexOfVersion = include.IndexOf("Version=", StringComparison.InvariantCulture);
 			if (indexOfVersion < 0) return null;
-			var indexOfComma = include.IndexOf(",", indexOfVersion, StringComparison.InvariantCulture);
+			int indexOfComma = include.IndexOf(",", indexOfVersion, StringComparison.InvariantCulture);
 			if (indexOfComma < 0) return null;
 
-			var substring = include.Substring(indexOfVersion + 8, indexOfComma-indexOfVersion-8);
+			string substring = include.Substring(indexOfVersion + 8, indexOfComma-indexOfVersion-8);
 			return substring;
-		}
-
-		public void AttachTo(SolutionWalker walker)
-		{
-			walker.OnVisitProjectItem += OnVisitProjectItem;
 		}
 	}
 }

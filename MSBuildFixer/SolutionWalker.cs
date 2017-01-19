@@ -1,13 +1,13 @@
-using System;
+using FeatureToggle.Core;
 using Microsoft.Build.Construction;
 using MSBuildFixer.Configuration;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using FeatureToggle.Core;
 using MSBuildFixer.FeatureToggles;
 using MSBuildFixer.Fixes;
 using MSBuildFixer.SampleFeatureToggles;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace MSBuildFixer
 {
@@ -25,17 +25,19 @@ namespace MSBuildFixer
 			_fullSolutionPath = fullSolutionPath;
 		}
 
-		public void VisitSolution()
+		public IEnumerable<ProjectRootElement> VisitSolution(bool save = true)
 		{
 			OnOpenSolution?.Invoke(_fullSolutionPath);
 			SolutionFile solutionFile = SolutionFile.Parse(_fullSolutionPath);
-			if (solutionFile == null) return;
-		    IEnumerable<ProjectRootElement> projectRootElements = VisitProjects(solutionFile.ProjectsInOrder);
-            OnAfterVisitSolution?.Invoke(solutionFile);
-		    foreach (ProjectRootElement projectRootElement in projectRootElements)
-		    {
-		        projectRootElement?.Save();
-		    }
+			if (solutionFile == null) return null;
+			IEnumerable<ProjectRootElement> projectRootElements = VisitProjects(solutionFile.ProjectsInOrder);
+			OnAfterVisitSolution?.Invoke(solutionFile);
+			if (!save) return projectRootElements;
+			foreach (ProjectRootElement projectRootElement in projectRootElements)
+			{
+				projectRootElement?.Save();
+			}
+			return projectRootElements;
 		}
 
 		public delegate void VisitProjectsCollectionHandler(IReadOnlyList<ProjectInSolution> projects);
@@ -43,7 +45,7 @@ namespace MSBuildFixer
 		public IEnumerable<ProjectRootElement> VisitProjects(IReadOnlyList<ProjectInSolution> projects)
 		{
 			OnVisitProjects?.Invoke(projects);
-		    return projects.Select(VisitProject).ToList();
+			return projects.Select(VisitProject).ToList();
 		}
 
 		public delegate void VisitProjectFileHandler(string projectPath);

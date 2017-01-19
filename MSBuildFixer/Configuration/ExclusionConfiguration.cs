@@ -19,7 +19,7 @@ namespace MSBuildFixer.Configuration
 			string fileName = Path.GetFileName(absolutePath);
 			if(string.IsNullOrEmpty(fileName)) throw new ArgumentException($"{nameof(absolutePath)} must be a valid file name");
 			_exclustionConfiguration = (dynamic) ConfigurationManager.GetSection("exclusionConfiguration");
-			return _exclustionConfiguration.Projects?.Any(exclusion => fileName.Equals(exclusion)) ?? false;
+			return _exclustionConfiguration?.Projects?.Any(exclusion => fileName.Equals(exclusion)) ?? false;
 		}
 	}
 }

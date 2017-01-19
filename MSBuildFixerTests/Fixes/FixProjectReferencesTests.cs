@@ -1,8 +1,7 @@
 ﻿using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MSBuildFixer.FeatureToggles;
+using MSBuildFixer;
 using MSBuildFixer.Fixes;
-using System;
 using System.Linq;
 
 namespace MSBuildFixerTests.Fixes
@@ -14,36 +13,18 @@ namespace MSBuildFixerTests.Fixes
 		public class OnVisitMetadataTests
 		{
 			[TestMethod]
-			public void SetsValue()
+			public void FixesVersionNumber()
 			{
-				TestSetup.SetToggleTo(ProjectReferencesToggle.Instance, true);
-
-				var projectRootElement = TestSetup.GetTestProject();
-
-				var projectItemElement = CheckForReference(projectRootElement);
-				Assert.IsNotNull(projectItemElement);
-
-				var fixCopyToOutputDirectory = new FixProjectRefences();
-				fixCopyToOutputDirectory.VisitProjectItem(projectItemElement);
-				Assert.IsNull(CheckForReference(projectRootElement));
-			}
-
-			private static ProjectItemElement CheckForReference(ProjectRootElement projectRootElement)
-			{
-				var reference = "Reference";
-				return CheckFor(projectRootElement, reference);
-			}
-
-			private static ProjectItemElement CheckForProjectReference(ProjectRootElement projectRootElement)
-			{
-				var reference = "ProjectReference";
-				return CheckFor(projectRootElement, reference);
-			}
-
-			private static ProjectItemElement CheckFor(ProjectRootElement projectRootElement, string reference)
-			{
-				return
-					projectRootElement.Items.FirstOrDefault(x => x.ItemType.Equals(reference) && x.Include.Contains("Reporting.Model"));
+				var walker = new SolutionWalker(TestSetup.SolutionPath);
+				ProjectRootElement badProject = walker.VisitSolution(false).First();
+				ProjectItemElement badElement = badProject.Items.FirstOrDefault(x=>x.Include.StartsWith("FakeItEasy, Version=2.3.0"));
+				Assert.IsNotNull(badElement);
+				new FixReferenceVersion().AttachTo(walker);
+				ProjectRootElement fixedProject = walker.VisitSolution(false).First();
+				ProjectItemElement missingElement = fixedProject.Items.FirstOrDefault(x => x.Include.StartsWith("FakeItEasy, Version=2.3.0"));
+				Assert.IsNull(missingElement);
+				ProjectItemElement fixedElement = fixedProject.Items.FirstOrDefault(x => x.Include.StartsWith("FakeItEasy, Version=2.3.3"));
+				Assert.IsNotNull(fixedElement);
 			}
 		}
 	}

@@ -51,10 +51,22 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FakeItEasy, Version=2.3.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
+      <HintPath>packages\FakeItEasy.2.3.3\lib\net40\FakeItEasy.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FeatureToggle, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\FeatureToggle.3.5.1\lib\net40\FeatureToggle.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FeatureToggle.Core, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\FeatureToggle.Core.3.5.1\lib\portable-net40+sl50+wp81+wpa+win\FeatureToggle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Reporting.Model, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b8761d376eb50bae, processorArchitecture=MSIL">
-        <SpecificVersion>False</SpecificVersion>
-        <HintPath>$(SolutionDir)\.lib\Tyler\Reporting.Model.dll</HintPath>
-        <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)\.lib\Tyler\Reporting.Model.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="IdeaBlade.Persistence, Version=3.6.4.1, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -78,6 +90,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="SimpleConfig">
+      <HintPath>..\..\packages\simple-config.1.4.0\lib\net40\SimpleConfig.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -845,6 +860,7 @@
     <Compile Include="Utility\PagedQuery.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="TylerIncodeKey.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
