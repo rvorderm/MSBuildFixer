@@ -1,8 +1,8 @@
 ﻿using Microsoft.Build.Construction;
+using MSBuildFixer.Helpers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 
 namespace MSBuildFixer.Fixes
 {
@@ -38,63 +38,11 @@ namespace MSBuildFixer.Fixes
 				string projectDirectory = Path.GetDirectoryName(projectPath);
 				string packageFilePath = Path.Combine(projectDirectory, "packages.config");
 
-
-				var xmlDocument = new XmlDocument();
-				if (!File.Exists(packageFilePath))
-				{
-					File.WriteAllText(packageFilePath, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<packages>\r\n</packages>");
-				}
-
-				xmlDocument.Load(packageFilePath);
-				AddOrUpdateElement(xmlDocument, "Public.API.Core", Version);
-				AddOrUpdateElement(xmlDocument, "Newtonsoft.Json", "8.0.3");
-				xmlDocument.Save(packageFilePath);
+				new PackageConfigHelper(packageFilePath)
+					.WithPackage("Public.API.Core", Version)
+					.WithPackage("Newtonsoft.Json", "8.0.3")
+					.SavePackageFile();
 			}
-		}
-
-		private static void AddOrUpdateElement(XmlDocument xmlDocument, string name, string version)
-		{
-			XmlElement xmlElement = GetElement(xmlDocument, name);
-			if (xmlElement == null)
-			{
-				xmlElement = (XmlElement)xmlDocument.SelectSingleNode("//packages");
-				var child = AddPackage(xmlDocument, name, version);
-				xmlElement.AppendChild(child);
-			}
-			else
-			{
-				xmlElement.Attributes["version"].Value = version;
-			}
-		}
-
-		private static XmlElement AddPackage(XmlDocument xmlDocument, string id, string version)
-		{
-			var child = xmlDocument.CreateElement("package");
-			addAttribute(xmlDocument, child, "id", id);
-			addAttribute(xmlDocument, child, "version", version);
-			addAttribute(xmlDocument, child, "targetFramework", "net461");
-			return child;
-		}
-
-		private static void addAttribute(XmlDocument xmlDocument, XmlElement elem, string name, string version)
-		{
-			XmlAttribute xmlAttribute = xmlDocument.CreateAttribute(name);
-			xmlAttribute.Value = version;
-			elem.Attributes.Append(xmlAttribute);
-		}
-
-		private static XmlElement GetElement(XmlDocument xmlDocument, string id)
-		{
-			XmlNodeList xmlNodeList = xmlDocument.SelectNodes("//package");
-			if (xmlNodeList == null) return null;
-			foreach (XmlElement elem in xmlNodeList)
-			{
-				if (elem.Attributes["id"].Value.Equals(id))
-				{
-					return elem;
-				}
-			}
-			return null;
 		}
 
 		private void replaceNewtonSoft(ProjectRootElement projectRootElement)
