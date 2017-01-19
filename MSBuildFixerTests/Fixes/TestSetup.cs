@@ -14,7 +14,7 @@ namespace MSBuildFixerTests.Fixes
 	[TestClass]
 	public static class TestSetup
 	{
-		private const string _solutionPath = @"..\..\TestData\Test.sln";
+		private const string _solutionPath = @"..\..\MSBuildFixerTests\TestData\Test.sln";
 		public static readonly string SolutionPath = Path.Combine(Environment.CurrentDirectory, _solutionPath);
 		private static ProjectRootElement _projectRootElement;
 
