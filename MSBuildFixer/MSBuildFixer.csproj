@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ExclusionConfiguration.cs" />
+    <Compile Include="Configuration\ReferencesConfiguration.cs" />
     <Compile Include="Configuration\SolutionConfiguration.cs" />
     <Compile Include="FeatureToggles\BuildCopyScriptsToggle.cs" />
     <Compile Include="FeatureToggles\ColocateAssemblyInfo.cs" />

@@ -1,11 +1,5 @@
-﻿using FeatureToggle.Core;
-using MSBuildFixer.Configuration;
-using MSBuildFixer.FeatureToggles;
-using MSBuildFixer.Fixes;
-using MSBuildFixer.SampleFeatureToggles;
+﻿using MSBuildFixer.Configuration;
 using System;
-using System.IO;
-using static System.Configuration.ConfigurationManager;
 
 namespace MSBuildFixer
 {
@@ -13,9 +7,7 @@ namespace MSBuildFixer
 	{
 		static void Main(string[] args)
 		{
-			SolutionConfiguration solutionConfiguration = (dynamic)GetSection("solutionConfiguration");
-
-			foreach (string fullSolutionPath in solutionConfiguration.Solutions)
+			foreach (string fullSolutionPath in SolutionConfiguration.Instance.Solutions)
 			{
 				SolutionWalker projectFixer = SolutionWalker.CreateWalker(fullSolutionPath);
 				projectFixer.VisitSolution();
