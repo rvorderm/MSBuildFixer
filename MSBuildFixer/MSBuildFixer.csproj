@@ -54,8 +54,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ExclusionConfiguration.cs" />
     <Compile Include="Configuration\SolutionConfiguration.cs" />
     <Compile Include="FeatureToggles\BuildCopyScriptsToggle.cs" />
+    <Compile Include="FeatureToggles\ColocateAssemblyInfo.cs" />
     <Compile Include="FeatureToggles\FixTargetFrameworkToggle.cs" />
     <Compile Include="FeatureToggles\FixXCopyToggle.cs" />
     <Compile Include="FeatureToggles\UseRelativePathing.cs" />
@@ -67,6 +69,8 @@
     <Compile Include="FeatureToggles\OutputPathToggle.cs" />
     <Compile Include="FeatureToggles\HintPathToggle.cs" />
     <Compile Include="FeatureToggles\CopyLocalToggle.cs" />
+    <Compile Include="Fixes\FixCodeSigning.cs" />
+    <Compile Include="Fixes\FixColocateAssemblyInfo.cs" />
     <Compile Include="Fixes\FixCopyToOutputDirectory.cs" />
     <Compile Include="Fixes\FixCopyLocal.cs" />
     <Compile Include="Fixes\FixReferenceVersion.cs" />

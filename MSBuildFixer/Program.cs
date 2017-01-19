@@ -43,6 +43,7 @@ namespace MSBuildFixer
 		{
 			Attach<MergeBinFolders>(MergeBinFoldersToggle.Instance, walker);
 			Attach<FixCopyLocal>(CopyLocalToggle.Instance, walker);
+			Attach<FixColocateAssemblyInfo>(ColocateAssemblyInfoToggle.Instance, walker);
 			Attach<FixCopyToOutputDirectory>(CopyToOutputDirectoryToggle.Instance, walker);
 			Attach<FixHintPath>(HintPathToggle.Instance, walker);
 			Attach<FixOutputPath>(OutputPathToggle.Instance, walker);
@@ -53,8 +54,9 @@ namespace MSBuildFixer
 			//Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
 			//AttachScriptBuilder();
 			//new ListUntrackedProjectFiles(solutionPath).AttachTo(walker);
-			//Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ListProjectsWithReferences.ReferenceRegex), walker);
+//			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ListProjectsWithReferences.ReferenceRegex), walker);
 			new FixAPICore().AttachTo(walker);
+//			new FixCodeSigning().AttachTo(walker);
 		}
 
 		private static void Attach<T>(IFeatureToggle copyLocalToggle, SolutionWalker walker)
