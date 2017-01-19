@@ -1,30 +1,38 @@
+using System;
 using Microsoft.Build.Construction;
 using MSBuildFixer.Configuration;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FeatureToggle.Core;
+using MSBuildFixer.FeatureToggles;
+using MSBuildFixer.Fixes;
+using MSBuildFixer.SampleFeatureToggles;
 
 namespace MSBuildFixer
 {
 	public class SolutionWalker
 	{
+		private readonly string _fullSolutionPath;
+
 		public delegate void OnOpenSolutionHandler(string solutionPath);
 		public event OnOpenSolutionHandler OnOpenSolution;
 		public delegate void AfterVisitSolutionHandler(SolutionFile solutionFile);
 		public event AfterVisitSolutionHandler OnAfterVisitSolution;
 
-		public void VisitSolution(string solutionDirectory, string solutionFilename)
+		public SolutionWalker(string fullSolutionPath)
 		{
-			if(string.IsNullOrEmpty(solutionDirectory)) throw new ArgumentNullException(nameof(solutionDirectory));
-			if(string.IsNullOrEmpty(solutionFilename)) throw new ArgumentNullException(nameof(solutionFilename));
-			var solutionFilePath = Path.Combine(solutionDirectory, solutionFilename);
-			OnOpenSolution?.Invoke(solutionFilePath);
-			var solutionFile = SolutionFile.Parse(solutionFilePath);
+			_fullSolutionPath = fullSolutionPath;
+		}
+
+		public void VisitSolution()
+		{
+			OnOpenSolution?.Invoke(_fullSolutionPath);
+			SolutionFile solutionFile = SolutionFile.Parse(_fullSolutionPath);
 			if (solutionFile == null) return;
-		    var projectRootElements = VisitProjects(solutionFile.ProjectsInOrder);
+		    IEnumerable<ProjectRootElement> projectRootElements = VisitProjects(solutionFile.ProjectsInOrder);
             OnAfterVisitSolution?.Invoke(solutionFile);
-		    foreach (var projectRootElement in projectRootElements)
+		    foreach (ProjectRootElement projectRootElement in projectRootElements)
 		    {
 		        projectRootElement?.Save();
 		    }
@@ -131,6 +139,57 @@ namespace MSBuildFixer
 		public void VisitProperty(ProjectPropertyElement projectPropertyElement)
 		{
 			OnVisitProperty?.Invoke(projectPropertyElement);
+		}
+
+		public static SolutionWalker CreateWalker(string fullSolutionPath)
+		{
+			if (!File.Exists(fullSolutionPath))
+			{
+				Console.WriteLine($"SolutionPath null or directory did not exist: {fullSolutionPath}");
+				throw new ArgumentException(fullSolutionPath);
+			}
+
+			Console.WriteLine($"Opening {fullSolutionPath}");
+
+			SolutionWalker walker = new SolutionWalker(fullSolutionPath);
+			Attach<MergeBinFolders>(MergeBinFoldersToggle.Instance, walker);
+			Attach<FixCopyLocal>(CopyLocalToggle.Instance, walker);
+			Attach<FixColocateAssemblyInfo>(ColocateAssemblyInfoToggle.Instance, walker);
+			Attach<FixCopyToOutputDirectory>(CopyToOutputDirectoryToggle.Instance, walker);
+			Attach<FixHintPath>(HintPathToggle.Instance, walker);
+			Attach<FixOutputPath>(OutputPathToggle.Instance, walker);
+			Attach<FixRunPostBuildEvent>(RunPostBuildEventToggle.Instance, walker);
+			Attach<FixProjectRefences>(ProjectReferencesToggle.Instance, walker);
+			Attach<FixReferenceVersion>(ReferenceVersionToggle.Instance, walker);
+			Attach<FixXCopy>(FixXCopyToggle.Instance, walker);
+			Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
+			//AttachScriptBuilder();
+			new ListUntrackedProjectFiles().AttachTo(walker);
+//			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ListProjectsWithReferences.ReferenceRegex), walker);
+			new FixAPICore().AttachTo(walker);
+//			new FixCodeSigning().AttachTo(walker);
+			return walker;
+		}
+
+		public static void Attach<T>(IFeatureToggle copyLocalToggle, SolutionWalker walker)
+			where T : IFix, new()
+		{
+			Attach<T>(copyLocalToggle.FeatureEnabled, walker);
+		}
+
+		public static void Attach<T>(bool shouldAttach, SolutionWalker walker)
+			where T : IFix, new()
+		{
+			if (shouldAttach) new T().AttachTo(walker);
+		}
+
+		public static void AttachScriptBuilder()
+		{
+			var scriptBuilder = new ScriptBuilder();
+			if (BuildCopyScriptsToggle.Enabled)
+			{
+				scriptBuilder.BuildScripts();
+			}
 		}
 	}
 }

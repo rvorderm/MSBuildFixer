@@ -6,34 +6,39 @@ using System.Linq;
 
 namespace MSBuildFixer.Fixes
 {
-	class ListUntrackedProjectFiles : IFix
+	public class ListUntrackedProjectFiles : IFix
 	{
-		public ListUntrackedProjectFiles(string fullSolutionPath)
-		{
-			var solutionDirectory = Path.GetDirectoryName(fullSolutionPath);
-			IEnumerable<string> files = Directory.EnumerateFiles(solutionDirectory, "*.csproj", SearchOption.AllDirectories);
-			allFiles = new HashSet<string>(files);
-		}
 
 		public void AttachTo(SolutionWalker walker)
 		{
 			walker.OnOpenProjectFile += Walker_OnOpenProjectFile;
 			walker.OnAfterVisitSolution += Walker_OnAfterVisitSolution;
+			walker.OnOpenSolution += Walker_OnOpenSolution;
 		}
 
-		private readonly HashSet<string> visitedPaths = new HashSet<string>();
-		private HashSet<string> allFiles;
+		private void Walker_OnOpenSolution(string solutionPath)
+		{
+			string solutionDirectory = Path.GetDirectoryName(solutionPath);
+			IEnumerable<string> files = Directory.EnumerateFiles(solutionDirectory, "*.csproj", SearchOption.AllDirectories);
+			foreach (string file in files)
+			{
+				_allFiles.Add(file);
+			}
+		}
+
+		private readonly HashSet<string> _visitedPaths = new HashSet<string>();
+		private readonly HashSet<string> _allFiles = new HashSet<string>();
 
 		private void Walker_OnAfterVisitSolution(SolutionFile solutionFile)
 		{
-			IEnumerable<string> unbuiltFiles = allFiles.Except(visitedPaths).ToList();
+			IEnumerable<string> unbuiltFiles = _allFiles.Except(_visitedPaths).ToList();
 			var path = Path.Combine(Environment.CurrentDirectory, "UnbuiltFiles.txt");
 			File.WriteAllLines(path, unbuiltFiles);
 		}
 
 		private void Walker_OnOpenProjectFile(string path)
 		{
-			visitedPaths.Add(path);
+			_visitedPaths.Add(path);
 		}
 	}
 }

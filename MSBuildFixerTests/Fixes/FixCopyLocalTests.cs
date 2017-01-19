@@ -26,7 +26,7 @@ namespace MSBuildFixerTests.Fixes
 
 				var element = metadataElements[0];
 				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitMetadata(element, EventArgs.Empty);
+				fixCopyLocal.OnVisitMetadata(element);
 				Assert.AreEqual(false.ToString(), element.Value);
 			}
 
@@ -34,7 +34,7 @@ namespace MSBuildFixerTests.Fixes
 			public void NullInput()
 			{
 				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitMetadata(null, EventArgs.Empty);
+				fixCopyLocal.OnVisitMetadata(null);
 			}
 
 			[TestMethod]
@@ -50,7 +50,7 @@ namespace MSBuildFixerTests.Fixes
 				var element = metadataElements[0];
 				element.Name = "meow";
 				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitMetadata(element, EventArgs.Empty);
+				fixCopyLocal.OnVisitMetadata(element);
 				Assert.AreEqual(true.ToString(), element.Value);
 			}
 		}
@@ -78,7 +78,7 @@ namespace MSBuildFixerTests.Fixes
 			public void NullInput()
 			{
 				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitMetadata(null, EventArgs.Empty);
+				fixCopyLocal.OnVisitMetadata(null);
 			}
 
 			[TestMethod]

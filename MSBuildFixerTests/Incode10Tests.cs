@@ -122,11 +122,11 @@ namespace MSBuildFixerTests
 
 		private static void DoFix<T>(string dir, string filename, Action<T> action = null) where T : IFix, new()
 		{
-			var projectFixer = new SolutionWalker();
+			var projectFixer = new SolutionWalker(Path.Combine(dir, filename));
 			var fix = new T();
 			fix.AttachTo(projectFixer);
 			action?.Invoke(fix);
-			projectFixer.VisitSolution(dir, filename);
+			projectFixer.VisitSolution();
 		}
 
 		private static TimeSpan TimeAction(Action a)
