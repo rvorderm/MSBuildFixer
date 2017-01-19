@@ -87,6 +87,7 @@
     <Compile Include="Fixes\ScriptBuilder.cs" />
     <Compile Include="Fixes\FixTargetFramework.cs" />
     <Compile Include="Helpers\PackageConfigHelper.cs" />
+    <Compile Include="Helpers\ProjectItemElementHelpers.cs" />
     <Compile Include="IFix.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SolutionWalker.cs" />
