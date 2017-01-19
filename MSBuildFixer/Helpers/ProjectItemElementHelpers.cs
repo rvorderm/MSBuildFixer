@@ -10,6 +10,11 @@ namespace MSBuildFixer.Helpers
 			return firstComma == -1 ? include : include.Substring(0,firstComma);
 		}
 
+		public static bool IsStrongName(string include)
+		{
+			return include.Contains(",");
+		}
+
 		public static string GetVersion(string include)
 		{
 			int firstComma = include.IndexOf(",");

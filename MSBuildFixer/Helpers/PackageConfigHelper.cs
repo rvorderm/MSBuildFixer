@@ -19,7 +19,7 @@ namespace MSBuildFixer.Helpers
 			_xmlDocument.Load(packageFilePath);
 		}
 
-		public PackageConfigHelper WithPackage(string assemblyName, string version)
+		public PackageConfigHelper AddOrUpdate(string assemblyName, string version)
 		{
 			XmlElement xmlElement = GetElement(_xmlDocument, assemblyName);
 			if (xmlElement == null)
@@ -29,6 +29,16 @@ namespace MSBuildFixer.Helpers
 				xmlElement?.AppendChild(child);
 			}
 			else
+			{
+				xmlElement.Attributes["version"].Value = version;
+			}
+			return this;
+		}
+
+		public PackageConfigHelper Update(string assemblyName, string version)
+		{
+			XmlElement xmlElement = GetElement(_xmlDocument, assemblyName);
+			if (xmlElement != null)
 			{
 				xmlElement.Attributes["version"].Value = version;
 			}
