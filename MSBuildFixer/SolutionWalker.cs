@@ -161,7 +161,7 @@ namespace MSBuildFixer
 			Attach<FixHintPath>(HintPathToggle.Instance, walker);
 			Attach<FixOutputPath>(OutputPathToggle.Instance, walker);
 			Attach<FixRunPostBuildEvent>(RunPostBuildEventToggle.Instance, walker);
-//			Attach<FixProjectRefences>(ProjectReferencesToggle.Instance, walker);
+			Attach<FixProjectRefences>(ProjectReferencesToggle.Instance, walker);
 			Attach<FixReferenceVersion>(ReferenceVersionToggle.Instance.Enabled, walker);
 			Attach<FixXCopy>(FixXCopyToggle.Instance, walker);
 //			Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
