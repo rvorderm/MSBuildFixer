@@ -9,7 +9,7 @@ namespace MSBuildFixer.Fixes
 	class FixAPICore : IFix
 	{
 		private readonly HashSet<string> _projectPaths = new HashSet<string>();
-		private const string Version = "1.0.1.106";
+		private const string Version = "1.0.1.108";
 		private static readonly string Include = $"Api.Core, Version={Version}, Culture=neutral, PublicKeyToken=b8761d376eb50bae, processorArchitecture=MSIL";
 		private static readonly string HintPath = $@"..\..\packages\Public.API.Core.{Version}\lib\net461\Api.Core.dll";
 		private static readonly List<string> Services = new List<string>() {"Api.Dispatch.Service", "Api.Security.Service", "ExpressApi"};
@@ -29,7 +29,7 @@ namespace MSBuildFixer.Fixes
 
 			projectItemElement.Parent.RemoveChild(projectItemElement);
 			ProjectItemElement itemElement = projectItemElement.ContainingProject.AddItem("Reference", Include);
-			AddOrUpdateReference(itemElement);
+			ProjectItemElementHelpers.AddOrUpdateReference(itemElement, Include, HintPath);
 		}
 
 		private void Walker_OnAfterVisitSolution(SolutionFile solutionFile)
@@ -70,7 +70,7 @@ namespace MSBuildFixer.Fixes
 			if (!oldApiRef.Any()) return;
 			foreach (ProjectItemElement projectItemElement in oldApiRef)
 			{
-				string oldVersion = ProjectItemElementHelpers.GetVersion(projectItemElement.Include);
+				string oldVersion = ProjectItemElementHelpers.GetIncludeVersion(projectItemElement.Include);
 				projectItemElement.Include = projectItemElement.Include.Replace(oldVersion, Version);
 			}
 		}
@@ -82,25 +82,7 @@ namespace MSBuildFixer.Fixes
 			_projectPaths.Add(projectRootElement.FullPath);
 			foreach (ProjectItemElement projectItemElement in oldApiRef)
 			{
-				AddOrUpdateReference(projectItemElement);
-			}
-		}
-
-		private static void AddOrUpdateReference(ProjectItemElement projectItemElement)
-		{
-			projectItemElement.Include = Include;
-			AddOrUpdateMetaData(projectItemElement, "HintPath", HintPath);
-			AddOrUpdateMetaData(projectItemElement, "SpecificVersion", false.ToString());
-		}
-
-		private static void AddOrUpdateMetaData(ProjectItemElement projectItemElement, string name, string value)
-		{
-			ProjectMetadataElement hintPath = projectItemElement.Metadata.FirstOrDefault(x => x.Name.Equals(name));
-			if (hintPath == null)
-				hintPath = projectItemElement.AddMetadata(name, value);
-			else
-			{
-				hintPath.Value = value;
+				ProjectItemElementHelpers.AddOrUpdateReference(projectItemElement, Include, HintPath);
 			}
 		}
 

@@ -69,6 +69,7 @@ namespace MSBuildFixer.Helpers
 
 		public void SavePackageFile()
 		{
+			if (_xmlDocument.SelectNodes("//package")?.Count <= 0) return;
 			_xmlDocument.Save(_packageFilePath);
 		}
 	}

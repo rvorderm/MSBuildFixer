@@ -3,11 +3,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MSBuildFixer;
 using MSBuildFixer.Fixes;
 using System.Linq;
+using MSBuildFixer.SampleFeatureToggles;
 
 namespace MSBuildFixerTests.Fixes
 {
 	[TestClass]
-	public class FixUpdateReferenceVersionToFileVersionTests
+	public class FixReferenceVersionTests
 	{
 		[TestClass]
 		public class OnVisitMetadataTests
@@ -15,11 +16,12 @@ namespace MSBuildFixerTests.Fixes
 			[TestMethod]
 			public void FixesVersionNumber()
 			{
+				ReferenceVersionToggle.Instance.Type = RefereneVersionType.HintPath;
 				var walker = new SolutionWalker(TestSetup.SolutionPath);
 				ProjectRootElement badProject = walker.VisitSolution(false).First();
 				ProjectItemElement badElement = badProject.Items.FirstOrDefault(x=>x.Include.StartsWith("FakeItEasy, Version=2.3.0"));
 				Assert.IsNotNull(badElement);
-				new FixUpdateReferenceVersionToFileVersion().AttachTo(walker);
+				new FixReferenceVersion().AttachTo(walker);
 				ProjectRootElement fixedProject = walker.VisitSolution(false).First();
 				ProjectItemElement missingElement = fixedProject.Items.FirstOrDefault(x => x.Include.StartsWith("FakeItEasy, Version=2.3.0"));
 				Assert.IsNull(missingElement);

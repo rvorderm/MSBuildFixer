@@ -161,14 +161,14 @@ namespace MSBuildFixer
 			Attach<FixHintPath>(HintPathToggle.Instance, walker);
 			Attach<FixOutputPath>(OutputPathToggle.Instance, walker);
 			Attach<FixRunPostBuildEvent>(RunPostBuildEventToggle.Instance, walker);
-			Attach<FixProjectRefences>(ProjectReferencesToggle.Instance, walker);
-			Attach<FixUpdateReferenceVersionToFileVersion>(UpdateReferenceVersionToFileVersionToggle.Instance, walker);
+//			Attach<FixProjectRefences>(ProjectReferencesToggle.Instance, walker);
+			Attach<FixReferenceVersion>(ReferenceVersionToggle.Instance.Enabled, walker);
 			Attach<FixXCopy>(FixXCopyToggle.Instance, walker);
-			Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
+//			Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
 			//AttachScriptBuilder();
 			new ListUntrackedProjectFiles().AttachTo(walker);
 //			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ListProjectsWithReferences.ReferenceRegex), walker);
-			new FixAPICore().AttachTo(walker);
+//			new FixAPICore().AttachTo(walker);
 //			new FixCodeSigning().AttachTo(walker);
 			return walker;
 		}
