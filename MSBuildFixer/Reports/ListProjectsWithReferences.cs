@@ -1,14 +1,14 @@
-﻿using Microsoft.Build.Construction;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using static System.Configuration.ConfigurationManager;
+using Microsoft.Build.Construction;
 
-namespace MSBuildFixer.Fixes
+namespace MSBuildFixer.Reports
 {
-	class ListProjectsWithReferences : IFix
+	public class ListProjectsWithReferences : IFix
 	{
 		public ListProjectsWithReferences()
 		{
@@ -24,7 +24,7 @@ namespace MSBuildFixer.Fixes
 
 		private void Walker_OnAfterVisitSolution(SolutionFile solutionFile)
 		{
-			var path = Path.Combine(Environment.CurrentDirectory, "ProjectsWithReference.txt");
+			string path = Path.Combine(Environment.CurrentDirectory, "ProjectsWithReference.txt");
 			List<string> list = allFiles.OrderBy(x=>x).ToList();
 			list = list.Select(x=>x.Replace(Environment.CurrentDirectory, string.Empty)).ToList();
 			File.WriteAllLines(path, list);
@@ -38,7 +38,7 @@ namespace MSBuildFixer.Fixes
 
 
 
-		public static string ReferenceRegex { get; set; } = AppSettings["ReferenceRegex"];
+		public static string ReferenceRegex { get; set; } = ConfigurationManager.AppSettings["ReferenceRegex"];
 
 		private readonly HashSet<string> allFiles = new HashSet<string>();
 		private readonly Regex _regex;

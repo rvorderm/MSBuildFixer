@@ -83,8 +83,8 @@
     <Compile Include="Fixes\FixRunPostBuildEvent.cs" />
     <Compile Include="Fixes\FixXCopy.cs" />
     <Compile Include="Fixes\FixAPICore.cs" />
-    <Compile Include="Fixes\ListProjectsWithReferences.cs" />
-    <Compile Include="Fixes\ListUntrackedProjectFiles.cs" />
+    <Compile Include="Reports\ListProjectsWithReferences.cs" />
+    <Compile Include="Reports\ListUntrackedProjectFiles.cs" />
     <Compile Include="Fixes\MergeBinFolders.cs" />
     <Compile Include="Fixes\ScriptBuilder.cs" />
     <Compile Include="Fixes\FixTargetFramework.cs" />
