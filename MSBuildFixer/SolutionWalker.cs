@@ -185,7 +185,7 @@ namespace MSBuildFixer
 //			Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
 			//AttachScriptBuilder();
 			new ListUntrackedProjectFiles().AttachTo(walker);
-//			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ListProjectsWithReferences.ReferenceRegex), walker);
+			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ReportsConfiguration.Instance.ReferenceRegex), walker);
 //			new FixAPICore().AttachTo(walker);
 //			new FixCodeSigning().AttachTo(walker);
 			return walker;

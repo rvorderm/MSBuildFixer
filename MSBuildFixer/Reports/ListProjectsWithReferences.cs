@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Build.Construction;
+using MSBuildFixer.Configuration;
+using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Build.Construction;
 
 namespace MSBuildFixer.Reports
 {
@@ -38,7 +38,7 @@ namespace MSBuildFixer.Reports
 
 
 
-		public static string ReferenceRegex { get; set; } = ConfigurationManager.AppSettings["ReferenceRegex"];
+		public static string ReferenceRegex { get; set; } = ReportsConfiguration.Instance.ReferenceRegex;
 
 		private readonly HashSet<string> allFiles = new HashSet<string>();
 		private readonly Regex _regex;

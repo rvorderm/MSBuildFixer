@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ExclusionConfiguration.cs" />
+    <Compile Include="Configuration\ReportsConfiguration.cs" />
     <Compile Include="Configuration\PackagesConfiguration.cs" />
     <Compile Include="Configuration\ReferencesConfiguration.cs" />
     <Compile Include="Configuration\SolutionConfiguration.cs" />
