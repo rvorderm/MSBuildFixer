@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Construction;
+﻿using System;
+using Microsoft.Build.Construction;
 using System.IO;
 using System.Linq;
 // ReSharper disable StringIndexOfIsCultureSpecific.1
@@ -35,7 +36,7 @@ namespace MSBuildFixer.Helpers
 			if (hintPath?.Value == null) return null;
 
 			string assemblyName = GetAssemblyName(projectItemElement.Include);
-			int assemblyNameLocation = hintPath.Value.IndexOf(assemblyName);
+			int assemblyNameLocation = hintPath.Value.IndexOf(assemblyName, StringComparison.OrdinalIgnoreCase);
 			int firstDot = hintPath.Value.IndexOf(".", assemblyNameLocation+assemblyName.Length);
 			int slash = hintPath.Value.IndexOf(@"\", firstDot+1);
 			if (assemblyNameLocation == -1 || firstDot == -1 || slash == -1) return null;
