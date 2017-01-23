@@ -32,9 +32,7 @@ namespace MSBuildFixer.Fixes
 
 		private void Walker_OnVisitProjectRootItem(ProjectRootElement rootElement)
 		{
-			string directoryName = Path.GetDirectoryName(rootElement.FullPath);
-			string packagePath = Path.Combine(directoryName, "packages.config");
-
+			string packagePath = ProjectRootElementHelpers.GetNugetPackagePath(rootElement);
 			configHelpers[rootElement] = new PackageConfigHelper(packagePath);
 		}
 
@@ -69,9 +67,9 @@ namespace MSBuildFixer.Fixes
 			string hintPathVersion = ProjectItemElementHelpers.GetHintPathVersion(projectItemElement);
 			hintPath.Value = hintPath.Value.Replace(hintPathVersion, reference.HintPathVersion);
 
-			Package package = PackagesConfiguration.Instance.TryGetPackage(assemblyName);
-			if (package == null) return;
-			configHelpers[projectItemElement.ContainingProject].Update(package.PackageName, package.Version);
+//			Package package = PackagesConfiguration.Instance.TryGetPackage(assemblyName);
+//			if (package == null) return;
+//			configHelpers[projectItemElement.ContainingProject].Update(package.PackageName, package.Version);
 		}
 
 		private void SetVersionToFileVersion(ProjectItemElement projectItemElement)

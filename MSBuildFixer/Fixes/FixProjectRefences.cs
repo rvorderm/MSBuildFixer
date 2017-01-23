@@ -21,15 +21,7 @@ namespace MSBuildFixer.Fixes
 			if (!Projects.TryGetValue(assembly, out project)) return;
 
 			projectItemElement.Parent.RemoveChild(projectItemElement);
-			AddProjectReference(projectItemElement, project);
-		}
-
-		private static void AddProjectReference(ProjectItemElement projectItemElement, ProjectInSolution project)
-		{
-			ProjectRootElement containingProject = projectItemElement.ContainingProject;
-
-			ProjectItemElement itemElement = containingProject.AddItem("ProjectReference", project.RelativePath);
-			itemElement.AddMetadata("Project", project.ProjectGuid);
+			ProjectRootElementHelpers.AddProjectReference(projectItemElement.ContainingProject, project);
 		}
 
 		public void AttachTo(SolutionWalker walker)
