@@ -20,7 +20,7 @@ namespace MSBuildFixer.Fixes
 			walker.OnVisitProjectRootItem += replaceAPICore;
 			walker.OnVisitProjectRootItem += replaceAPIService;
 			walker.OnVisitProjectRootItem += replaceNewtonSoft;
-			walker.OnVisitProjectItem += Walker_OnVisitProjectItem;
+			walker.OnVisitProjectItem_Reference += Walker_OnVisitProjectItem;
 		}
 
 		private void Walker_OnVisitProjectItem(ProjectItemElement projectItemElement)

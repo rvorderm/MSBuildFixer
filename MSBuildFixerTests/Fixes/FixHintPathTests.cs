@@ -24,7 +24,7 @@ namespace MSBuildFixerTests.Fixes
 				var folder = "NotValid";
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder };
-				fixHintPath.OnVisitProjectItem(projectItemElement);
+				fixHintPath.OnvisitReference(projectItemElement);
 			}
 
 			[TestMethod]
@@ -37,7 +37,7 @@ namespace MSBuildFixerTests.Fixes
 				var folder = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder };
-				fixHintPath.OnVisitProjectItem(projectItemElement);
+				fixHintPath.OnvisitReference(projectItemElement);
 			}
 
 			[TestMethod]
@@ -51,7 +51,7 @@ namespace MSBuildFixerTests.Fixes
 				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitProjectItem(projectItemElement);
+				fixHintPath.OnvisitReference(projectItemElement);
 				Assert.AreEqual(1, projectItemElement.Metadata.Count);
 			}
 
@@ -68,7 +68,7 @@ namespace MSBuildFixerTests.Fixes
 				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitProjectItem(projectItemElement);
+				fixHintPath.OnvisitReference(projectItemElement);
 				Assert.AreEqual(0, projectItemElement.Metadata.Count);
 			}
 
@@ -84,7 +84,7 @@ namespace MSBuildFixerTests.Fixes
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
 				projectItemElement.ItemType = "NotRef";
-				fixHintPath.OnVisitProjectItem(projectItemElement);
+				fixHintPath.OnvisitReference(projectItemElement);
 				Assert.AreEqual(1, projectItemElement.Metadata.Count);
 			}
 
@@ -103,7 +103,7 @@ namespace MSBuildFixerTests.Fixes
 				if (!File.Exists(filePath)) File.Create(filePath).Close();
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitProjectItem(projectItemElement);
+				fixHintPath.OnvisitReference(projectItemElement);
 				Assert.AreEqual(2, projectItemElement.Metadata.Count);
 				var hintPath = projectItemElement.Metadata.Skip(1).First();
 				Assert.AreEqual("HintPath", hintPath.Name);
@@ -125,7 +125,7 @@ namespace MSBuildFixerTests.Fixes
 				if(!File.Exists(filePath)) File.Create(filePath).Close();
 
 				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitProjectItem(projectItemElement);
+				fixHintPath.OnvisitReference(projectItemElement);
 				Assert.AreEqual(2, projectItemElement.Metadata.Count);
 				var hintPath = projectItemElement.Metadata.Skip(1).First();
 				Assert.AreEqual("HintPath", hintPath.Name);

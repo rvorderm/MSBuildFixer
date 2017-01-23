@@ -89,11 +89,28 @@ namespace MSBuildFixer
 		}
 
 		public delegate void VisitProjectItemHandler(ProjectItemElement projectItemElement);
-		public event VisitProjectItemHandler OnVisitProjectItem;
+		public event VisitProjectItemHandler OnVisitProjectItem_Reference;
+		public event VisitProjectItemHandler OnVisitProjectItem_Compile;
+		public event VisitProjectItemHandler OnVisitProjectItem_ProjectReference;
+		public event VisitProjectItemHandler OnVisitProjectItem_Other;
 
 		public void VisitProjectItem(ProjectItemElement projectItemElement)
 		{
-			OnVisitProjectItem?.Invoke(projectItemElement);
+			switch (projectItemElement.Include)
+			{
+				case "Reference":
+					OnVisitProjectItem_Reference?.Invoke(projectItemElement);
+					break;
+				case "Compile":
+					OnVisitProjectItem_Compile?.Invoke(projectItemElement);
+					break;
+				case "ProjectReference":
+					OnVisitProjectItem_ProjectReference?.Invoke(projectItemElement);
+					break;
+				default:
+					OnVisitProjectItem_Other?.Invoke(projectItemElement);
+					break;
+			}
 			VisitMetadataCollection(projectItemElement.Metadata);
 		}
 

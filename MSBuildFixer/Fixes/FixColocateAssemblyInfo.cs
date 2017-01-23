@@ -13,7 +13,7 @@ namespace MSBuildFixer.Fixes
 		public void AttachTo(SolutionWalker walker)
 		{
 			walker.OnVisitProjectRootItem += Walker_OnVisitProjectRootItem;
-			walker.OnVisitProjectItem += Walker_OnVisitProjectItem;
+			walker.OnVisitProjectItem_Compile += OnVisitCompile;
 			walker.OnOpenSolution += Walker_OnOpenSolution;
 		}
 
@@ -28,9 +28,8 @@ namespace MSBuildFixer.Fixes
 			if (_solutionDirectoryName != null) _sharedAssemblyInfoPath = Path.Combine(_solutionDirectoryName, "AssemblyInfo.cs");
 		}
 
-		private void Walker_OnVisitProjectItem(ProjectItemElement projectItemElement)
+		private void OnVisitCompile(ProjectItemElement projectItemElement)
 		{
-			if (!projectItemElement.ItemType.Equals("Compile")) return;
 			if (!IsAssemblyInfo(projectItemElement)) return;
 			string currentFilePath = Path.Combine(_currentProjectDirectoryPath, projectItemElement.Include);
 			string destinationRelativePath = FixHintPath.MakeRelativePath(currentFilePath, _sharedAssemblyInfoPath);

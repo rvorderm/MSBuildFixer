@@ -1,5 +1,4 @@
 ﻿using Microsoft.Build.Construction;
-using MSBuildFixer.SampleFeatureToggles;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,15 +18,12 @@ namespace MSBuildFixer.Fixes
 
 		public void OnVisitMetadata(ProjectMetadataElement projectMetadataElement)
 		{
-			if (!CopyLocalToggle.Enabled) return;
 			if (!projectMetadataElement.Name.Equals("Private")) return;
 			projectMetadataElement.Value = false.ToString();
 		}
 
 		public void OnVisitProjectItem(ProjectItemElement projectItemElement)
 		{
-			if (!CopyLocalToggle.Enabled) return;
-			if (!(projectItemElement.ItemType.Equals("Reference") || projectItemElement.ItemType.Equals("ProjectReference"))) return;
 			if (IsGacAssembly(projectItemElement)) return;
 			ProcessMetadata(projectItemElement);
 		}
@@ -119,7 +115,8 @@ namespace MSBuildFixer.Fixes
 		public void AttachTo(SolutionWalker walker)
 		{
 //			walker.OnVisitMetadata += OnVisitMetadata;
-			walker.OnVisitProjectItem += OnVisitProjectItem;
+			walker.OnVisitProjectItem_Reference += OnVisitProjectItem;
+			walker.OnVisitProjectItem_ProjectReference += OnVisitProjectItem;
             walker.OnAfterVisitSolution += Walker_OnAfterVisitSolution;
 		}
 

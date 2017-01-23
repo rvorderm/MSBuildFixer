@@ -17,7 +17,8 @@ namespace MSBuildFixer.Fixes
 
 		public void AttachTo(SolutionWalker walker)
 		{
-			walker.OnVisitProjectItem += Walker_OnVisitProjectItem;
+			walker.OnVisitProjectItem_Reference += Walker_OnVisitProjectItem;
+			walker.OnVisitProjectItem_ProjectReference += Walker_OnVisitProjectItem;
 			walker.OnAfterVisitSolution += Walker_OnAfterVisitSolution;
 		}
 

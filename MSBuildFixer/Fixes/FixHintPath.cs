@@ -32,11 +32,10 @@ namespace MSBuildFixer.Fixes
 		public string SolutionPath { get; set; }
 		
 
-		public void OnVisitProjectItem(ProjectItemElement projectItemElement)
+		public void OnvisitReference(ProjectItemElement projectItemElement)
 		{
 			if (string.IsNullOrEmpty(SolutionPath)) throw new ArgumentException(SolutionPath);
 			if (string.IsNullOrEmpty(LibraryPath)) throw new ArgumentException(nameof(LibraryPath));
-			if (!projectItemElement.ItemType.Equals("Reference")) return;
 			var metadataCollection = projectItemElement.Metadata;
 			if (metadataCollection.Any(x=>x.Name.Equals("HintPath"))) return;
 			if (!HintPathToggle.Enabled) return;
@@ -108,7 +107,7 @@ namespace MSBuildFixer.Fixes
 		{
 			walker.OnOpenSolution += OnOpenSolution;
 			walker.OnVisitMetadata += OnVisitMetadata;
-			walker.OnVisitProjectItem += OnVisitProjectItem;
+			walker.OnVisitProjectItem_Reference += OnvisitReference;
 		}
 	}
 }

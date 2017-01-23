@@ -17,7 +17,7 @@ namespace MSBuildFixer.Fixes
 		public void AttachTo(SolutionWalker walker)
 		{
 			walker.OnOpenSolution += Walker_OnOpenSolution;
-			walker.OnVisitProjectItem += OnVisitProjectItem;
+			walker.OnVisitProjectItem_Reference += OnVisitReference;
 			walker.OnVisitProjectRootItem += Walker_OnVisitProjectRootItem;
 			walker.OnAfterVisitSolution += Walker_OnAfterVisitSolution;
 		}
@@ -43,7 +43,7 @@ namespace MSBuildFixer.Fixes
 			_solutionDirectory = Path.GetDirectoryName(solutionPath);
 		}
 
-		public void OnVisitProjectItem(ProjectItemElement projectItemElement)
+		public void OnVisitReference(ProjectItemElement projectItemElement)
 		{
 			switch (ReferenceVersionToggle.Instance.Type)
 			{
@@ -76,7 +76,6 @@ namespace MSBuildFixer.Fixes
 
 		private void SetVersionToFileVersion(ProjectItemElement projectItemElement)
 		{
-			if (!projectItemElement.ItemType.Equals("Reference")) return;
 			ICollection<ProjectMetadataElement> metadataCollection = projectItemElement.Metadata;
 			ProjectMetadataElement hintPath = metadataCollection.FirstOrDefault(x => x.Name.Equals("HintPath"));
 			if (hintPath == null) return;

@@ -14,10 +14,8 @@ namespace MSBuildFixer.Fixes
 			Projects = projectsInSolution.Where(x=>x.ProjectType != SolutionProjectType.SolutionFolder).ToDictionary(x=>x.ProjectName);
 		}
 
-		public void VisitProjectItem(ProjectItemElement projectItemElement)
+		public void OnVisitReference(ProjectItemElement projectItemElement)
 		{
-			if (!projectItemElement.ItemType.Equals("Reference")) return;
-
 			string assembly = ProjectItemElementHelpers.GetAssemblyName(projectItemElement.Include);
 			ProjectInSolution project;
 			if (!Projects.TryGetValue(assembly, out project)) return;
@@ -37,7 +35,7 @@ namespace MSBuildFixer.Fixes
 		public void AttachTo(SolutionWalker walker)
 		{
 			walker.OnVisitProjects += VisitProjects;
-			walker.OnVisitProjectItem += VisitProjectItem;
+			walker.OnVisitProjectItem_Reference += OnVisitReference;
 		}
 	}
 }
