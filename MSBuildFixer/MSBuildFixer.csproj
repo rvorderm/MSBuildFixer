@@ -81,9 +81,11 @@
     <Compile Include="Fixes\FixHintPath.cs" />
     <Compile Include="Fixes\FixOutputPath.cs" />
     <Compile Include="Fixes\FixProjectRefences.cs" />
+    <Compile Include="Fixes\FixReplaceProjectReferences.cs" />
     <Compile Include="Fixes\FixRunPostBuildEvent.cs" />
     <Compile Include="Fixes\FixXCopy.cs" />
     <Compile Include="Fixes\FixAPICore.cs" />
+    <Compile Include="Helpers\ProjectRootElementHelpers.cs" />
     <Compile Include="Reports\ListProjectsWithReferences.cs" />
     <Compile Include="Reports\ListUntrackedProjectFiles.cs" />
     <Compile Include="Fixes\MergeBinFolders.cs" />
