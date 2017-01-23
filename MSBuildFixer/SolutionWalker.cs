@@ -97,7 +97,7 @@ namespace MSBuildFixer
 
 		public void VisitProjectItem(ProjectItemElement projectItemElement)
 		{
-			switch (projectItemElement.Include)
+			switch (projectItemElement.ItemType)
 			{
 				case "Reference":
 					OnVisitProjectItem_Reference?.Invoke(projectItemElement);
@@ -180,13 +180,14 @@ namespace MSBuildFixer
 			Attach<FixOutputPath>(OutputPathToggle.Instance, walker);
 			Attach<FixRunPostBuildEvent>(RunPostBuildEventToggle.Instance, walker);
 			Attach<FixProjectRefences>(ProjectReferencesToggle.Instance, walker);
+			Attach<FixPackageVersion>(PackagesConfiguration.Instance.Packages.Any(), walker);
 			Attach<FixReferenceVersion>(ReferenceVersionToggle.Instance.Enabled, walker);
 			Attach<FixXCopy>(FixXCopyToggle.Instance, walker);
 //			Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
 			//AttachScriptBuilder();
 			new ListUntrackedProjectFiles().AttachTo(walker);
 			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ReportsConfiguration.Instance.ReferenceRegex), walker);
-			Attach<ListTransitiveDependencies>(ReportsConfiguration.Instance.TransitivesChecks.Any(), walker);
+//			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
 //			new FixAPICore().AttachTo(walker);
 //			new FixCodeSigning().AttachTo(walker);
 			return walker;
