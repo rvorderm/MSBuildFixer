@@ -12,15 +12,25 @@ namespace MSBuildFixerTests.Helpers
 		[TestMethod]
 		public void GetAssemblyFromWeakNameString()
 		{
-			string assemblyName = ProjectItemElementHelpers.GetAssemblyName("FakeItEasy");
-			Assert.AreEqual("FakeItEasy", assemblyName);
+			ProjectItemElement projectItemElement = TestSetup.GetTestProject().Items.FirstOrDefault(x => x.Include.Equals("System"));
+			string assemblyName = ProjectItemElementHelpers.GetAssemblyName(projectItemElement);
+			Assert.AreEqual("System", assemblyName);
 		}
 
 		[TestMethod]
 		public void GetAssemblyFromStrongNameString()
 		{
-			string assemblyName = ProjectItemElementHelpers.GetAssemblyName("FakeItEasy, Version=2.3.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL");
+			ProjectItemElement projectItemElement = TestSetup.GetTestProject().Items.FirstOrDefault(x => x.Include.StartsWith("FakeItEasy"));
+			string assemblyName = ProjectItemElementHelpers.GetAssemblyName(projectItemElement);
 			Assert.AreEqual("FakeItEasy", assemblyName);
+		}
+
+		[TestMethod]
+		public void GetAssemblyFromProjectReference()
+		{
+			ProjectItemElement projectItemElement = TestSetup.GetTestProject().Items.FirstOrDefault(x => x.Include.Equals(@"..\AppHelper\AppHelper.csproj"));
+			string assemblyName = ProjectItemElementHelpers.GetAssemblyName(projectItemElement);
+			Assert.AreEqual("AppHelper", assemblyName);
 		}
 
 		[TestMethod]

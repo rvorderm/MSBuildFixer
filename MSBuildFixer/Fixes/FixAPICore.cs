@@ -88,7 +88,7 @@ namespace MSBuildFixer.Fixes
 
 		private static bool ServicesPredicate(ProjectItemElement x)
 		{
-			string assemblyName = ProjectItemElementHelpers.GetAssemblyName(x.Include);
+			string assemblyName = ProjectItemElementHelpers.GetAssemblyName(x);
 			return Services.Contains(assemblyName);
 		}
 

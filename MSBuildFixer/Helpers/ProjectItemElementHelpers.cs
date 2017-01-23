@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.Build.Construction;
+﻿using Microsoft.Build.Construction;
+using System;
 using System.IO;
 using System.Linq;
 // ReSharper disable StringIndexOfIsCultureSpecific.1
@@ -9,10 +9,20 @@ namespace MSBuildFixer.Helpers
 {
 	public static class ProjectItemElementHelpers
 	{
-		public static string GetAssemblyName(string include)
+		public static string GetAssemblyName(ProjectItemElement projectItemElement)
 		{
-			int firstComma = include.IndexOf(",");
-			return firstComma == -1 ? include : include.Substring(0,firstComma);
+			if (projectItemElement.ItemType.Equals("Reference"))
+			{
+				string include = projectItemElement.Include;
+				int firstComma = include.IndexOf(",");
+				return firstComma == -1 ? include : include.Substring(0, firstComma);
+			}
+			if (projectItemElement.ItemType.Equals("ProjectReference"))
+			{
+				ProjectMetadataElement projectMetadataElement = projectItemElement.Metadata.FirstOrDefault(x=>x.Name.Equals("Name"));
+				return projectMetadataElement?.Value;
+			}
+			return null;
 		}
 
 		public static bool IsStrongName(string include)
@@ -35,7 +45,7 @@ namespace MSBuildFixer.Helpers
 			ProjectMetadataElement hintPath = GetHintPath(projectItemElement);
 			if (hintPath?.Value == null) return null;
 
-			string assemblyName = GetAssemblyName(projectItemElement.Include);
+			string assemblyName = GetAssemblyName(projectItemElement);
 			int assemblyNameLocation = hintPath.Value.IndexOf(assemblyName, StringComparison.OrdinalIgnoreCase);
 			int firstDot = hintPath.Value.IndexOf(".", assemblyNameLocation+assemblyName.Length);
 			int slash = hintPath.Value.IndexOf(@"\", firstDot+1);

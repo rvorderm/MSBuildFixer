@@ -56,7 +56,7 @@ namespace MSBuildFixer.Fixes
 
 		private void UpgradePackageAndInclude(ProjectItemElement projectItemElement)
 		{
-			string assemblyName = ProjectItemElementHelpers.GetAssemblyName(projectItemElement.Include);
+			string assemblyName = ProjectItemElementHelpers.GetAssemblyName(projectItemElement);
 			Reference reference = ReferencesConfiguration.Instance.TryGetReference(assemblyName);
 			if (reference == null) return;
 			string version = ProjectItemElementHelpers.GetIncludeVersion(projectItemElement.Include);

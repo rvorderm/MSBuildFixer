@@ -16,7 +16,7 @@ namespace MSBuildFixer.Fixes
 
 		public void OnVisitReference(ProjectItemElement projectItemElement)
 		{
-			string assembly = ProjectItemElementHelpers.GetAssemblyName(projectItemElement.Include);
+			string assembly = ProjectItemElementHelpers.GetAssemblyName(projectItemElement);
 			ProjectInSolution project;
 			if (!Projects.TryGetValue(assembly, out project)) return;
 
