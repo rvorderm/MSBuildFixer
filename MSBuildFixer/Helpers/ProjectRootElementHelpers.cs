@@ -11,7 +11,7 @@ namespace MSBuildFixer.Helpers
 	{
 		public static string GetAssemblyName(ProjectRootElement rootElement)
 		{
-			return rootElement.Properties.FirstOrDefault(x=>x.Name.Equals("Assembly"))?.Value;
+			return rootElement.Properties.FirstOrDefault(x=>x.Name.Equals("AssemblyName"))?.Value;
 		}
 
 		public static void AddProjectReference(ProjectRootElement projectRootElement, ProjectInSolution project)
