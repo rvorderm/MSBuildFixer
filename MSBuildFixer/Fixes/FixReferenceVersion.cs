@@ -65,6 +65,7 @@ namespace MSBuildFixer.Fixes
 			
 			ProjectMetadataElement hintPath = ProjectItemElementHelpers.GetHintPath(projectItemElement);
 			string hintPathVersion = ProjectItemElementHelpers.GetHintPathVersion(projectItemElement);
+		    if (hintPathVersion == null) return;
 			hintPath.Value = hintPath.Value.Replace(hintPathVersion, reference.HintPathVersion);
 
 //			Package package = PackagesConfiguration.Instance.TryGetPackage(assemblyName);

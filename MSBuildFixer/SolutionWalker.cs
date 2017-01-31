@@ -187,7 +187,7 @@ namespace MSBuildFixer
 			//AttachScriptBuilder();
 			new ListUntrackedProjectFiles().AttachTo(walker);
 			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ReportsConfiguration.Instance.ReferenceRegex), walker);
-//			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
+			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
 //			new FixAPICore().AttachTo(walker);
 //			new FixCodeSigning().AttachTo(walker);
 			return walker;

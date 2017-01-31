@@ -19,8 +19,13 @@ namespace MSBuildFixer.Helpers
 			}
 			if (projectItemElement.ItemType.Equals("ProjectReference"))
 			{
-				ProjectMetadataElement projectMetadataElement = projectItemElement.Metadata.FirstOrDefault(x=>x.Name.Equals("Name"));
-				return projectMetadataElement?.Value;
+				string value = projectItemElement.Metadata.FirstOrDefault(x=>x.Name.Equals("Name"))?.Value;
+				if (string.IsNullOrEmpty(value))
+				{
+					//In this case there wasn't a metadata so lets assume the filename is the assembly name....
+					value = Path.GetFileNameWithoutExtension(projectItemElement.Include);
+				}
+				return value;
 			}
 			return null;
 		}

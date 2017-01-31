@@ -4,6 +4,7 @@
 using System.IO;
 using Microsoft.Build.Construction;
 using System.Linq;
+using MSBuildFixer.Fixes;
 
 namespace MSBuildFixer.Helpers
 {
@@ -16,8 +17,10 @@ namespace MSBuildFixer.Helpers
 
 		public static void AddProjectReference(ProjectRootElement projectRootElement, ProjectInSolution project)
 		{
-			ProjectItemElement itemElement = projectRootElement.AddItem("ProjectReference", project.RelativePath);
+			string relativePath = FixHintPath.MakeRelativePath(projectRootElement.FullPath, project.AbsolutePath);
+			ProjectItemElement itemElement = projectRootElement.AddItem("ProjectReference", relativePath);
 			itemElement.AddMetadata("Project", project.ProjectGuid);
+			itemElement.AddMetadata("Name", project.ProjectName);
 		}
 
 		public static string GetNugetPackagePath(ProjectRootElement rootElement)
