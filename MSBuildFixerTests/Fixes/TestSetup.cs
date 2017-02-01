@@ -7,6 +7,7 @@ using MSBuildFixer;
 using MSBuildFixerTests.Properties;
 using System;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 namespace MSBuildFixerTests.Fixes
@@ -28,6 +29,12 @@ namespace MSBuildFixerTests.Fixes
 		public static ProjectRootElement GetTestProject()
 		{
 			return _projectRootElement.DeepClone();
+		}
+
+		public static ProjectPropertyElement GetProperty(string name)
+		{
+			ProjectRootElement projectRootElement = TestSetup.GetTestProject();
+			return projectRootElement.Properties.FirstOrDefault(x => x.Name.Equals(name));
 		}
 
 		public static void SetToggleTo(SimpleFeatureToggle toggle, bool value)

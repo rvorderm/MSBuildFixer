@@ -8,7 +8,6 @@ namespace MSBuildFixer.Fixes
 	{
 		public void OnVisitProperty(ProjectPropertyElement projectPropertyElement)
 		{
-			if (!OutputPathToggle.Enabled) return;
 			if (!projectPropertyElement.Name.Equals("OutputPath")) return;
 
 			if (!UseRelativePathing.Enabled)
@@ -17,15 +16,15 @@ namespace MSBuildFixer.Fixes
 			}
 			else
 			{
-				var relativePath = FixHintPath.MakeRelativePath(projectPropertyElement.ContainingProject.FullPath, solutionFolder);
+				string relativePath = FixHintPath.MakeRelativePath(projectPropertyElement.ContainingProject.FullPath, solutionFolder);
 				projectPropertyElement.Value = Path.Combine(relativePath, "bin", "$(Configuration)");
 			}
 		}
 
 		private string solutionFolder;
-		private void OnOpenSolution(string path)
+
+		public void OnOpenSolution(string path)
 		{
-			if (string.IsNullOrEmpty(path)) return;
 			solutionFolder = Path.GetDirectoryName(path);
 			if (!solutionFolder.EndsWith(@"\")) solutionFolder += @"\";
 		}
