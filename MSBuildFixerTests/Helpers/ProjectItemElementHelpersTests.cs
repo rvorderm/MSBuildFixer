@@ -1,8 +1,10 @@
-﻿using Microsoft.Build.Construction;
+﻿using System.Collections.Generic;
+using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MSBuildFixer.Helpers;
 using MSBuildFixerTests.Fixes;
 using System.Linq;
+using FakeItEasy;
 
 namespace MSBuildFixerTests.Helpers
 {

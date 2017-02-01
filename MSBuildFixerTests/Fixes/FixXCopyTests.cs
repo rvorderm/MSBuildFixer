@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MSBuildFixer.Fixes;
 using MSBuildFixerTests.Properties;
-using System;
 using System.Linq;
 
 namespace MSBuildFixerTests.Fixes
@@ -55,13 +54,6 @@ namespace MSBuildFixerTests.Fixes
 		[TestClass]
 		public class OnVisitPropertyTests
 		{
-			[TestMethod]
-			public void Null()
-			{
-				var fixXCopy = new FixXCopy();
-				fixXCopy.OnVisitProperty(null);
-			}
-
 			[TestMethod]
 			public void WrongName()
 			{
