@@ -1,0 +1,952 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6863C20E-9D64-4FC3-9A25-442EAE90B878}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TylerTech.Incode.Common.Model</RootNamespace>
+    <AssemblyName>Common.Model</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>TylerIncodeKey.pfx</AssemblyOriginatorKeyFile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FakeItEasy, Version=2.3.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
+      <HintPath>packages\FakeItEasy.2.3.3\lib\net40\FakeItEasy.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FeatureToggle, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\FeatureToggle.3.5.1\lib\net40\FeatureToggle.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FeatureToggle.Core, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\FeatureToggle.Core.3.5.1\lib\portable-net40+sl50+wp81+wpa+win\FeatureToggle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Reporting.Model, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b8761d376eb50bae, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)\.lib\Tyler\Reporting.Model.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="IdeaBlade.Persistence, Version=3.6.4.1, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\.lib\Ideablade\IdeaBlade.Persistence.dll</HintPath>
+    </Reference>
+    <Reference Include="IdeaBlade.Persistence.Rdb, Version=3.6.4.1, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="IdeaBlade.Rdb, Version=3.6.4.1, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\.lib\Ideablade\IdeaBlade.Rdb.dll</HintPath>
+    </Reference>
+    <Reference Include="IdeaBlade.Util, Version=3.6.4.1, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\.lib\Ideablade\IdeaBlade.Util.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="IdeaBlade.Verification, Version=3.6.4.1, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\.lib\Ideablade\IdeaBlade.Verification.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="SimpleConfig">
+      <HintPath>..\..\packages\simple-config.1.4.0\lib\net40\SimpleConfig.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Tyler.Alloy, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c57d472641d83f7f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\.lib\Tyler\Tyler.Alloy.dll</HintPath>
+    </Reference>
+    <Reference Include="Tyler.Alloy.Contract, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c57d472641d83f7f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\.lib\Tyler\Tyler.Alloy.Contract.dll</HintPath>
+    </Reference>
+    <Reference Include="UJ.ExceptionManagement.EMS, Version=1.0.1929.11599, Culture=neutral, PublicKeyToken=f932258208f96ad1">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\.lib\UJ\UJ.ExceptionManagement.EMS.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AggregateProviders\CommonAggregateProvider.cs" />
+    <Compile Include="BaseHistory.cs">
+      <CustomToolNamespace>Orm:User:0f182161-af68-4237-9d51-aad9150aa7a4</CustomToolNamespace>
+    </Compile>
+    <Compile Include="BaseHistoryDataRow.cs">
+      <DependentUpon>BaseHistory.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:0f182161-af68-4237-9d51-aad9150aa7a4</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BusinessModule.cs" />
+    <Compile Include="CCAchProfileDataRow.cs">
+      <DependentUpon>CCAchProfile.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:fc817130-6c1e-481b-9a22-cf6d608e67fa</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAuthorizationCode.cs">
+      <CustomToolNamespace>Orm:User:21b6b446-0d29-424e-a09c-dd2795a78c75</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAuthorizationCodeDataRow.cs">
+      <DependentUpon>CCAuthorizationCode.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:21b6b446-0d29-424e-a09c-dd2795a78c75</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAuthorizationCodeSignature.cs">
+      <CustomToolNamespace>Orm:User:39d43f99-ddfb-4c69-b099-ac4e0ddb613a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAuthorizationCodeSignatureDataRow.cs">
+      <DependentUpon>CCAuthorizationCodeSignature.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:39d43f99-ddfb-4c69-b099-ac4e0ddb613a</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCDistinctObjectListDataRow.cs">
+      <DependentUpon>CCDistinctObjectList.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:8c342430-eecf-4814-9f13-72a5f8f6ce14</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCEcommerceActivity.cs">
+      <CustomToolNamespace>Orm:User:4311ebee-e94d-4173-a4b7-da4803f8c61a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCEcommerceActivityDataRow.cs">
+      <DependentUpon>CCEcommerceActivity.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:4311ebee-e94d-4173-a4b7-da4803f8c61a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCEcommerceMerchant.cs">
+      <CustomToolNamespace>Orm:User:c6f4e71a-b2aa-4773-8511-b0508de6a585</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCEcommerceMerchantDataRow.cs">
+      <DependentUpon>CCEcommerceMerchant.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:c6f4e71a-b2aa-4773-8511-b0508de6a585</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCEdenSystem.cs">
+      <CustomToolNamespace>Orm:User:da35cccc-6a3d-46e1-b2df-7befb7b908f7</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCEdenSystemDataRow.cs">
+      <DependentUpon>CCEdenSystem.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:da35cccc-6a3d-46e1-b2df-7befb7b908f7</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCEdenSystemDocSource.cs">
+      <CustomToolNamespace>Orm:User:0c68d54c-8ff8-4105-b033-b04837b00a39</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCEdenSystemDocSourceDataRow.cs">
+      <DependentUpon>CCEdenSystemDocSource.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:0c68d54c-8ff8-4105-b033-b04837b00a39</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCEdenSystemIft.cs">
+      <CustomToolNamespace>Orm:User:0c68d54c-8ff8-4105-b033-b04837b00a39</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCEdenSystemIftDataRow.cs">
+      <DependentUpon>CCEdenSystemIft.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:0c68d54c-8ff8-4105-b033-b04837b00a39</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCExceptionDataRow.cs">
+      <DependentUpon>CCException.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:5c97692e-614d-4408-894c-6b4acb2f706c</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCGetAllowedSecureSignatureUsers.cs">
+      <CustomToolNamespace>Orm:User:bbd43c75-b02a-42e1-8eba-4fe3c5893ec5</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCGetAllowedSecureSignatureUsersDataRow.cs">
+      <DependentUpon>CCGetAllowedSecureSignatureUsers.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:bbd43c75-b02a-42e1-8eba-4fe3c5893ec5</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCGetAllSecureSignatureUsers.cs">
+      <CustomToolNamespace>Orm:User:bbd43c75-b02a-42e1-8eba-4fe3c5893ec5</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCGetAllSecureSignatureUsersDataRow.cs">
+      <DependentUpon>CCGetAllSecureSignatureUsers.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:bbd43c75-b02a-42e1-8eba-4fe3c5893ec5</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCGetSecureSignatureData.cs">
+      <CustomToolNamespace>Orm:User:bbd43c75-b02a-42e1-8eba-4fe3c5893ec5</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCGetSecureSignatureDataDataRow.cs">
+      <DependentUpon>CCGetSecureSignatureData.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:bbd43c75-b02a-42e1-8eba-4fe3c5893ec5</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCGetTipOfTheDay.cs">
+      <CustomToolNamespace>Orm:User:ed7d6de7-dffa-4c43-a42d-77cdf9798278</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCGetTipOfTheDayCategories.cs">
+      <CustomToolNamespace>Orm:User:ed7d6de7-dffa-4c43-a42d-77cdf9798278</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCGetTipOfTheDayCategoriesDataRow.cs">
+      <DependentUpon>CCGetTipOfTheDayCategories.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:ed7d6de7-dffa-4c43-a42d-77cdf9798278</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCGetTipOfTheDayDataRow.cs">
+      <DependentUpon>CCGetTipOfTheDay.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:ed7d6de7-dffa-4c43-a42d-77cdf9798278</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCIdGeneratorTypeDataRow.cs">
+      <DependentUpon>CCIdGeneratorType.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:117b1339-21a4-4dba-a1d9-ab45db08c1c5</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCKeyValueSettings.cs">
+      <CustomToolNamespace>Orm:User:d7e5d655-018f-474c-82c7-28e862859185</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCKeyValueSettingsDataRow.cs">
+      <DependentUpon>CCKeyValueSettings.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:d7e5d655-018f-474c-82c7-28e862859185</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCLedgerAccount.cs">
+      <CustomToolNamespace>Orm:User:da65a7a2-6def-4388-88c1-faa77691db77</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCLedgerAccountDataRow.cs">
+      <DependentUpon>CCLedgerAccount.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:da65a7a2-6def-4388-88c1-faa77691db77</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCLedgerActivity.cs">
+      <CustomToolNamespace>Orm:User:c6f4e71a-b2aa-4773-8511-b0508de6a585</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCLedgerActivityDataRow.cs">
+      <DependentUpon>CCLedgerActivity.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:c6f4e71a-b2aa-4773-8511-b0508de6a585</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCLedgerFund.cs">
+      <CustomToolNamespace>Orm:User:08040f6d-45ea-412a-b91f-17a09d639c98</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCLedgerFundDataRow.cs">
+      <DependentUpon>CCLedgerFund.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:08040f6d-45ea-412a-b91f-17a09d639c98</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCLedgerProject.cs">
+      <CustomToolNamespace>Orm:User:7005b2e1-ec30-4e75-86ea-6aab6364a08f</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCLedgerProjectDataRow.cs">
+      <DependentUpon>CCLedgerProject.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:7005b2e1-ec30-4e75-86ea-6aab6364a08f</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCLoginAudit.cs">
+      <CustomToolNamespace>Orm:User:0f182161-af68-4237-9d51-aad9150aa7a4</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCLoginAuditDataRow.cs">
+      <DependentUpon>CCLoginAudit.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:0f182161-af68-4237-9d51-aad9150aa7a4</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCMHSPortMapping.cs" />
+    <Compile Include="CCMHSPortMappingDataRow.cs">
+      <DependentUpon>CCMHSPortMapping.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:185cc8e8-7c33-4705-9d99-68a2b840821b</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCModuleDataRow.cs">
+      <DependentUpon>CCModule.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:117b1339-21a4-4dba-a1d9-ab45db08c1c5</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCModuleDistributionDataRow.cs">
+      <DependentUpon>CCModuleDistribution.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:117b1339-21a4-4dba-a1d9-ab45db08c1c5</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCOutputDirectorSettings.cs">
+      <CustomToolNamespace>Orm:User:95ab2dfb-f5b0-4a65-a4ca-375c2535579f</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCOutputDirectorSettingsDataRow.cs">
+      <DependentUpon>CCOutputDirectorSettings.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:95ab2dfb-f5b0-4a65-a4ca-375c2535579f</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCPacketDataRow.cs">
+      <DependentUpon>CCPacket.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:08040f6d-45ea-412a-b91f-17a09d639c98</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCPrivilegeACLDataRow.cs">
+      <DependentUpon>CCPrivilegeACL.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:14ef8df1-b345-496b-a298-2c466dd757f7</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCPrivilegeDataRow.cs">
+      <DependentUpon>CCPrivilege.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:14ef8df1-b345-496b-a298-2c466dd757f7</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessDataRow.cs">
+      <DependentUpon>CCProcess.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:716ffe7d-d095-4016-91c1-262c4f5802f9</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessStepDataRow.cs">
+      <DependentUpon>CCProcessStep.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:716ffe7d-d095-4016-91c1-262c4f5802f9</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessStepTypeDataRow.cs">
+      <DependentUpon>CCProcessStepType.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:2377cf24-6f73-4505-baf3-565cdca33be8</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessTypeDataRow.cs">
+      <DependentUpon>CCProcessType.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:2377cf24-6f73-4505-baf3-565cdca33be8</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessTypeRoleDataRow.cs">
+      <DependentUpon>CCProcessTypeRole.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:edc08378-7e98-4ba2-a469-db59c859dc05</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCQuickAddConfiguration.cs">
+      <CustomToolNamespace>Orm:User:0fc00e20-e522-44d0-9e0e-54a00000b6db</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCQuickAddConfigurationDataRow.cs">
+      <DependentUpon>CCQuickAddConfiguration.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:0fc00e20-e522-44d0-9e0e-54a00000b6db</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCQuickAddConfigurationItem.cs">
+      <CustomToolNamespace>Orm:User:0dc408b2-98e8-4fb3-9e20-9b00c900e27d</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCQuickAddConfigurationItemDataRow.cs">
+      <DependentUpon>CCQuickAddConfigurationItem.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:0dc408b2-98e8-4fb3-9e20-9b00c900e27d</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCQuickAddControl.cs">
+      <CustomToolNamespace>Orm:User:d9120d51-e4fe-447a-ac45-751553c0c6c1</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCQuickAddControlDataRow.cs">
+      <DependentUpon>CCQuickAddControl.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:d9120d51-e4fe-447a-ac45-751553c0c6c1</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCQuickAddFormType.cs">
+      <CustomToolNamespace>Orm:User:0dc408b2-98e8-4fb3-9e20-9b00c900e27d</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCQuickAddFormTypeDataRow.cs">
+      <DependentUpon>CCQuickAddFormType.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:0dc408b2-98e8-4fb3-9e20-9b00c900e27d</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCRolePrivilegeInfoDataRow.cs">
+      <DependentUpon>CCRolePrivilegeInfo.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1a3d9f80-bc41-49aa-aa44-3c0525995d75</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSearchTemplate.cs">
+      <CustomToolNamespace>Orm:User:2e876133-d204-421d-aa60-d3d56a58c367</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSearchTemplateDataRow.cs">
+      <DependentUpon>CCSearchTemplate.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:2e876133-d204-421d-aa60-d3d56a58c367</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCSecureSignature.cs">
+      <CustomToolNamespace>Orm:User:ee51e757-8d14-4510-8929-5937a0fa2419</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecureSignatureData.cs">
+      <CustomToolNamespace>Orm:User:ee51e757-8d14-4510-8929-5937a0fa2419</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecureSignatureDataDataRow.cs">
+      <DependentUpon>CCSecureSignatureData.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:ee51e757-8d14-4510-8929-5937a0fa2419</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecureSignatureDataRow.cs">
+      <DependentUpon>CCSecureSignature.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:ee51e757-8d14-4510-8929-5937a0fa2419</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecureSignatureUser.cs">
+      <CustomToolNamespace>Orm:User:56fd8b99-3b19-425b-bc6a-88d0db0d8b04</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecureSignatureUserDataRow.cs">
+      <DependentUpon>CCSecureSignatureUser.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:56fd8b99-3b19-425b-bc6a-88d0db0d8b04</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecurityRoleAPIService.cs">
+      <CustomToolNamespace>Orm:User:c7443e0a-0361-4726-aa1a-aa16d5c7fd3a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecurityRoleAPIServiceDataRow.cs">
+      <DependentUpon>CCSecurityRoleAPIService.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:c7443e0a-0361-4726-aa1a-aa16d5c7fd3a</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCSecurityRoleDataRow.cs">
+      <DependentUpon>CCSecurityRole.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:a5b030a0-5d18-4770-9480-5d83bb3db900</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecurityRoleJobCode.cs">
+      <CustomToolNamespace>Orm:User:a5b030a0-5d18-4770-9480-5d83bb3db900</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecurityRoleJobCodeDataRow.cs">
+      <DependentUpon>CCSecurityRoleJobCode.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:a5b030a0-5d18-4770-9480-5d83bb3db900</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCSecurityRoleQBEModule.cs">
+      <CustomToolNamespace>Orm:User:1c69b157-d2c5-4ebd-aec1-1771dd91a1fb</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecurityRoleQBEModuleDataRow.cs">
+      <DependentUpon>CCSecurityRoleQBEModule.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1c69b157-d2c5-4ebd-aec1-1771dd91a1fb</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCShellSettings.cs">
+      <CustomToolNamespace>Orm:User:829eb6a5-d1ee-4d8e-962d-220fd7f294df</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCShellSettingsDataRow.cs">
+      <DependentUpon>CCShellSettings.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:829eb6a5-d1ee-4d8e-962d-220fd7f294df</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCSystemControlDataRow.cs">
+      <DependentUpon>CCSystemControl.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:117b1339-21a4-4dba-a1d9-ab45db08c1c5</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCUserDataRow.cs">
+      <DependentUpon>CCUser.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:c6f4e71a-b2aa-4773-8511-b0508de6a585</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCUserIntegration.cs">
+      <CustomToolNamespace>Orm:User:123d47c1-537e-405f-af29-d4c49d931445</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCUserIntegrationDataRow.cs">
+      <DependentUpon>CCUserIntegration.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:123d47c1-537e-405f-af29-d4c49d931445</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCUserPasswordAudit.cs">
+      <CustomToolNamespace>Orm:User:ca56566c-f562-4770-8799-c50a287b6ddf</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCUserPasswordAuditDataRow.cs">
+      <DependentUpon>CCUserPasswordAudit.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:ca56566c-f562-4770-8799-c50a287b6ddf</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCUserSettings.cs">
+      <CustomToolNamespace>Orm:User:829eb6a5-d1ee-4d8e-962d-220fd7f294df</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCUserSettingsDataRow.cs">
+      <DependentUpon>CCUserSettings.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:829eb6a5-d1ee-4d8e-962d-220fd7f294df</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CCValueSourceItemDel.cs">
+      <CustomToolNamespace>Orm:User:375e5ac0-1d10-4e11-985a-4873ef0e4d1b</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCValueSourceItemDelDataRow.cs">
+      <DependentUpon>CCValueSourceItemDel.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:375e5ac0-1d10-4e11-985a-4873ef0e4d1b</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCViewHelp.cs">
+      <CustomToolNamespace>Orm:User:0d589652-3130-4fda-b898-ba07b95ae56d</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCViewHelpDataRow.cs">
+      <DependentUpon>CCViewHelp.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:0d589652-3130-4fda-b898-ba07b95ae56d</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCWorkspace.cs">
+      <CustomToolNamespace>Orm:User:b42d24f1-b1d5-481f-bdfd-89a19da8c275</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCWorkspaceDataRow.cs">
+      <DependentUpon>CCWorkspace.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:b42d24f1-b1d5-481f-bdfd-89a19da8c275</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCWorkspaceTemplate.cs" />
+    <Compile Include="CCWorkspaceTemplateDataRow.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CurrentProcessStep.cs">
+      <CustomToolNamespace>Orm:User:b42e83fa-aa20-427e-a8c5-de955ebfedd3</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CurrentProcessStepDataRow.cs">
+      <DependentUpon>CurrentProcessStep.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:b42e83fa-aa20-427e-a8c5-de955ebfedd3</CustomToolNamespace>
+    </Compile>
+    <Compile Include="EntityRelations.cs">
+      <SubType>Code</SubType>
+      <CustomToolNamespace>Orm:Auto:117b1339-21a4-4dba-a1d9-ab45db08c1c5</CustomToolNamespace>
+    </Compile>
+    <Compile Include="ExceptionReportBuilder.cs" />
+    <Compile Include="FileWatcherJob.cs">
+      <CustomToolNamespace>Orm:User:5a6232ea-4ce9-4e8e-9f4c-08da3470dc67</CustomToolNamespace>
+    </Compile>
+    <Compile Include="FileWatcherJobDataRow.cs">
+      <DependentUpon>FileWatcherJob.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:5a6232ea-4ce9-4e8e-9f4c-08da3470dc67</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FileWatcherJobLog.cs">
+      <CustomToolNamespace>Orm:User:5a6232ea-4ce9-4e8e-9f4c-08da3470dc67</CustomToolNamespace>
+    </Compile>
+    <Compile Include="FileWatcherJobLogDataRow.cs">
+      <DependentUpon>FileWatcherJobLog.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:5a6232ea-4ce9-4e8e-9f4c-08da3470dc67</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ImportUtilities.cs" />
+    <Compile Include="LedgerModelService\CommonLedgerModelService.cs" />
+    <Compile Include="MergeHelpers.cs" />
+    <Compile Include="NotifyTypeConfig.cs">
+      <CustomToolNamespace>Orm:User:90e1744a-1069-4671-a6f4-5cf445bfba09</CustomToolNamespace>
+    </Compile>
+    <Compile Include="NotifyTypeConfigDataRow.cs">
+      <DependentUpon>NotifyTypeConfig.cs</DependentUpon>
+      <CustomToolNamespace>Orm:Auto:90e1744a-1069-4671-a6f4-5cf445bfba09</CustomToolNamespace>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Privileges\Privileges.cs" />
+    <Compile Include="QuickAdd\QuickAddConfiguration.cs" />
+    <Compile Include="QuickAdd\QuickAddConfigurationItem.cs" />
+    <Compile Include="BaseEntityDataRow.cs">
+      <DependentUpon>BaseEntity.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAccessControlListDataRow.cs">
+      <DependentUpon>CCAccessControlList.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCActiveDirectoryRole.cs">
+      <CustomToolNamespace>Orm:User:0f868cae-c774-4214-8fa6-da27bbd93a55</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCActiveDirectoryRoleDataRow.cs">
+      <DependentUpon>CCActiveDirectoryRole.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:0f868cae-c774-4214-8fa6-da27bbd93a55</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAppSettingsDataRow.cs">
+      <DependentUpon>CCAppSettings.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAuditArchiveDataRow.cs">
+      <DependentUpon>CCAuditArchive.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAuditArchiveDetailDataRow.cs">
+      <DependentUpon>CCAuditArchiveDetail.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAuditDataRow.cs">
+      <DependentUpon>CCAudit.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCCategoryDataRow.cs">
+      <DependentUpon>CCCategory.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCCountryDataRow.cs">
+      <DependentUpon>CCCountry.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCCustomListDataRow.cs">
+      <DependentUpon>CCCustomList.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCCustomListObjectDataRow.cs">
+      <DependentUpon>CCCustomListObject.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCExceptionReportDataRow.cs">
+      <DependentUpon>CCExceptionReport.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCGroupDataRow.cs">
+      <DependentUpon>CCGroup.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCIdGeneratorDataRow.cs">
+      <DependentUpon>CCIdGenerator.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCLicenseDataRow.cs">
+      <DependentUpon>CCLicense.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCMessageDataRow.cs">
+      <DependentUpon>CCMessage.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCMessageDistributionDataRow.cs">
+      <DependentUpon>CCMessageDistribution.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCPacketVerificationDataRow.cs">
+      <DependentUpon>CCPacketVerification.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessHistoryDataRow.cs">
+      <DependentUpon>CCProcessHistory.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessStepTypeRoleDataRow.cs">
+      <DependentUpon>CCProcessStepTypeRole.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSavedQueryDataDataRow.cs">
+      <DependentUpon>CCSavedQueryData.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSavedQueryDataRow.cs">
+      <DependentUpon>CCSavedQuery.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecurityRoleACLDataRow.cs">
+      <DependentUpon>CCSecurityRoleACL.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCStateDataRow.cs">
+      <DependentUpon>CCState.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="Processing\SystemProcessStepType.cs" />
+    <Compile Include="Processing\SystemProcessType.cs" />
+    <Compile Include="ProxyEntityDataRow.cs">
+      <DependentUpon>ProxyEntity.cs</DependentUpon>
+      <SubType>Component</SubType>
+      <CustomToolNamespace>Orm:Auto:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="BaseEntity.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAccessControlList.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAchProfile.cs">
+      <CustomToolNamespace>Orm:User:fc817130-6c1e-481b-9a22-cf6d608e67fa</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAppSettings.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAudit.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAuditArchive.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCAuditArchiveDetail.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCCategory.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCCountry.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCCustomList.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCCustomListObject.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCDistinctObjectList.cs">
+      <CustomToolNamespace>Orm:User:8c342430-eecf-4814-9f13-72a5f8f6ce14</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCException.cs">
+      <CustomToolNamespace>Orm:User:5c97692e-614d-4408-894c-6b4acb2f706c</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCExceptionReport.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCGroup.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCIdGenerator.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCIdGeneratorType.cs">
+      <CustomToolNamespace>Orm:User:117b1339-21a4-4dba-a1d9-ab45db08c1c5</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCLicense.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCMessage.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCMessageDistribution.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCModule.cs">
+      <CustomToolNamespace>Orm:User:117b1339-21a4-4dba-a1d9-ab45db08c1c5</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCModuleDistribution.cs">
+      <CustomToolNamespace>Orm:User:117b1339-21a4-4dba-a1d9-ab45db08c1c5</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCPacket.cs">
+      <CustomToolNamespace>Orm:User:08040f6d-45ea-412a-b91f-17a09d639c98</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCPacketVerification.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCPrivilege.cs">
+      <CustomToolNamespace>Orm:User:14ef8df1-b345-496b-a298-2c466dd757f7</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCPrivilegeACL.cs">
+      <CustomToolNamespace>Orm:User:14ef8df1-b345-496b-a298-2c466dd757f7</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcess.cs">
+      <CustomToolNamespace>Orm:User:716ffe7d-d095-4016-91c1-262c4f5802f9</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessHistory.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessStep.cs">
+      <CustomToolNamespace>Orm:User:716ffe7d-d095-4016-91c1-262c4f5802f9</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessStepType.cs">
+      <CustomToolNamespace>Orm:User:2377cf24-6f73-4505-baf3-565cdca33be8</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessStepTypeRole.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessType.cs">
+      <CustomToolNamespace>Orm:User:2377cf24-6f73-4505-baf3-565cdca33be8</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCProcessTypeRole.cs">
+      <CustomToolNamespace>Orm:User:edc08378-7e98-4ba2-a469-db59c859dc05</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCRolePrivilegeInfo.cs">
+      <CustomToolNamespace>Orm:User:1a3d9f80-bc41-49aa-aa44-3c0525995d75</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSavedQuery.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSavedQueryData.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecurityRole.cs">
+      <CustomToolNamespace>Orm:User:a5b030a0-5d18-4770-9480-5d83bb3db900</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCSecurityRoleACL.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCState.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCStoredProcedureNames.cs" />
+    <Compile Include="CCSystemControl.cs">
+      <CustomToolNamespace>Orm:User:117b1339-21a4-4dba-a1d9-ab45db08c1c5</CustomToolNamespace>
+    </Compile>
+    <Compile Include="CCUser.cs">
+      <CustomToolNamespace>Orm:User:c6f4e71a-b2aa-4773-8511-b0508de6a585</CustomToolNamespace>
+    </Compile>
+    <Compile Include="EntityHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProxyEntity.cs">
+      <CustomToolNamespace>Orm:User:1e698a56-e707-46cb-925e-d28ccb72a86a</CustomToolNamespace>
+    </Compile>
+    <Compile Include="TypeDefinitions\CCAchRecordFormatType.cs" />
+    <Compile Include="TypeDefinitions\CCAuthenticationModeType.cs" />
+    <Compile Include="TypeDefinitions\CCBankAccountType.cs" />
+    <Compile Include="TypeDefinitions\CCDateFormatType.cs" />
+    <Compile Include="TypeDefinitions\CCDayOfMonthType.cs" />
+    <Compile Include="TypeDefinitions\CCDelimiterType.cs" />
+    <Compile Include="TypeDefinitions\CCFileLayoutType.cs" />
+    <Compile Include="TypeDefinitions\CCFormatMaskType.cs" />
+    <Compile Include="TypeDefinitions\CCFormType.cs" />
+    <Compile Include="TypeDefinitions\CCItemDistributionType.cs" />
+    <Compile Include="TypeDefinitions\CCMailingAddressType.cs" />
+    <Compile Include="TypeDefinitions\CCMessageType.cs" />
+    <Compile Include="TypeDefinitions\CCMonthAdditionType.cs" />
+    <Compile Include="TypeDefinitions\CCPhoneType.cs" />
+    <Compile Include="TypeDefinitions\CCProcessVerificationMessageType.cs" />
+    <Compile Include="TypeDefinitions\CCQuickAddItemType.cs" />
+    <Compile Include="TypeDefinitions\CCRoleType.cs" />
+    <Compile Include="TypeDefinitions\CCScheduleDayPatternType.cs" />
+    <Compile Include="TypeDefinitions\CCScheduleEndDateType.cs" />
+    <Compile Include="TypeDefinitions\CCScheduleMonthPatternType.cs" />
+    <Compile Include="TypeDefinitions\CCScheduleMonthPatternWeekOfMonthType.cs" />
+    <Compile Include="TypeDefinitions\CCScheduleRecurrencePatternType.cs" />
+    <Compile Include="TypeDefinitions\CCStateType.cs" />
+    <Compile Include="TypeDefinitions\CCSystemProcessStepType.cs" />
+    <Compile Include="TypeDefinitions\CCSystemProcessType.cs" />
+    <Compile Include="TypeDefinitions\CCTimeAMPMType.cs" />
+    <Compile Include="TypeDefinitions\CCAchOriginatingNumberType.cs" />
+    <Compile Include="TypeDefinitions\CCQuickAddConfigurationType.cs" />
+    <Compile Include="UserLookupMultiResult.cs" />
+    <Compile Include="Utility\PagedQuery.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="TylerIncodeKey.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AppHelper\AppHelper.csproj">
+      <Project>{11F2EE49-3ABD-4D58-AB49-D1F5DDCDA8AC}</Project>
+      <Name>AppHelper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common.Configuration\Common.Configuration.csproj">
+      <Project>{f4426a69-4bfc-4c3b-8a4d-e0ac49771960}</Project>
+      <Name>Common.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Foundation.Model\Foundation.Model.csproj">
+      <Project>{7C6474A5-F02B-4170-A730-97AE91C13E68}</Project>
+      <Name>Foundation.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Foundation.Security\Foundation.Security.csproj">
+      <Project>{F7351AD2-B9E8-49EB-81B0-09A546E5CD0E}</Project>
+      <Name>Foundation.Security</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Global.Model.Interface\Global.Model.Interface.csproj">
+      <Project>{0B2756F3-C5A6-4080-A6D1-27935B36E4A7}</Project>
+      <Name>Global.Model.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common.Eden.Interface\Common.Eden.Interface.csproj">
+      <Project>{0B2FD2B2-8B81-4F75-9C0C-13010C93D03A}</Project>
+      <Name>Common.Eden.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Global\Interfaces\Tyler.Vx.Global.Interface.Financials\Tyler.Vx.Global.Interface.Financials.csproj">
+      <Project>{9159b8c0-57d0-4520-8ee1-a18537cccbf6}</Project>
+      <Name>Tyler.Vx.Global.Interface.Financials</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tyler.Vx.Contract.Common\Tyler.Vx.Contract.Common.csproj">
+      <Project>{771cc0d5-915c-4144-8bed-3dfc56b7db5c}</Project>
+      <Name>Tyler.Vx.Contract.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tyler.Vx.Contract\Tyler.Vx.Contract.csproj">
+      <Project>{be6dcb3c-1f77-4084-b194-5231c773065f}</Project>
+      <Name>Tyler.Vx.Contract</Name>
+    </ProjectReference>
+    <ProjectReference Include="Test.csproj">
+      <Project>{0ad0b598-84d0-46e7-9b39-41cc2dd2445d}</Project>
+      <Name>Test</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y $(TargetDir)$(TargetName).* $(SolutionDir)\.out\*.*
+
+xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\Application\Silverblade\*.*
+
+xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\Services\QbeService\*.*
+
+xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\Services\ReportDeliveryService\*.*
+
+xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\WebSites\InSiteInterfaceService\bin\*.*</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+</Project>

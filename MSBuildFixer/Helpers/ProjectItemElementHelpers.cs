@@ -61,7 +61,17 @@ namespace MSBuildFixer.Helpers
 
 		public static ProjectMetadataElement GetHintPath(ProjectItemElement projectItemElement)
 		{
-			return projectItemElement.Metadata.FirstOrDefault(x=>x.Name.Equals("HintPath"));
+			return GetMetadataElement(projectItemElement, "HintPath");
+		}
+
+		public static ProjectMetadataElement GetPrivate(ProjectItemElement projectItemElement)
+		{
+			return GetMetadataElement(projectItemElement, "Private");
+		}
+
+		private static ProjectMetadataElement GetMetadataElement(ProjectItemElement projectItemElement, string name)
+		{
+			return projectItemElement.Metadata.FirstOrDefault(x => x.Name.Equals(name));
 		}
 
 		public static string GetFileName(string solutionDirectory, string projectFullPath, string hintPathValue)
@@ -78,12 +88,12 @@ namespace MSBuildFixer.Helpers
 
 		public static void AddOrUpdateMetaData(ProjectItemElement projectItemElement, string name, string value)
 		{
-			ProjectMetadataElement hintPath = projectItemElement.Metadata.FirstOrDefault(x => x.Name.Equals(name));
-			if (hintPath == null)
+			ProjectMetadataElement metadataElement = projectItemElement.Metadata.FirstOrDefault(x => x.Name.Equals(name));
+			if (metadataElement == null)
 				projectItemElement.AddMetadata(name, value);
 			else
 			{
-				hintPath.Value = value;
+				metadataElement.Value = value;
 			}
 		}
 

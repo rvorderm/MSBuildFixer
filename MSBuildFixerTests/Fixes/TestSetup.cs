@@ -26,6 +26,11 @@ namespace MSBuildFixerTests.Fixes
 			_projectRootElement = ProjectRootElement.Create(xmlReader);
 		}
 
+		public static SolutionFile GetTestSolution()
+		{
+			return SolutionFile.Parse(_solutionPath);
+		}
+
 		public static ProjectRootElement GetTestProject()
 		{
 			return _projectRootElement.DeepClone();

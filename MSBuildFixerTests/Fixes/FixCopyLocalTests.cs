@@ -1,9 +1,8 @@
-﻿using FakeItEasy;
-using Microsoft.Build.Construction;
+﻿using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MSBuildFixer;
 using MSBuildFixer.Fixes;
-using MSBuildFixer.SampleFeatureToggles;
-using System;
+using MSBuildFixer.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,94 +11,73 @@ namespace MSBuildFixerTests.Fixes
 	[TestClass]
 	public class FixCopyLocalTests
 	{
-		[TestClass]
-		public class OnVisitMetadataTests
+
+		[TestMethod]
+		public void NoCopyLocal()
 		{
-			[TestMethod]
-			public void SetsValue()
+			var solutionWalker = new SolutionWalker(TestSetup.SolutionPath);
+			new FixCopyLocal().AttachTo(solutionWalker);
+			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
+			foreach (ProjectRootElement projectRootElement in projectRootElements)
 			{
-				ProjectRootElement projectRootElement = TestSetup.GetTestProject();
-
-				List<ProjectMetadataElement> metadataElements = projectRootElement.AllChildren.OfType<ProjectMetadataElement>().Where(x=>x.Name.Equals("Private")).ToList();
-				Assert.IsTrue(metadataElements.Any());
-
-				ProjectMetadataElement element = metadataElements[0];
-				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitMetadata(element);
-				Assert.AreEqual(false.ToString(), element.Value);
-			}
-
-			[TestMethod]
-			public void Notelement()
-			{
-				ProjectRootElement projectRootElement = TestSetup.GetTestProject();
-
-				List<ProjectMetadataElement> metadataElements = projectRootElement.AllChildren.OfType<ProjectMetadataElement>().Where(x => x.Name.Equals("Private") && x.Value.Equals(true.ToString())).ToList();
-				Assert.IsTrue(metadataElements.Any());
-
-				ProjectMetadataElement element = metadataElements[0];
-				element.Name = "meow";
-				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitMetadata(element);
-				Assert.AreEqual(true.ToString(), element.Value);
+				foreach (ProjectItemElement projectItemElement in projectRootElement.Items)
+				{
+					if(FixCopyLocal.IsGacAssembly(projectItemElement)) continue;
+					if (!projectItemElement.ItemType.Contains("Reference")) continue;
+					Assert.AreEqual(false.ToString(), ProjectItemElementHelpers.GetPrivate(projectItemElement).Value);
+				}
 			}
 		}
 
-		[TestClass]
-		public class OnVisitProjectItemTests
+		[TestMethod]
+		public void FirstOnly()
 		{
-			[TestMethod]
-			public void AddsMetadata()
+			var solutionWalker = new SolutionWalker(TestSetup.SolutionPath);
+			var fixCopyLocal = new FixCopyLocal {CopyStyle = CopyStyle.FirstOnly};
+			fixCopyLocal.AttachTo(solutionWalker);
+			
+			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
+			IEnumerable<ProjectItemElement> projectItemElements = projectRootElements.SelectMany(x=>x.Items);
+			var includes = new HashSet<string>();
+			foreach (ProjectItemElement itemElement in projectItemElements)
 			{
-				ProjectRootElement projectRootElement = TestSetup.GetTestProject();
 
-				ProjectItemElement element = projectRootElement.Items.First(x => x.ItemType.Equals("Reference") && !x.Metadata.Any(y=>y.Name.Equals("Private")));
-				Assert.IsFalse(element.Metadata.Any(x=>x.Name.Equals("Private")));
+				if (FixCopyLocal.IsGacAssembly(itemElement)) continue;
+				if (!itemElement.ItemType.Contains("Reference")) continue;
 
-				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitProjectItem(element);
-				Assert.IsTrue(element.Metadata.Any(x => x.Name.Equals("Private")));
-				Assert.AreEqual(false.ToString(), element.Metadata.First(x => x.Name.Equals("Private")).Value);
+				bool visited = includes.Contains(itemElement.Include);
+				includes.Add(itemElement.Include);
+				string expected = !visited ?  true.ToString() : false.ToString();
+
+				ProjectMetadataElement projectMetadataElement = ProjectItemElementHelpers.GetPrivate(itemElement);
+				if (projectMetadataElement == null) continue;
+				Assert.AreEqual(expected, projectMetadataElement.Value, $"{itemElement.ContainingProject.FullPath}, {itemElement.Include}");
 			}
+		}
 
-			[TestMethod]
-			public void IsGacAssembly()
+		[TestMethod]
+		public void LastOnly()
+		{
+			var solutionWalker = new SolutionWalker(TestSetup.SolutionPath);
+			var fixCopyLocal = new FixCopyLocal { CopyStyle = CopyStyle.LastOnly };
+			fixCopyLocal.AttachTo(solutionWalker);
+
+			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
+			IEnumerable<ProjectItemElement> projectItemElements = projectRootElements.SelectMany(x => x.Items).Reverse();
+			var includes = new HashSet<string>();
+			foreach (ProjectItemElement itemElement in projectItemElements)
 			{
-				ProjectRootElement projectRootElement = TestSetup.GetTestProject();
 
-				ProjectItemElement element = projectRootElement.Items.First(x=>x.Include.Equals("Microsoft.VisualBasic"));
-				Assert.IsFalse(element.Metadata.Any(x => x.Name.Equals("Private")));
+				if (FixCopyLocal.IsGacAssembly(itemElement)) continue;
+				if (!itemElement.ItemType.Contains("Reference")) continue;
 
-				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitProjectItem(element);
-				Assert.IsFalse(element.Metadata.Any(x => x.Name.Equals("Private")));
-			}
+				bool visited = includes.Contains(itemElement.Include);
+				includes.Add(itemElement.Include);
+				string expected = !visited ? true.ToString() : false.ToString();
 
-			[TestMethod]
-			public void HasMetadata()
-			{
-				ProjectRootElement projectRootElement = TestSetup.GetTestProject();
-
-				ProjectItemElement element = projectRootElement.Items.First(x => x.Include.Equals("IdeaBlade.Util, Version=3.6.4.1, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL"));
-				int count = element.Metadata.Count;
-
-				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitProjectItem(element);
-				Assert.AreEqual(count, element.Metadata.Count);
-			}
-
-			[TestMethod]
-			public void NotRefence()
-			{
-				ProjectRootElement projectRootElement = TestSetup.GetTestProject();
-
-				ProjectItemElement element = projectRootElement.Items.First(x => x.ItemType.Equals("Reference") && !x.Metadata.Any(y=>y.Name.Equals("Private")));
-				element.ItemType = "NotReference";
-				Assert.IsFalse(element.Metadata.Any(x => x.Name.Equals("Private")));
-
-				var fixCopyLocal = new FixCopyLocal();
-				fixCopyLocal.OnVisitProjectItem(element);
-				Assert.IsFalse(element.Metadata.Any(x => x.Name.Equals("Private")));
+				ProjectMetadataElement projectMetadataElement = ProjectItemElementHelpers.GetPrivate(itemElement);
+				if (projectMetadataElement == null) continue;
+				Assert.AreEqual(expected, projectMetadataElement.Value, $"{itemElement.ContainingProject.FullPath}, {itemElement.Include}");
 			}
 		}
 	}
