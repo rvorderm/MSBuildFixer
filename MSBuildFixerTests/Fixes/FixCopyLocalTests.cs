@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Construction;
+﻿using System;
+using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MSBuildFixer;
 using MSBuildFixer.Fixes;
@@ -14,8 +15,7 @@ namespace MSBuildFixerTests.Fixes
 		[TestMethod]
 		public void NoCopyLocal()
 		{
-			var solutionWalker = new SolutionWalker(TestSetup.SolutionPath);
-			new FixCopyLocal().AttachTo(solutionWalker);
+			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixCopyLocal>();
 			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
 			foreach (ProjectRootElement projectRootElement in projectRootElements)
 			{
@@ -31,9 +31,7 @@ namespace MSBuildFixerTests.Fixes
 		[TestMethod]
 		public void FirstOnly()
 		{
-			var solutionWalker = new SolutionWalker(TestSetup.SolutionPath);
-			var fixCopyLocal = new FixCopyLocal {CopyStyle = CopyStyle.FirstOnly};
-			fixCopyLocal.AttachTo(solutionWalker);
+			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixCopyLocal>(x=>x.CopyStyle = CopyStyle.FirstOnly);
 			
 			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
 			IEnumerable<ProjectItemElement> projectItemElements = projectRootElements.SelectMany(x=>x.Items);
@@ -56,9 +54,7 @@ namespace MSBuildFixerTests.Fixes
 		[TestMethod]
 		public void LastOnly()
 		{
-			var solutionWalker = new SolutionWalker(TestSetup.SolutionPath);
-			var fixCopyLocal = new FixCopyLocal { CopyStyle = CopyStyle.LastOnly };
-			fixCopyLocal.AttachTo(solutionWalker);
+			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixCopyLocal>(x => x.CopyStyle = CopyStyle.LastOnly);
 
 			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
 			IEnumerable<ProjectItemElement> projectItemElements = projectRootElements.SelectMany(x => x.Items).Reverse();

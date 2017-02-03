@@ -49,13 +49,21 @@ namespace MSBuildFixerTests.Fixes
 				.Where(call => call.Method.Name.Equals(nameof(booleanToggleValueProvider.EvaluateBooleanToggleValue))).
 				WithReturnType<bool>()
 				.Returns(value);
-			//booleanToggleValueProvider.CallsTo(x => x.EvaluateBooleanToggleValue(toggle)).Returns(value);
 			toggle.ToggleValueProvider = booleanToggleValueProvider;
 		}
 
 		public static SolutionWalker GetTestWalker()
 		{
 			return new SolutionWalker(SolutionPath);
+		}
+
+		public static SolutionWalker BuildWalker<T>(Action<T> action = null) where T : IFix, new()
+		{
+			SolutionWalker solutionWalker = GetTestWalker();
+			var fix = new T();
+			fix.AttachTo(solutionWalker);
+			action?.Invoke(fix);
+			return solutionWalker;
 		}
 	}
 }
