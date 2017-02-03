@@ -69,7 +69,6 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="FeatureToggles\ProjectReferencesToggle.cs" />
     <Compile Include="FeatureToggles\ReferenceVersionToggle.cs" />
-    <Compile Include="FeatureToggles\RunPostBuildEventToggle.cs" />
     <Compile Include="FeatureToggles\OutputPathToggle.cs" />
     <Compile Include="FeatureToggles\HintPathToggle.cs" />
     <Compile Include="FeatureToggles\CopyLocalToggle.cs" />
@@ -83,7 +82,6 @@
     <Compile Include="Fixes\FixOutputPath.cs" />
     <Compile Include="Fixes\FixProjectRefences.cs" />
     <Compile Include="Fixes\FixReplaceProjectReferences.cs" />
-    <Compile Include="Fixes\FixRunPostBuildEvent.cs" />
     <Compile Include="Fixes\FixXCopy.cs" />
     <Compile Include="Helpers\ProjectRootElementHelpers.cs" />
     <Compile Include="Reports\ListProjectsWithReferences.cs" />

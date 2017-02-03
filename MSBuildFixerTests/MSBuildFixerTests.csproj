@@ -74,7 +74,6 @@
     <Compile Include="Fixes\FixHintPathTests.cs" />
     <Compile Include="Fixes\FixOutputPathTests.cs" />
     <Compile Include="Fixes\FixReferenceVersionTests.cs" />
-    <Compile Include="Fixes\FixRunPostBuildEventTests.cs" />
     <Compile Include="Fixes\FixXCopyTests.cs" />
     <Compile Include="Fixes\MergeBinFolderTests.cs" />
     <Compile Include="Fixes\TestSetup.cs" />

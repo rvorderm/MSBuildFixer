@@ -31,15 +31,38 @@ namespace MSBuildFixerTests.Fixes
 
 			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixProperties>();
 			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
+			AssertPropertyValues(projectRootElements, "TargetFrameworkVersion", "v4.6");
+		}
+
+		[TestMethod]
+		public void UpdatesPostbuild()
+		{
+			FixesConfiguration.Instance = new FixesConfiguration
+			{
+				Properties = new List<Property>
+				{
+					new Property()
+					{
+						Name = "RunPostBuildEvent",
+						Value = "OnOutputUpdated"
+					}
+				}
+			};
+
+			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixProperties>();
+			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
+			AssertPropertyValues(projectRootElements, "TargetFrameworkVersion", "v4.6");
+		}
+
+		private static void AssertPropertyValues(IEnumerable<ProjectRootElement> projectRootElements, string propertyName, string propertyValue)
+		{
 			IEnumerable<ProjectPropertyElement> badProperties = projectRootElements.SelectMany(x => x.Properties)
-				.Where(x => x.Name.Equals("TargetFrameworkVersion"))
-				.Where(x => !x.Value.Equals("v4.6"));
+				.Where(x => x.Name.Equals(propertyName))
+				.Where(x => !x.Value.Equals(propertyValue));
 			foreach (ProjectPropertyElement property in badProperties)
 			{
 				Assert.Fail($"{property.Value} found in {property.ContainingProject.FullPath}");
 			}
 		}
-
-		
 	}
 }
