@@ -61,7 +61,13 @@ namespace MSBuildFixerTests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to :: Common.Model
+        ///xcopy /y $(TargetDir)$(TargetName).* $(SolutionDir)\.out\*.*
+        ///xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\Application\Silverblade\*.*
+        ///xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\Services\QbeService\*.*
+        ///xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\Services\ReportDeliveryService\*.*
+        ///xcopy /y $(TargetDir)$(TargetName).dll $(SolutionDir)\.pkg\WebSites\InSiteInterfaceService\bin\*.*
+        ///.
         /// </summary>
         internal static string CollatedXCopy {
             get {
@@ -78,7 +84,8 @@ namespace MSBuildFixerTests.Properties {
         ///    &lt;ProductVersion&gt;8.0.30703&lt;/ProductVersion&gt;
         ///    &lt;SchemaVersion&gt;2.0&lt;/SchemaVersion&gt;
         ///    &lt;ProjectGuid&gt;{0AD0B598-84D0-46E7-9B39-41CC2DD2445D}&lt;/ProjectGuid&gt;
-        ///    &lt;OutputType&gt;Library&lt;/OutputTy [rest of string was truncated]&quot;;.
+        ///    &lt;OutputType&gt;Library&lt;/OutputType&gt;
+        ///     [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Test {
             get {

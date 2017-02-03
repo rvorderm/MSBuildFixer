@@ -41,7 +41,7 @@ namespace MSBuildFixerTests
 			WorkingDirectory = RootDir,
 			WindowStyle = ProcessWindowStyle.Hidden,
 			FileName = @"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild.exe",
-            Arguments = "Incode10.sln /p:Platform=\"Any CPU\" /maxcpucount:3 /verbosity:quiet /t:Build"
+            Arguments = "Incode10.sln /p:Platform=\"Any CPU\" /maxcpucount:3 /verbosity:quiet /t:Clean"
         };
 
 		private static readonly ProcessStartInfo HG_UP = new ProcessStartInfo
@@ -57,21 +57,29 @@ namespace MSBuildFixerTests
 		{
 			TimeAction(()=>DoProcess(HG_UP));
             Purge();
+
+            //Build
             var initialDuration = TimeAction(() => DoProcess(Build));
 			Console.WriteLine($@"Initial Duration was {initialDuration}");
 			TestSetup.SetToggleTo(CopyLocalToggle.Instance, true);
 			DoFix<FixCopyLocal>(RootDir, Filename);
+
+            //No Copy Local
             Purge();
             var vanillaDuration = TimeAction(() => DoProcess(Build));
 			Console.WriteLine($@"Vanilla Duration was {vanillaDuration}");
-			DoFix<FixCopyLocal>(RootDir, Filename, x=>x.CopyStyle = CopyStyle.FirstOnly);
+
+            //First only
+            DoFix<FixCopyLocal>(RootDir, Filename, x=>x.CopyStyle = CopyStyle.FirstOnly);
             Purge();
             var firstOnlyDuration = TimeAction(() => DoProcess(Build));
-			Console.WriteLine($@"SingleCopy Duration was {firstOnlyDuration}");
-			CleanDirectory(BinPath);
+			Console.WriteLine($@"FirstOnly Duration was {firstOnlyDuration}");
+
+            //Last Only
+			Purge();
             DoFix<FixCopyLocal>(RootDir, Filename, x => x.CopyStyle = CopyStyle.LastOnly);
             var lastOnlyDuration = TimeAction(() => DoProcess(Build));
-			Console.WriteLine($@"SingleCopy Duration was {lastOnlyDuration}");
+			Console.WriteLine($@"LastOnly Duration was {lastOnlyDuration}");
 			CleanDirectory(BinPath);
 		}
 

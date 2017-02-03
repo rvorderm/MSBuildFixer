@@ -11,7 +11,6 @@ namespace MSBuildFixerTests.Fixes
 	[TestClass]
 	public class FixCopyLocalTests
 	{
-
 		[TestMethod]
 		public void NoCopyLocal()
 		{
@@ -41,7 +40,6 @@ namespace MSBuildFixerTests.Fixes
 			var includes = new HashSet<string>();
 			foreach (ProjectItemElement itemElement in projectItemElements)
 			{
-
 				if (FixCopyLocal.IsGacAssembly(itemElement)) continue;
 				if (!itemElement.ItemType.Contains("Reference")) continue;
 

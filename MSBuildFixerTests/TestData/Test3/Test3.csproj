@@ -894,6 +894,10 @@
       <Project>{9159b8c0-57d0-4520-8ee1-a18537cccbf6}</Project>
       <Name>Tyler.Vx.Global.Interface.Financials</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Test2\Test2.csproj">
+      <Project>{6863c20e-9d64-4fc3-9a25-442eae90b878}</Project>
+      <Name>Test2</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Tyler.Vx.Contract.Common\Tyler.Vx.Contract.Common.csproj">
       <Project>{771cc0d5-915c-4144-8bed-3dfc56b7db5c}</Project>
       <Name>Tyler.Vx.Contract.Common</Name>
@@ -901,10 +905,6 @@
     <ProjectReference Include="..\Tyler.Vx.Contract\Tyler.Vx.Contract.csproj">
       <Project>{be6dcb3c-1f77-4084-b194-5231c773065f}</Project>
       <Name>Tyler.Vx.Contract</Name>
-    </ProjectReference>
-    <ProjectReference Include="Test2.csproj">
-      <Project>{6863c20e-9d64-4fc3-9a25-442eae90b878}</Project>
-      <Name>Test2</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

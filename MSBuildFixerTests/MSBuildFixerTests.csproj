@@ -96,9 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestData\CollatedXCopy.txt" />
-    <Content Include="TestData\Test.csproj">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="TestData\Test\Test.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
