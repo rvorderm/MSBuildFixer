@@ -183,13 +183,11 @@ namespace MSBuildFixer
 			Attach<FixPackageVersion>(PackagesConfiguration.Instance.Packages.Any(), walker);
 			Attach<FixReferenceVersion>(ReferenceVersionToggle.Instance.Enabled, walker);
 			Attach<FixXCopy>(FixXCopyToggle.Instance, walker);
-//			Attach<FixTargetFramework>(FixTargetFrameworkToggle.Instance, walker);
+			Attach<FixProperties>(FixesConfiguration.Instance.Properties.Any(), walker);
 			//AttachScriptBuilder();
 			new ListUntrackedProjectFiles().AttachTo(walker);
 			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ReportsConfiguration.Instance.ReferenceRegex), walker);
 			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
-//			new FixAPICore().AttachTo(walker);
-//			new FixCodeSigning().AttachTo(walker);
 			return walker;
 		}
 

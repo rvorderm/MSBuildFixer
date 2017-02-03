@@ -90,7 +90,7 @@
     <Compile Include="Reports\ListUntrackedProjectFiles.cs" />
     <Compile Include="Fixes\MergeBinFolders.cs" />
     <Compile Include="Fixes\ScriptBuilder.cs" />
-    <Compile Include="Fixes\FixTargetFramework.cs" />
+    <Compile Include="Fixes\FixProperties.cs" />
     <Compile Include="Helpers\PackageConfigHelper.cs" />
     <Compile Include="Helpers\ProjectItemElementHelpers.cs" />
     <Compile Include="IFix.cs" />
