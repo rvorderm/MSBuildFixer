@@ -21,6 +21,10 @@ namespace MSBuildFixer
 		public delegate void AfterVisitSolutionHandler(SolutionFile solutionFile);
 		public event AfterVisitSolutionHandler OnAfterVisitSolution;
 
+		public delegate void OnSaveHandler();
+
+		public event OnSaveHandler OnSave;
+
 		public SolutionWalker(string fullSolutionPath)
 		{
 			_fullSolutionPath = fullSolutionPath;
@@ -34,6 +38,7 @@ namespace MSBuildFixer
 			IEnumerable<ProjectRootElement> projectRootElements = VisitProjects(solutionFile.ProjectsInOrder);
 			OnAfterVisitSolution?.Invoke(solutionFile);
 			if (!save) return projectRootElements;
+			OnSave?.Invoke();
 			foreach (ProjectRootElement projectRootElement in projectRootElements)
 			{
 				projectRootElement?.Save();
@@ -179,7 +184,7 @@ namespace MSBuildFixer
 			Attach<FixHintPath>(HintPathToggle.Instance, walker);
 			Attach<FixOutputPath>(OutputPathToggle.Instance, walker);
 			Attach<FixProjectRefences>(ProjectReferencesToggle.Instance, walker);
-			Attach<FixPackageVersion>(PackagesConfiguration.Instance.Packages.Any(), walker);
+			Attach<FixPackages>(PackagesConfiguration.Instance.Packages.Any(), walker);
 			Attach<FixReferenceVersion>(ReferenceVersionToggle.Instance.Enabled, walker);
 			Attach<FixXCopy>(FixXCopyToggle.Instance, walker);
 			Attach<FixProperties>(FixesConfiguration.Instance.Properties.Any(), walker);

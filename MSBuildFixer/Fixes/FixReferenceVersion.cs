@@ -26,7 +26,7 @@ namespace MSBuildFixer.Fixes
 		{
 			foreach (PackageConfigHelper packageConfigHelper in configHelpers.Values)
 			{
-				packageConfigHelper.SavePackageFile();
+				packageConfigHelper.SavePackageFile(packageConfigHelper.GetPackageDocument());
 			}
 		}
 

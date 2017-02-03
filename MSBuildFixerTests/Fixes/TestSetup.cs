@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MSBuildFixer;
 using MSBuildFixerTests.Properties;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -59,11 +60,32 @@ namespace MSBuildFixerTests.Fixes
 
 		public static SolutionWalker BuildWalker<T>(Action<T> action = null) where T : IFix, new()
 		{
-			SolutionWalker solutionWalker = GetTestWalker();
 			var fix = new T();
+			return BuildAndAttach(action, fix);
+		}
+
+		public static SolutionWalker BuildWalker<T>(T fix, Action<T> action = null) where T : IFix
+		{
+			return BuildAndAttach(action, fix);
+		}
+
+		private static SolutionWalker BuildAndAttach<T>(Action<T> action, T fix) where T : IFix
+		{
+			SolutionWalker solutionWalker = GetTestWalker();
 			fix.AttachTo(solutionWalker);
 			action?.Invoke(fix);
 			return solutionWalker;
+		}
+
+		public static void AssertPropertyValues(IEnumerable<ProjectRootElement> projectRootElements, string propertyName, string propertyValue)
+		{
+			IEnumerable<ProjectPropertyElement> badProperties = projectRootElements.SelectMany(x => x.Properties)
+				.Where(x => x.Name.Equals(propertyName))
+				.Where(x => !x.Value.Equals(propertyValue));
+			foreach (ProjectPropertyElement property in badProperties)
+			{
+				Assert.Fail($"{property.Value} found in {property.ContainingProject.FullPath}");
+			}
 		}
 	}
 }

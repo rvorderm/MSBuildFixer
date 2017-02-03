@@ -6,8 +6,10 @@ using MSBuildFixer.SampleFeatureToggles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using MSBuildFixer;
 using MSBuildFixer.Configuration;
+using MSBuildFixer.Helpers;
 
 namespace MSBuildFixerTests.Fixes
 {
@@ -21,7 +23,7 @@ namespace MSBuildFixerTests.Fixes
 			{
 				Properties = new List<Property>
 				{
-					new Property()
+					new Property
 					{
 						Name = "TargetFrameworkVersion",
 						Value = "v4.6"
@@ -31,7 +33,34 @@ namespace MSBuildFixerTests.Fixes
 
 			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixProperties>();
 			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
-			AssertPropertyValues(projectRootElements, "TargetFrameworkVersion", "v4.6");
+			TestSetup.AssertPropertyValues(projectRootElements, "TargetFrameworkVersion", "v4.6");
+		}
+
+		[TestMethod]
+		public void UpdatesPackageFiles()
+		{
+			PackagesConfiguration.Instance = new PackagesConfiguration()
+			{
+				Packages= new List<Package>
+				{
+					new Package
+					{
+						PackageName = ".*",
+						Version = "v4.6"
+					}
+				},
+				TargetFramework = "net46"
+			};
+
+			var fix = new FixPackages();
+			SolutionWalker solutionWalker = TestSetup.BuildWalker(fix);
+			solutionWalker.VisitSolution(false);
+			foreach (PackageConfigHelper builder in fix.PackageBuilders)
+			{
+				XmlDocument packageDocument = builder.GetPackageDocument();
+				XmlNodeList xmlNodeList = packageDocument.SelectNodes("//package[@targetFramework='net40']");
+				Assert.IsTrue(xmlNodeList.Count == 0);
+			}
 		}
 
 		[TestMethod]
@@ -51,18 +80,7 @@ namespace MSBuildFixerTests.Fixes
 
 			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixProperties>();
 			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
-			AssertPropertyValues(projectRootElements, "TargetFrameworkVersion", "v4.6");
-		}
-
-		private static void AssertPropertyValues(IEnumerable<ProjectRootElement> projectRootElements, string propertyName, string propertyValue)
-		{
-			IEnumerable<ProjectPropertyElement> badProperties = projectRootElements.SelectMany(x => x.Properties)
-				.Where(x => x.Name.Equals(propertyName))
-				.Where(x => !x.Value.Equals(propertyValue));
-			foreach (ProjectPropertyElement property in badProperties)
-			{
-				Assert.Fail($"{property.Value} found in {property.ContainingProject.FullPath}");
-			}
+			TestSetup.AssertPropertyValues(projectRootElements, "TargetFrameworkVersion", "v4.6");
 		}
 	}
 }

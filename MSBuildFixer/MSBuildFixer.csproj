@@ -76,7 +76,7 @@
     <Compile Include="Fixes\FixColocateAssemblyInfo.cs" />
     <Compile Include="Fixes\FixCopyToOutputDirectory.cs" />
     <Compile Include="Fixes\FixCopyLocal.cs" />
-    <Compile Include="Fixes\FixPackageVersion.cs" />
+    <Compile Include="Fixes\FixPackages.cs" />
     <Compile Include="Fixes\FixReferenceVersion.cs" />
     <Compile Include="Fixes\FixHintPath.cs" />
     <Compile Include="Fixes\FixOutputPath.cs" />

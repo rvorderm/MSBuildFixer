@@ -7,6 +7,7 @@ namespace MSBuildFixer.Configuration
 	public class PackagesConfiguration
 	{
 		public IEnumerable<Package> Packages { get; set; }
+		public string TargetFramework { get; set; }
 		public static PackagesConfiguration Instance = (dynamic)ConfigurationManager.GetSection("PackagesConfiguration");
 
 		private Dictionary<string, Package> _packages { get; set; }
