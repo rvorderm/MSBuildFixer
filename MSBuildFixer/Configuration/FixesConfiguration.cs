@@ -24,6 +24,7 @@ namespace MSBuildFixer.Configuration
 
 		public bool TryGetProperty(string name, out string value)
 		{
+			if(_propertiesDictionary == null || _propertiesDictionary.Any()) _properties.ToDictionary(x => x.Name, x => x.Value);
 			return _propertiesDictionary.TryGetValue(name, out value);
 		}
 	}

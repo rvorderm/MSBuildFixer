@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -103,7 +102,7 @@ namespace MSBuildFixer.Helpers
 
 		private static void UpdatePackageAttributes(string version, string targetFramework, XmlElement xmlElement)
 		{
-			xmlElement.Attributes["version"].Value = version;
+			if (!string.IsNullOrEmpty(version)) xmlElement.Attributes["version"].Value = version;
 			if (!string.IsNullOrEmpty(targetFramework)) xmlElement.Attributes["targetFramework"].Value = targetFramework;
 		}
 	}
