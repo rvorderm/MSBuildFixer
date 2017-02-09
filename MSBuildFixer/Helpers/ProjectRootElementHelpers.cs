@@ -1,10 +1,11 @@
 ﻿// ReSharper disable StringIndexOfIsCultureSpecific.1
 // ReSharper disable StringIndexOfIsCultureSpecific.2
 
-using System.IO;
 using Microsoft.Build.Construction;
-using System.Linq;
 using MSBuildFixer.Fixes;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace MSBuildFixer.Helpers
 {
@@ -12,7 +13,12 @@ namespace MSBuildFixer.Helpers
 	{
 		public static string GetAssemblyName(ProjectRootElement rootElement)
 		{
-			return rootElement.Properties.FirstOrDefault(x=>x.Name.Equals("AssemblyName"))?.Value;
+			return GetProperties(rootElement, "AssemblyName").FirstOrDefault()?.Value;
+		}
+
+		public static IEnumerable<ProjectPropertyElement> GetProperties(ProjectRootElement rootElement, string assemblyname)
+		{
+			return rootElement.Properties.Where(x=>x.Name.Equals(assemblyname));
 		}
 
 		public static void AddProjectReference(ProjectRootElement projectRootElement, ProjectInSolution project)

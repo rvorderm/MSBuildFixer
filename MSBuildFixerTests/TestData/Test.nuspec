@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Test_Application</id>
+    <version>1.0.0.0</version>
+    <authors>Authoritarian</authors>
+    <owners>Possesor</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Described</description>
+  </metadata>
+  <files>
+    <file src="..\..\bin\$Configuration$\**\*.*" exclude="**\*.pdb;**\TylerTech.VX.WebSites.InSiteInterfaceService.imspkg;**\IdeaBlade*.*;**\DevExpress*.*;**\Infragistics2*.*;**\Stimulsoft*.*;..\..\bin\$Configuration$\x86\**\*.*;..\..\bin\$Configuration$\x64\**\*.*;..\..\bin\$Configuration$\Foundation.Installers.*"/>
+  </files>
+</package>

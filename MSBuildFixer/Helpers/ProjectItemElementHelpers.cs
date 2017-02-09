@@ -100,8 +100,8 @@ namespace MSBuildFixer.Helpers
 		public static void AddOrUpdateReference(ProjectItemElement projectItemElement, string include, string hintPath)
 		{
 			projectItemElement.Include = include;
-			ProjectItemElementHelpers.AddOrUpdateMetaData(projectItemElement, "HintPath", hintPath);
-			ProjectItemElementHelpers.AddOrUpdateMetaData(projectItemElement, "SpecificVersion", false.ToString());
+			AddOrUpdateMetaData(projectItemElement, "HintPath", hintPath);
+			AddOrUpdateMetaData(projectItemElement, "SpecificVersion", false.ToString());
 		}
 	}
 }

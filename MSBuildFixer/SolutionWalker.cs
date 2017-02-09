@@ -3,12 +3,13 @@ using Microsoft.Build.Construction;
 using MSBuildFixer.Configuration;
 using MSBuildFixer.FeatureToggles;
 using MSBuildFixer.Fixes;
+using MSBuildFixer.Reports;
 using MSBuildFixer.SampleFeatureToggles;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
-using MSBuildFixer.Reports;
 
 namespace MSBuildFixer
 {
@@ -192,6 +193,7 @@ namespace MSBuildFixer
 			new ListUntrackedProjectFiles().AttachTo(walker);
 			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ReportsConfiguration.Instance.ReferenceRegex), walker);
 			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
+			Attach<UpdateSolutionNuspecPackage>(!string.IsNullOrEmpty(ConfigurationManager.AppSettings["NuspecFileName"]), walker);
 			return walker;
 		}
 
