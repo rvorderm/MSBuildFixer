@@ -88,6 +88,7 @@
     <Compile Include="Fixes\FixXCopyTests.cs" />
     <Compile Include="Fixes\MergeBinFolderTests.cs" />
     <Compile Include="Fixes\TestSetup.cs" />
+    <Compile Include="Helpers\PathHelpersTests.cs" />
     <Compile Include="Helpers\ProjectItemElementHelpersTests.cs" />
     <Compile Include="Incode10Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

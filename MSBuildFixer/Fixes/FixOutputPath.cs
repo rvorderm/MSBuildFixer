@@ -1,6 +1,7 @@
 ﻿using Microsoft.Build.Construction;
 using MSBuildFixer.SampleFeatureToggles;
 using System.IO;
+using MSBuildFixer.Helpers;
 
 namespace MSBuildFixer.Fixes
 {
@@ -16,7 +17,7 @@ namespace MSBuildFixer.Fixes
 			}
 			else
 			{
-				string relativePath = FixHintPath.MakeRelativePath(projectPropertyElement.ContainingProject.FullPath, solutionFolder);
+				string relativePath = PathHelpers.MakeRelativePath(projectPropertyElement.ContainingProject.FullPath, solutionFolder);
 				projectPropertyElement.Value = Path.Combine(relativePath, "bin", "$(Configuration)");
 			}
 		}

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Build.Construction;
 using System.IO;
+using MSBuildFixer.Helpers;
 
 namespace MSBuildFixer.Fixes
 {
@@ -32,7 +33,7 @@ namespace MSBuildFixer.Fixes
 		{
 			if (!IsAssemblyInfo(projectItemElement)) return;
 			string currentFilePath = Path.Combine(_currentProjectDirectoryPath, projectItemElement.Include);
-			string destinationRelativePath = FixHintPath.MakeRelativePath(currentFilePath, _sharedAssemblyInfoPath);
+			string destinationRelativePath = PathHelpers.MakeRelativePath(currentFilePath, _sharedAssemblyInfoPath);
 			if (projectItemElement.Include.Equals(destinationRelativePath)) return;
 
 			if(!File.Exists(_sharedAssemblyInfoPath)) File.Copy(currentFilePath, _sharedAssemblyInfoPath);

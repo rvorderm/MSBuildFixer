@@ -84,6 +84,7 @@
     <Compile Include="Fixes\FixColocateAssemblyInfo.cs" />
     <Compile Include="Fixes\FixCopyToOutputDirectory.cs" />
     <Compile Include="Fixes\FixCopyLocal.cs" />
+    <Compile Include="Fixes\FixFileEncoding.cs" />
     <Compile Include="Fixes\FixPackages.cs" />
     <Compile Include="Fixes\FixReferenceVersion.cs" />
     <Compile Include="Fixes\FixHintPath.cs" />
@@ -91,7 +92,7 @@
     <Compile Include="Fixes\FixProjectRefences.cs" />
     <Compile Include="Fixes\FixReplaceProjectReferences.cs" />
     <Compile Include="Fixes\FixXCopy.cs" />
-    <Compile Include="Fixes\UpdateSolutionNuspecPackage.cs" />
+    <Compile Include="Helpers\PathHelpers.cs" />
     <Compile Include="Helpers\ProjectRootElementHelpers.cs" />
     <Compile Include="Reports\ListProjectsWithReferences.cs" />
     <Compile Include="Reports\ListUntrackedProjectFiles.cs" />

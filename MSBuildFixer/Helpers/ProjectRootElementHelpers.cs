@@ -23,7 +23,7 @@ namespace MSBuildFixer.Helpers
 
 		public static void AddProjectReference(ProjectRootElement projectRootElement, ProjectInSolution project)
 		{
-			string relativePath = FixHintPath.MakeRelativePath(projectRootElement.FullPath, project.AbsolutePath);
+			string relativePath = PathHelpers.MakeRelativePath(projectRootElement.FullPath, project.AbsolutePath);
 			ProjectItemElement itemElement = projectRootElement.AddItem("ProjectReference", relativePath);
 			itemElement.AddMetadata("Project", project.ProjectGuid);
 			itemElement.AddMetadata("Name", project.ProjectName);
