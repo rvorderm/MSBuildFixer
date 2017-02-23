@@ -5,14 +5,13 @@ using MSBuildFixer.SampleFeatureToggles;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 
 namespace MSBuildFixer.Fixes
 {
-	public class FixReferenceVersion : IFix
+    public class FixReferenceVersion : IFix
 	{
 		private string _solutionDirectory;
-		private Dictionary<ProjectRootElement, PackageConfigHelper> configHelpers = new Dictionary<ProjectRootElement, PackageConfigHelper>();
+		private readonly Dictionary<ProjectRootElement, PackageConfigHelper> configHelpers = new Dictionary<ProjectRootElement, PackageConfigHelper>();
 
 		public void AttachTo(SolutionWalker walker)
 		{
@@ -65,18 +64,13 @@ namespace MSBuildFixer.Fixes
 			
 			ProjectMetadataElement hintPath = ProjectItemElementHelpers.GetHintPath(projectItemElement);
 			string hintPathVersion = ProjectItemElementHelpers.GetHintPathVersion(projectItemElement);
-		    if (hintPathVersion == null) return;
+			if (hintPathVersion == null) return;
 			hintPath.Value = hintPath.Value.Replace(hintPathVersion, reference.HintPathVersion);
-
-//			Package package = PackagesConfiguration.Instance.TryGetPackage(assemblyName);
-//			if (package == null) return;
-//			configHelpers[projectItemElement.ContainingProject].Update(package.PackageName, package.Version);
 		}
 
 		private void SetVersionToFileVersion(ProjectItemElement projectItemElement)
 		{
-			ICollection<ProjectMetadataElement> metadataCollection = projectItemElement.Metadata;
-			ProjectMetadataElement hintPath = metadataCollection.FirstOrDefault(x => x.Name.Equals("HintPath"));
+			ProjectMetadataElement hintPath = ProjectItemElementHelpers.GetHintPath(projectItemElement);
 			if (hintPath == null) return;
 
 			string fileName = ProjectItemElementHelpers.GetFileName(_solutionDirectory, hintPath.ContainingProject.FullPath,
