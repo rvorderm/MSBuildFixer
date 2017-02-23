@@ -56,7 +56,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FeatureToggle, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\FeatureToggle.3.5.1\lib\net40\FeatureToggle.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FeatureToggle.Core, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">

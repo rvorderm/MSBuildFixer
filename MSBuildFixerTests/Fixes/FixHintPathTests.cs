@@ -1,8 +1,10 @@
-﻿using Microsoft.Build.Construction;
+﻿using FakeItEasy;
+using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MSBuildFixer;
 using MSBuildFixer.Fixes;
-using MSBuildFixer.SampleFeatureToggles;
-using System;
+using MSBuildFixer.Helpers;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -11,192 +13,98 @@ namespace MSBuildFixerTests.Fixes
 	[TestClass]
 	public class FixHintPathTests
 	{
-		[TestClass]
-		public class OnVisitProjectItemTests
+		private static ILookup<string, string> CreateBasicLookup(string name, string value)
 		{
-			[TestMethod]
-			[ExpectedException(typeof(ArgumentException))]
-			public void InvalidSolutionPath()
-			{
-				var projectRootElement = TestSetup.GetTestProject();
-				var projectItemElement = projectRootElement.Items.First();
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = "NotValid";
-
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder };
-				fixHintPath.OnvisitReference(projectItemElement);
-			}
-
-			[TestMethod]
-			[ExpectedException(typeof(ArgumentException))]
-			public void InvalidLibrary()
-			{
-				var projectRootElement = TestSetup.GetTestProject();
-				var projectItemElement = projectRootElement.Items.First();
-				var path = "NotValid";
-				var folder = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder };
-				fixHintPath.OnvisitReference(projectItemElement);
-			}
-
-			[TestMethod]
-			public void ToggleDiabled()
-			{
-				TestSetup.SetToggleTo(HintPathToggle.Instance, false);
-				var projectRootElement = TestSetup.GetTestProject();
-				var projectItemElement = projectRootElement.Items
-					.First(x => x.Include.Contains("IdeaBlade.Persistence.Rdb") && !x.Metadata.Any(m => m.Name.Equals("HintPath")));
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnvisitReference(projectItemElement);
-				Assert.AreEqual(1, projectItemElement.Metadata.Count);
-			}
-
-			[TestMethod]
-			public void EmptyCollection()
-			{
-				TestSetup.SetToggleTo(HintPathToggle.Instance, true);
-				var projectRootElement = TestSetup.GetTestProject();
-				var projectItemElement = projectRootElement.Items
-					.First(x => x.Include.Contains("IdeaBlade.Persistence.Rdb") && !x.Metadata.Any(m => m.Name.Equals("HintPath")));
-				projectItemElement.RemoveChild(projectItemElement.Metadata.First());
-				Assert.AreEqual(0, projectItemElement.Metadata.Count);
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnvisitReference(projectItemElement);
-				Assert.AreEqual(0, projectItemElement.Metadata.Count);
-			}
-
-			[TestMethod]
-			public void ParentNotReference()
-			{
-				TestSetup.SetToggleTo(HintPathToggle.Instance, true);
-				var projectRootElement = TestSetup.GetTestProject();
-				var projectItemElement = projectRootElement.Items
-					.First(x => x.Include.Contains("IdeaBlade.Persistence.Rdb") && !x.Metadata.Any(m => m.Name.Equals("HintPath")));
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				projectItemElement.ItemType = "NotRef";
-				fixHintPath.OnvisitReference(projectItemElement);
-				Assert.AreEqual(1, projectItemElement.Metadata.Count);
-			}
-
-			[TestMethod]
-			public void ShouldNotInsert()
-			{
-				TestSetup.SetToggleTo(HintPathToggle.Instance, true);
-				var projectRootElement = TestSetup.GetTestProject();
-				var projectItemElement = projectRootElement.Items
-					.First(x => x.Include.Contains("IdeaBlade") && x.Metadata.Any(m => m.Name.Equals("HintPath")));
-
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var filePath = Path.Combine(Path.GetTempPath(), "IdeaBlade.Persistence.Rdb.dll");
-				if (!File.Exists(filePath)) File.Create(filePath).Close();
-
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnvisitReference(projectItemElement);
-				Assert.AreEqual(2, projectItemElement.Metadata.Count);
-				var hintPath = projectItemElement.Metadata.Skip(1).First();
-				Assert.AreEqual("HintPath", hintPath.Name);
-				Assert.AreEqual(@"..\.lib\Ideablade\IdeaBlade.Persistence.dll", hintPath.Value);
-			}
-
-			[TestMethod]
-			public void ShouldInsert()
-			{
-				TestSetup.SetToggleTo(HintPathToggle.Instance, true);
-				var projectRootElement = TestSetup.GetTestProject();
-				var projectItemElement = projectRootElement.Items
-					.First(x => x.Include.Contains("IdeaBlade.Persistence.Rdb") && !x.Metadata.Any(m => m.Name.Equals("HintPath")));
-
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var filePath = Path.Combine(Path.GetTempPath(), "IdeaBlade.Persistence.Rdb.dll");
-				if(!File.Exists(filePath)) File.Create(filePath).Close();
-
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnvisitReference(projectItemElement);
-				Assert.AreEqual(2, projectItemElement.Metadata.Count);
-				var hintPath = projectItemElement.Metadata.Skip(1).First();
-				Assert.AreEqual("HintPath", hintPath.Name);
-				Assert.AreEqual("$(SolutionDir)\\Temp\\IdeaBlade.Persistence.Rdb.dll", hintPath.Value);
-			}
+			var lookup = A.Fake<ILookup<string, string>>();
+			AddToLookup(lookup, name, value);
+			return lookup;
 		}
 
-		[TestClass]
-		public class OnVisitMetadataTests
+		private static void AddToLookup(ILookup<string, string> libLookup, string name, string value)
 		{
-			[TestMethod]
-			public void SetsValue()
+			A.CallTo(() => libLookup.Contains(name)).Returns(true);
+			A.CallTo(() => libLookup[name]).Returns(new List<string>() { value });
+		}
+
+		[TestMethod]
+		public void LibraryPathBecomesLookup()
+		{
+			var fix = new FixHintPath();
+			fix.LibraryPath = Path.Combine(Path.GetDirectoryName(TestSetup.SolutionPath), "packages");
+			Assert.IsNotNull(fix.Library);
+			Assert.IsTrue(fix.Library.Any());
+		}
+
+		[TestMethod]
+		public void SolutionPathBecomesLookup()
+		{
+			var fix = new FixHintPath();
+			fix.SolutionPath = Path.Combine(Path.GetDirectoryName(TestSetup.SolutionPath), "packages");
+			Assert.IsNotNull(fix.SolutionLookup);
+			Assert.IsTrue(fix.SolutionLookup.Any());
+		}
+
+		[TestMethod]
+		public void FixBrokenPath()
+		{
+			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixHintPath>(x =>
 			{
-				TestSetup.SetToggleTo(HintPathToggle.Instance, true);
+				x.Library = CreateBasicLookup("FeatureToggle.Core.dll", "hintPath");
+				x.SolutionLookup = CreateBasicLookup("", "");
+			});
+			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
+			ProjectRootElement rootElement = projectRootElements.First();
+			ProjectItemElement item = rootElement.Items.First(x=>x.Include.StartsWith("FeatureToggle.Core, Version=3.3.0.0"));
+			ProjectMetadataElement hintPath = ProjectItemElementHelpers.GetHintPath(item);
+			Assert.AreEqual("hintPath", hintPath.Value);
+		}
 
-				var projectRootElement = TestSetup.GetTestProject();
+		[TestMethod]
+		public void AddMissingPath()
+		{
+			var walker = new SolutionWalker(TestSetup.SolutionPath);
+			ProjectRootElement badProject = walker.VisitSolution(false).First();
+			ProjectItemElement projectItemElement = badProject.Items.First(x=>x.Include.StartsWith("FeatureToggle,"));
+			ProjectMetadataElement missingHintPath = ProjectItemElementHelpers.GetHintPath(projectItemElement);
+			Assert.IsNull(missingHintPath);
 
-				var metadataElements = projectRootElement.AllChildren.OfType<ProjectMetadataElement>().Where(x => x.Name.Equals("HintPath")).ToList();
-				Assert.IsTrue(metadataElements.Any());
-
-				var fileStream = File.Create(Path.Combine(Path.GetTempPath(), "IdeaBlade.Persistence.dll"));
-				fileStream.Close();
-
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var element = metadataElements[0];
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitMetadata(element);
-				Assert.AreEqual(@"$(SolutionDir)\Temp\IdeaBlade.Persistence.dll", element.Value);
-				//Assert.AreEqual(Path.Combine(Path.GetTempPath(), "IdeaBlade.Persistence.dll"), element.Value);
-			}
-
-			[TestMethod]
-			public void ToggleBlocks()
+			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixHintPath>(x =>
 			{
-				TestSetup.SetToggleTo(HintPathToggle.Instance, false);
+				x.Library = CreateBasicLookup("FeatureToggle.dll", "hintPath");
+				x.SolutionLookup = CreateBasicLookup("", "");
+			});
+			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
+			ProjectRootElement rootElement = projectRootElements.First();
+			ProjectItemElement item = rootElement.Items.First(x => x.Include.StartsWith("FeatureToggle, Version=3.3.0.0"));
+			ProjectMetadataElement hintPath = ProjectItemElementHelpers.GetHintPath(item);
+			Assert.AreEqual("hintPath", hintPath.Value);
+		}
 
-				var projectRootElement = TestSetup.GetTestProject();
-
-				var metadataElements = projectRootElement.AllChildren.OfType<ProjectMetadataElement>().Where(x => x.Name.Equals("HintPath")).ToList();
-				Assert.IsTrue(metadataElements.Any());
-
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var element = metadataElements[0];
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitMetadata(element);
-				Assert.AreEqual("..\\.lib\\Ideablade\\IdeaBlade.Persistence.dll", element.Value);
-			}
-
-			[TestMethod]
-			public void Notelement()
+		[TestMethod]
+		public void FindInSolutionFolder()
+		{
+			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixHintPath>(x =>
 			{
-				TestSetup.SetToggleTo(HintPathToggle.Instance, true);
+				x.Library = CreateBasicLookup(string.Empty, string.Empty);
+				x.SolutionLookup = CreateBasicLookup("FeatureToggle.Core.dll", "hintPath");
+			});
+			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
+			ProjectRootElement rootElement = projectRootElements.First();
+			ProjectItemElement item = rootElement.Items.First(x => x.Include.StartsWith("FeatureToggle.Core, Version=3.3.0.0"));
+			ProjectMetadataElement hintPath = ProjectItemElementHelpers.GetHintPath(item);
+			Assert.AreEqual("hintPath", hintPath.Value);
+		}
 
-				var projectRootElement = TestSetup.GetTestProject();
+		[TestMethod]
+		public void MatchFileVersion()
+		{
+			Assert.Fail();
+		}
 
-				var metadataElements = projectRootElement.AllChildren.OfType<ProjectMetadataElement>().Where(x => x.Name.Equals("HintPath")).ToList();
-				Assert.IsTrue(metadataElements.Any());
-
-				var path = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetTempPath()));
-				var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetTempPath()));
-
-				var element = metadataElements[0];
-				element.Name = "Meow";
-				var fixHintPath = new FixHintPath() { SolutionPath = path, LibraryPath = folder};
-				fixHintPath.OnVisitMetadata(element);
-				Assert.AreEqual("..\\.lib\\Ideablade\\IdeaBlade.Persistence.dll", element.Value);
-			}
+		[TestMethod]
+		public void UseRelative()
+		{
+			Assert.Fail();
 		}
 	}
 }
