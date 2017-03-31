@@ -86,6 +86,7 @@
     <Compile Include="Fixes\FixCopyLocal.cs" />
     <Compile Include="Fixes\FixFileEncoding.cs" />
     <Compile Include="Fixes\FixPackages.cs" />
+    <Compile Include="Fixes\FixIncode10.cs" />
     <Compile Include="Fixes\FixReferenceVersion.cs" />
     <Compile Include="Fixes\FixHintPath.cs" />
     <Compile Include="Fixes\FixOutputPath.cs" />

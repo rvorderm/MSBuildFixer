@@ -69,7 +69,7 @@ namespace MSBuildFixer.Helpers
 			return GetMetadataElement(projectItemElement, "Private");
 		}
 
-		private static ProjectMetadataElement GetMetadataElement(ProjectItemElement projectItemElement, string name)
+		public static ProjectMetadataElement GetMetadataElement(ProjectItemElement projectItemElement, string name)
 		{
 			return projectItemElement.Metadata.FirstOrDefault(x => x.Name.Equals(name));
 		}

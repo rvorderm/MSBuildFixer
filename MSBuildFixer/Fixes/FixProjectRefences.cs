@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Construction;
+﻿using System;
+using Microsoft.Build.Construction;
 using MSBuildFixer.Helpers;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,10 +25,26 @@ namespace MSBuildFixer.Fixes
 			ProjectRootElementHelpers.AddProjectReference(projectItemElement.ContainingProject, project);
 		}
 
+		private void OnVisitProjectReference(ProjectItemElement projectItemElement)
+		{
+			ProjectMetadataElement name = ProjectItemElementHelpers.GetMetadataElement(projectItemElement, "Name");
+			ProjectMetadataElement project = ProjectItemElementHelpers.GetMetadataElement(projectItemElement, "Project");
+			ProjectInSolution existingProject;
+			if (!Projects.TryGetValue(name.Value, out existingProject)) return;
+			if (!project.Value.Equals(existingProject.ProjectGuid, StringComparison.CurrentCultureIgnoreCase))
+				project.Value = existingProject.ProjectGuid;
+			string relativePath = PathHelpers.MakeRelativePath(projectItemElement.ContainingProject.FullPath, existingProject.AbsolutePath);
+			if (!projectItemElement.Include.Equals(relativePath, StringComparison.InvariantCultureIgnoreCase))
+				projectItemElement.Include = relativePath;
+			if (!project.Value.Equals(existingProject.ProjectGuid, StringComparison.InvariantCultureIgnoreCase))
+				project.Value = existingProject.ProjectGuid;
+		}
+
 		public void AttachTo(SolutionWalker walker)
 		{
 			walker.OnVisitProjects += VisitProjects;
 			walker.OnVisitProjectItem_Reference += OnVisitReference;
+			walker.OnVisitProjectItem_ProjectReference += OnVisitProjectReference;
 		}
 	}
 }

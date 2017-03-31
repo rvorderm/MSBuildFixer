@@ -7,7 +7,6 @@ using MSBuildFixer.Reports;
 using MSBuildFixer.SampleFeatureToggles;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 
@@ -190,10 +189,11 @@ namespace MSBuildFixer
 			Attach<FixXCopy>(FixXCopyToggle.Instance, walker);
 			Attach<FixProperties>(FixesConfiguration.Instance.Properties.Any(), walker);
 			//AttachScriptBuilder();
-			new ListUntrackedProjectFiles().AttachTo(walker);
+//			new ListUntrackedProjectFiles().AttachTo(walker);
 			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ReportsConfiguration.Instance.ReferenceRegex), walker);
 			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
-			Attach<UpdateSolutionNuspecPackage>(!string.IsNullOrEmpty(ConfigurationManager.AppSettings["NuspecFileName"]), walker);
+			Attach<FixFileEncoding>(FixesConfiguration.Instance.FixProjectFileEncodings, walker);
+			new FixIncode10().AttachTo(walker);
 			return walker;
 		}
 
