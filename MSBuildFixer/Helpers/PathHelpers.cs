@@ -38,5 +38,10 @@ namespace MSBuildFixer.Helpers
 
             return relativePath;
         }
+
+        public static string GetAbsolutePath(string path)
+        {
+            return Path.GetFullPath((new Uri(path)).LocalPath);
+        }
     }
 }

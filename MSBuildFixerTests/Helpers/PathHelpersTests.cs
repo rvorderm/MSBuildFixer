@@ -24,5 +24,12 @@ namespace MSBuildFixerTests.Helpers
             string relativePath = PathHelpers.MakeRelativePath(@from, to);
             Assert.AreEqual(@"..\file.txt", relativePath);
         }
+
+        [TestMethod]
+        public void SimplifyPath()
+        {
+            var complicatedPath = @"C:\Root\Nested\..\..\Root2";
+            Assert.AreEqual(@"C:\Root2", PathHelpers.GetAbsolutePath(complicatedPath));
+        }
     }
 }

@@ -5,7 +5,7 @@ using MSBuildFixer.FeatureToggles;
 using MSBuildFixer.Fixes;
 using MSBuildFixer.Reports;
 using MSBuildFixer.SampleFeatureToggles;
-using System;
+using Serilog;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -60,15 +60,22 @@ namespace MSBuildFixer
 		public event VisitProjectRootElementHandler OnVisitProjectRootItem;
 		public ProjectRootElement VisitProject(ProjectInSolution project)
 		{
+			Log.Verbose("Visiting project {project}, of type {type}", project.ProjectName, project.ProjectType);
 			if (project.ProjectType == SolutionProjectType.SolutionFolder) return null;
 			var absolutePath = project.AbsolutePath;
 			if (project.ProjectType == SolutionProjectType.WebProject) return null;
-			if (ExclusionConfiguration.IsExcludedProject(absolutePath)) return null;
+			if (ExclusionConfiguration.IsExcludedProject(absolutePath))
+			{
+				Log.Verbose("Project {project} was excluded", project.ProjectType);
+				return null;
+			}
 			OnOpenProjectFile?.Invoke(absolutePath);
 			ProjectRootElement projectRootElement = ProjectRootElement.Open(absolutePath);
 			if (projectRootElement == null) return null;
 			OnVisitProjectRootItem?.Invoke(projectRootElement);
+			Log.Verbose("Visiting property groups for project {project}", project.ProjectName);
 			VisitPropertyGroups(projectRootElement.PropertyGroups);
+			Log.Verbose("Visiting item groups for project {project}", project.ProjectName);
 			VisitProjectItemGroups(projectRootElement.ItemGroups);
 			return projectRootElement;
 		}
@@ -102,6 +109,7 @@ namespace MSBuildFixer
 
 		public void VisitProjectItem(ProjectItemElement projectItemElement)
 		{
+			Log.Verbose("Visiting item {type} {item}", projectItemElement.ItemType, projectItemElement.Exclude);
 			switch (projectItemElement.ItemType)
 			{
 				case "Reference":
@@ -135,6 +143,7 @@ namespace MSBuildFixer
 		public event VisitMetadataHandler OnVisitMetadata;
 		public void VisitMetadata(ProjectMetadataElement projectMetadataElement)
 		{
+			Log.Verbose("Visiting metadata {name} {value}", projectMetadataElement.Name, projectMetadataElement.Value);
 			OnVisitMetadata?.Invoke(projectMetadataElement);
 		}
 
@@ -163,20 +172,21 @@ namespace MSBuildFixer
 		public event VisitPropertyHandler OnVisitProperty;
 		public void VisitProperty(ProjectPropertyElement projectPropertyElement)
 		{
+			Log.Verbose("Visiting property {name} {value}", projectPropertyElement.Name, projectPropertyElement.Value);
 			OnVisitProperty?.Invoke(projectPropertyElement);
 		}
 
-		public static SolutionWalker CreateWalker(string fullSolutionPath)
+		public static SolutionWalker CreateWalker(string solutionPath)
 		{
-			if (!File.Exists(fullSolutionPath))
+			if (!File.Exists(solutionPath))
 			{
-				Console.WriteLine($"SolutionPath null or directory did not exist: {fullSolutionPath}");
-				throw new ArgumentException(fullSolutionPath);
+				Log.Fatal("SolutionPath was null or file did not exist: {fullSolutionPath}", solutionPath);
+				return null;
 			}
 
-			Console.WriteLine($"Opening {fullSolutionPath}");
+			Log.Verbose("Opening solutionPath {solutionPath}", solutionPath);
 
-			SolutionWalker walker = new SolutionWalker(fullSolutionPath);
+			SolutionWalker walker = new SolutionWalker(solutionPath);
 			Attach<MergeBinFolders>(MergeBinFoldersToggle.Instance, walker);
 			Attach<FixCopyLocal>(FixesConfiguration.Instance.CopyStyle != null, walker);
 			Attach<FixColocateAssemblyInfo>(ColocateAssemblyInfoToggle.Instance, walker);
@@ -191,6 +201,7 @@ namespace MSBuildFixer
 			//AttachScriptBuilder();
 //			new ListUntrackedProjectFiles().AttachTo(walker);
 			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ReportsConfiguration.Instance.ReferenceRegex), walker);
+			Attach<ListCircularDependencies>(ReportsConfiguration.Instance.ListCircularDependencies, walker);
 			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
 			Attach<FixFileEncoding>(FixesConfiguration.Instance.FixProjectFileEncodings, walker);
 //			new FixIncode10().AttachTo(walker);
@@ -206,7 +217,9 @@ namespace MSBuildFixer
 		public static void Attach<T>(bool shouldAttach, SolutionWalker walker)
 			where T : IFix, new()
 		{
-			if (shouldAttach) new T().AttachTo(walker);
+			if (!shouldAttach) return;
+			Log.Information("Attaching a fix of type {typeof}", typeof(T));
+			new T().AttachTo(walker);
 		}
 
 		public static void AttachScriptBuilder()
