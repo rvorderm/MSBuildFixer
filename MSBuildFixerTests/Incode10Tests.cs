@@ -61,7 +61,6 @@ namespace MSBuildFixerTests
             //Build
             var initialDuration = TimeAction(() => DoProcess(Build));
 			Console.WriteLine($@"Initial Duration was {initialDuration}");
-			TestSetup.SetToggleTo(CopyLocalToggle.Instance, true);
 			DoFix<FixCopyLocal>(RootDir, Filename);
 
             //No Copy Local
@@ -70,14 +69,14 @@ namespace MSBuildFixerTests
 			Console.WriteLine($@"Vanilla Duration was {vanillaDuration}");
 
             //First only
-            DoFix<FixCopyLocal>(RootDir, Filename, x=>x.CopyStyle = CopyStyle.FirstOnly);
+            DoFix<FixCopyLocal>(RootDir, Filename, x=>x.CopyStyle = CopyStyle.FirstOccurence);
             Purge();
             var firstOnlyDuration = TimeAction(() => DoProcess(Build));
 			Console.WriteLine($@"FirstOnly Duration was {firstOnlyDuration}");
 
             //Last Only
 			Purge();
-            DoFix<FixCopyLocal>(RootDir, Filename, x => x.CopyStyle = CopyStyle.LastOnly);
+            DoFix<FixCopyLocal>(RootDir, Filename, x => x.CopyStyle = CopyStyle.LastOccurence);
             var lastOnlyDuration = TimeAction(() => DoProcess(Build));
 			Console.WriteLine($@"LastOnly Duration was {lastOnlyDuration}");
 			CleanDirectory(BinPath);

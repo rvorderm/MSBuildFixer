@@ -6,6 +6,7 @@ namespace MSBuildFixer.Configuration
 	{
 		public string ReferenceRegex { get; set; }
 		public bool ListUntrackedProjects { get; set; }
+		public bool ListCircularDependencies { get; set; }
 		public static ReportsConfiguration Instance = (dynamic)ConfigurationManager.GetSection("ReportsConfiguration");
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using MSBuildFixer.Fixes;
 
 namespace MSBuildFixer.Configuration
 {
@@ -19,6 +20,8 @@ namespace MSBuildFixer.Configuration
 				_propertiesDictionary = value.ToDictionary(x => x.Name, x => x.Value);
 			}
 		}
+
+		public CopyStyle CopyStyle { get; set; } = CopyStyle.DoNothing;
 
 		private Dictionary<string, string> _propertiesDictionary;
 		private IEnumerable<Property> _properties;

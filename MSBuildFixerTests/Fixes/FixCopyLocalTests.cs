@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Build.Construction;
+﻿using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MSBuildFixer;
 using MSBuildFixer.Fixes;
@@ -29,9 +28,9 @@ namespace MSBuildFixerTests.Fixes
 		}
 
 		[TestMethod]
-		public void FirstOnly()
+		public void FirstOccurence()
 		{
-			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixCopyLocal>(x=>x.CopyStyle = CopyStyle.FirstOnly);
+			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixCopyLocal>(x=>x.CopyStyle = CopyStyle.FirstOccurence);
 			
 			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
 			IEnumerable<ProjectItemElement> projectItemElements = projectRootElements.SelectMany(x=>x.Items);
@@ -52,9 +51,9 @@ namespace MSBuildFixerTests.Fixes
 		}
 
 		[TestMethod]
-		public void LastOnly()
+		public void LastOccurence()
 		{
-			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixCopyLocal>(x => x.CopyStyle = CopyStyle.LastOnly);
+			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixCopyLocal>(x => x.CopyStyle = CopyStyle.LastOccurence);
 
 			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
 			IEnumerable<ProjectItemElement> projectItemElements = projectRootElements.SelectMany(x => x.Items).Reverse();
@@ -72,6 +71,37 @@ namespace MSBuildFixerTests.Fixes
 				ProjectMetadataElement projectMetadataElement = ProjectItemElementHelpers.GetPrivate(itemElement);
 				if (projectMetadataElement == null) continue;
 				Assert.AreEqual(expected, projectMetadataElement.Value, $"{itemElement.ContainingProject.FullPath}, {itemElement.Include}");
+			}
+		}
+
+		[TestMethod]
+		public void MoveAllToFirstProject()
+		{
+			SolutionWalker solutionWalker = TestSetup.BuildWalker<FixCopyLocal>(x => x.CopyStyle = CopyStyle.MoveAllToFirstProject);
+
+			IEnumerable<ProjectRootElement> projectRootElements = solutionWalker.VisitSolution(false);
+			ProjectRootElement firstProject = projectRootElements.First();
+			var includes = new HashSet<string>();
+
+			foreach (ProjectItemElement projectItemElement in firstProject.Items)
+			{
+				if (FixCopyLocal.IsGacAssembly(projectItemElement)) continue;
+				if (!projectItemElement.ItemType.Equals("Reference")) continue;
+				ProjectMetadataElement projectMetadataElement = ProjectItemElementHelpers.GetPrivate(projectItemElement);
+				Assert.AreEqual(true.ToString(), projectMetadataElement.Value);
+				includes.Add(ProjectItemElementHelpers.GetAssemblyName(projectItemElement));
+			}
+
+			foreach (ProjectRootElement projectRootElement in projectRootElements.Skip(1))
+			{
+				foreach (ProjectItemElement projectItemElement in projectRootElement.Items)
+				{
+					if (FixCopyLocal.IsGacAssembly(projectItemElement)) continue;
+					if (!projectItemElement.ItemType.Equals("Reference")) continue;
+					ProjectMetadataElement projectMetadataElement = ProjectItemElementHelpers.GetPrivate(projectItemElement);
+					Assert.AreEqual(false.ToString(), projectMetadataElement.Value);
+					Assert.IsTrue(includes.Contains(ProjectItemElementHelpers.GetAssemblyName(projectItemElement)), $"Wasn't moved to first project: {projectItemElement.ContainingProject.Properties.FirstOrDefault(x=>x.Name.Equals("AssemblyName")).Value} - {projectItemElement.Include}");
+				}
 			}
 		}
 	}

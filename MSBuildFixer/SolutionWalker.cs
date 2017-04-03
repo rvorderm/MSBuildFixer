@@ -178,7 +178,7 @@ namespace MSBuildFixer
 
 			SolutionWalker walker = new SolutionWalker(fullSolutionPath);
 			Attach<MergeBinFolders>(MergeBinFoldersToggle.Instance, walker);
-			Attach<FixCopyLocal>(CopyLocalToggle.Instance, walker);
+			Attach<FixCopyLocal>(FixesConfiguration.Instance.CopyStyle != null, walker);
 			Attach<FixColocateAssemblyInfo>(ColocateAssemblyInfoToggle.Instance, walker);
 			Attach<FixCopyToOutputDirectory>(CopyToOutputDirectoryToggle.Instance, walker);
 			Attach<FixHintPath>(HintPathToggle.Instance, walker);
@@ -193,7 +193,7 @@ namespace MSBuildFixer
 			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ReportsConfiguration.Instance.ReferenceRegex), walker);
 			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
 			Attach<FixFileEncoding>(FixesConfiguration.Instance.FixProjectFileEncodings, walker);
-			new FixIncode10().AttachTo(walker);
+//			new FixIncode10().AttachTo(walker);
 			return walker;
 		}
 
