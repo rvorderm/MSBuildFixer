@@ -9,7 +9,8 @@ namespace MSBuildFixer.Configuration
 	{
 		public static FixesConfiguration Instance = (dynamic)ConfigurationManager.GetSection("FixesConfiguration");
 		public IEnumerable<ProjectReferenceReplacement> ProjectReferenceReplacements { get; set; }
-		public bool FixProjectFileEncodings { get; set; }
+		public bool ProjectFileEncodings { get; set; }
+		public bool ProjectReferences { get; set; }
 
 		public IEnumerable<Property> Properties
 		{

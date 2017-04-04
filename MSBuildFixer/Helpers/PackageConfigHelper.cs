@@ -18,28 +18,31 @@ namespace MSBuildFixer.Helpers
 	public class PackageConfigHelper : IPackageConfigHelper
 	{
 		private readonly string _packageFilePath;
-		private List<Action<XmlDocument>> Actions { get; } = new List<Action<XmlDocument>>();
 
 		public PackageConfigHelper(string packageFilePath)
 		{
 			_packageFilePath = packageFilePath;
 		}
 
+		private List<Action<XmlDocument>> Actions { get; } = new List<Action<XmlDocument>>();
+
 		public PackageConfigHelper AddPackage(string assemblyName, string version, string targetFramework = null)
 		{
-			Actions.Add(xmlDocument  => AddPackage_Action(xmlDocument, assemblyName, version, targetFramework));
+			Actions.Add(xmlDocument => AddPackage_Action(xmlDocument, assemblyName, version, targetFramework));
 			return this;
 		}
 
 		public PackageConfigHelper Update(string regex, string version, string targetFramework = null)
 		{
-			Actions.Add(xmlDocument  => Update_Action(xmlDocument, new Regex(regex), version, targetFramework));
+			Actions.Add(xmlDocument => Update_Action(xmlDocument, new Regex(regex), version, targetFramework));
 			return this;
 		}
 
 		public void SavePackageFile(XmlDocument xmlDocument)
 		{
-			xmlDocument?.Save(_packageFilePath);
+			if (xmlDocument == null) return;
+			if (xmlDocument.InnerText.Equals(File.ReadAllText(_packageFilePath))) return;
+			xmlDocument.Save(_packageFilePath);
 		}
 
 		public XmlDocument GetPackageDocument()
@@ -47,9 +50,7 @@ namespace MSBuildFixer.Helpers
 			if (!Actions.Any()) return null;
 			XmlDocument xmlDocument = GetXmlDocument();
 			foreach (Action<XmlDocument> action in Actions)
-			{
 				action.Invoke(xmlDocument);
-			}
 			return xmlDocument;
 		}
 
@@ -65,7 +66,7 @@ namespace MSBuildFixer.Helpers
 			AddAttribute(child, "id", id);
 			AddAttribute(child, "version", version);
 			AddAttribute(child, "targetFramework", targetFramework);
-			var xmlElement = (XmlElement)xmlDocument.SelectSingleNode("//packages");
+			var xmlElement = (XmlElement) xmlDocument.SelectSingleNode("//packages");
 			xmlElement?.AppendChild(child);
 		}
 
@@ -81,13 +82,9 @@ namespace MSBuildFixer.Helpers
 		{
 			var xmlDocument = new XmlDocument();
 			if (!File.Exists(_packageFilePath))
-			{
 				xmlDocument.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<packages>\r\n</packages>");
-			}
 			else
-			{
 				xmlDocument.Load(_packageFilePath);
-			}
 			return xmlDocument;
 		}
 
@@ -95,9 +92,7 @@ namespace MSBuildFixer.Helpers
 		{
 			IEnumerable<XmlElement> xmlElements = GetElements(xmlDocument, regex);
 			foreach (XmlElement xmlElement in xmlElements)
-			{
 				UpdatePackageAttributes(version, targetFramework, xmlElement);
-			}
 		}
 
 		private static void UpdatePackageAttributes(string version, string targetFramework, XmlElement xmlElement)

@@ -193,7 +193,7 @@ namespace MSBuildFixer
 			Attach<FixCopyToOutputDirectory>(CopyToOutputDirectoryToggle.Instance, walker);
 			Attach<FixHintPath>(HintPathToggle.Instance, walker);
 			Attach<FixOutputPath>(OutputPathToggle.Instance, walker);
-			Attach<FixProjectRefences>(ProjectReferencesToggle.Instance, walker);
+			Attach<FixProjectRefences>(FixesConfiguration.Instance.ProjectReferences, walker);
 			Attach<FixPackages>(PackagesConfiguration.Instance.Packages.Any(), walker);
 			Attach<FixReferenceVersion>(ReferenceVersionToggle.Instance.Enabled, walker);
 			Attach<FixXCopy>(FixXCopyToggle.Instance, walker);
@@ -203,7 +203,7 @@ namespace MSBuildFixer
 			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ReportsConfiguration.Instance.ReferenceRegex), walker);
 			Attach<ListCircularDependencies>(ReportsConfiguration.Instance.ListCircularDependencies, walker);
 			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
-			Attach<FixFileEncoding>(FixesConfiguration.Instance.FixProjectFileEncodings, walker);
+			Attach<FixFileEncoding>(FixesConfiguration.Instance.ProjectFileEncodings, walker);
 //			new FixIncode10().AttachTo(walker);
 			return walker;
 		}

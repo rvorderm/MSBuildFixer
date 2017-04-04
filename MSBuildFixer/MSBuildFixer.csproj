@@ -87,7 +87,6 @@
     <Compile Include="FeatureToggles\UseRelativePathing.cs" />
     <Compile Include="FeatureToggles\MergeBinFoldersToggle.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="FeatureToggles\ProjectReferencesToggle.cs" />
     <Compile Include="FeatureToggles\ReferenceVersionToggle.cs" />
     <Compile Include="FeatureToggles\OutputPathToggle.cs" />
     <Compile Include="FeatureToggles\HintPathToggle.cs" />
