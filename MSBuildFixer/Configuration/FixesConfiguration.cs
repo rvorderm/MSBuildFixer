@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using MSBuildFixer.Fixes;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using MSBuildFixer.Fixes;
 
 namespace MSBuildFixer.Configuration
 {
@@ -11,6 +11,8 @@ namespace MSBuildFixer.Configuration
 		public IEnumerable<ProjectReferenceReplacement> ProjectReferenceReplacements { get; set; }
 		public bool ProjectFileEncodings { get; set; }
 		public bool ProjectReferences { get; set; }
+		public ReferenceVersionType ReferenceVersionType { get; set; } = ReferenceVersionType.None;
+		public bool ReferenceVersion => ReferenceVersionType != ReferenceVersionType.None;
 
 		public IEnumerable<Property> Properties
 		{
@@ -44,5 +46,12 @@ namespace MSBuildFixer.Configuration
 	{
 		public string Name { get; set; }
 		public string Value { get; set; }
+	}
+
+	public enum ReferenceVersionType
+	{
+		None,
+		HintPath,
+		Config,
 	}
 }

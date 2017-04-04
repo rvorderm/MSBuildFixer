@@ -19,7 +19,7 @@ namespace MSBuildFixerTests.Fixes
 			[TestMethod]
 			public void ShouldUseHintPath()
 			{
-				ReferenceVersionToggle.Instance.Type = RefereneVersionType.HintPath;
+				FixesConfiguration.Instance.ReferenceVersionType = ReferenceVersionType.HintPath;
 				var walker = new SolutionWalker(TestSetup.SolutionPath);
 				ProjectRootElement badProject = walker.VisitSolution(false).First();
 				ProjectItemElement badElement = badProject.Items.FirstOrDefault(x=>x.Include.StartsWith("FakeItEasy, Version=2.3.0"));
@@ -35,7 +35,7 @@ namespace MSBuildFixerTests.Fixes
             [TestMethod]
 			public void ShouldUseConfig()
 			{
-				ReferenceVersionToggle.Instance.Type = RefereneVersionType.Config;
+				FixesConfiguration.Instance.ReferenceVersionType = ReferenceVersionType.Config;
                 ReferencesConfiguration.Instance = new ReferencesConfiguration()
                 {
                     References = new List<Reference>()

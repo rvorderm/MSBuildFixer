@@ -42,12 +42,12 @@ namespace MSBuildFixer.Fixes
 
 		public void OnVisitReference(ProjectItemElement projectItemElement)
 		{
-			switch (ReferenceVersionToggle.Instance.Type)
+			switch (FixesConfiguration.Instance.ReferenceVersionType)
 			{
-				case RefereneVersionType.HintPath:
+				case ReferenceVersionType.HintPath:
 					SetVersionToFileVersion(projectItemElement);
 					break;
-				case RefereneVersionType.Config:
+				case ReferenceVersionType.Config:
 					UpgradePackageAndInclude(projectItemElement);
 					break;
 			}

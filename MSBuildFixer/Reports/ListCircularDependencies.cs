@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Microsoft.Build.Construction;
+﻿using Microsoft.Build.Construction;
 using MSBuildFixer.Configuration;
 using MSBuildFixer.Helpers;
 using Serilog;
 using Serilog.Context;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace MSBuildFixer.Reports
 {
 	public class ListCircularDependencies : IFix
 	{
+		private readonly Dictionary<string, List<string>> cycles = new Dictionary<string, List<string>>();
 		private readonly Dictionary<string, HashSet<string>> edgeSets = new Dictionary<string, HashSet<string>>();
 		private readonly HashSet<string> sources = new HashSet<string>();
 
@@ -36,27 +37,40 @@ namespace MSBuildFixer.Reports
 				foreach (string source in sources)
 				{
 					var cycle = new List<string>();
-					if (DFS(source, cycle))
-						Log.Information("Cycle detected for project {project}: {cycle}", source,
-							string.Join($"{Environment.NewLine}-> ", cycle));
+					DFS(source, cycle);
+				}
+				Log.Information("{count} cycles were found", cycles.Count);
+				foreach (KeyValuePair<string, List<string>> cycle in cycles)
+				{
+					Log.Information("Cycle detected for project {project}:",
+						Path.GetFileNameWithoutExtension(cycle.Key));
+					foreach (string path in cycle.Value)
+					{
+						Log.Information("-> {path}", Path.GetFileNameWithoutExtension(path));
+					}
 				}
 			}
 		}
 
-		private bool DFS(string source, ICollection<string> cycle)
+		private void DFS(string source, List<string> cycle)
 		{
+			if (cycles.ContainsKey(source)) return;
 			HashSet<string> dependencies;
 			if (!edgeSets.TryGetValue(source, out dependencies))
-				return false;
-
-			if (cycle.Contains(source))
-			{
-				cycle.Add(source);
-				return true;
-			}
+				return;
 
 			cycle.Add(source);
-			return dependencies.Any(dependency => DFS(dependency, cycle));
+
+			int start = cycle.IndexOf(source);
+			if (start != cycle.Count - 1)
+			{
+				cycles[source] = new List<string>(cycle.Skip(start));
+				return;
+			}
+
+			foreach (string dependency in dependencies)
+				DFS(dependency, cycle);
+			cycle.RemoveAt(cycle.Count-1);
 		}
 
 		private void Walker_OnVisitProjectItem_ProjectReference(ProjectItemElement projectItemElement)
