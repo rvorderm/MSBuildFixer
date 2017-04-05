@@ -51,12 +51,26 @@ namespace MSBuildFixer.Helpers
 			if (hintPath?.Value == null) return null;
 
 			string assemblyName = GetAssemblyName(projectItemElement);
-			int assemblyNameLocation = hintPath.Value.IndexOf(assemblyName, StringComparison.OrdinalIgnoreCase);
-			int firstDot = hintPath.Value.IndexOf(".", assemblyNameLocation+assemblyName.Length);
-			int slash = hintPath.Value.IndexOf(@"\", firstDot+1);
-			if (assemblyNameLocation == -1 || firstDot == -1 || slash == -1) return null;
+			string hintPathValue = hintPath.Value;
+			return GetHintPathVersion(hintPathValue, assemblyName);
+		}
+
+		public static string GetHintPathVersion(string hintPathValue, string assemblyName)
+		{
+			int assemblyNameLocation = hintPathValue.IndexOf(assemblyName, StringComparison.OrdinalIgnoreCase);
+			int firstDot = hintPathValue.IndexOf(".", assemblyNameLocation + assemblyName.Length);
+			int slash = hintPathValue.IndexOf(@"\", firstDot + 1);
 //			Console.Out.Write($"{assemblyNameLocation}, {firstDot}, {slash}");
-			return assemblyNameLocation == -1 ? null : hintPath.Value.Substring(firstDot+1, slash-firstDot-1);
+			if (assemblyNameLocation != -1 && slash > firstDot && firstDot > assemblyNameLocation)
+				return hintPathValue.Substring(firstDot + 1, slash - firstDot - 1);
+			assemblyNameLocation = hintPathValue.IndexOf("packages\\");
+			slash = hintPathValue.IndexOf(@"\", assemblyNameLocation);
+			firstDot = hintPathValue.IndexOf(".", assemblyNameLocation);
+			if (firstDot > slash) return null;
+			slash = hintPathValue.IndexOf(@"\", firstDot);
+			if(slash > firstDot && firstDot != -1)
+				return hintPathValue.Substring(firstDot + 1, slash - firstDot - 1);
+			return null;
 		}
 
 		public static ProjectMetadataElement GetHintPath(ProjectItemElement projectItemElement)

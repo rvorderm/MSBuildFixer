@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace MSBuildFixer.Fixes
 {
-    public enum CopyStyle
+	public enum CopyStyle
 	{
 		NoCopying,
 		FirstOccurence,
@@ -19,7 +19,7 @@ namespace MSBuildFixer.Fixes
 	public class FixCopyLocal : IFix
 	{
 		private ProjectRootElement _firstElement;
-		private Dictionary<string, string> _originalHintPaths = new Dictionary<string, string>();
+		private readonly Dictionary<string, string> _originalHintPaths = new Dictionary<string, string>();
 		private readonly HashSet<string> _visitedIncludes = new HashSet<string>();
 		private readonly Dictionary<string, ProjectItemElement> _visitedElements = new Dictionary<string, ProjectItemElement>();
 		public CopyStyle CopyStyle { get; set; } = FixesConfiguration.Instance.CopyStyle;
@@ -49,18 +49,43 @@ namespace MSBuildFixer.Fixes
 		private void CaseMoveAllToFirstProject(ProjectItemElement projectItemElement)
 		{
 			if (!projectItemElement.ItemType.Equals("Reference")) return;
+			ProjectMetadataElement hintPath = ProjectItemElementHelpers.GetHintPath(projectItemElement);
+			if (hintPath != null)
+			{
+				string include = ProjectItemElementHelpers.GetAssemblyName(projectItemElement);
+				string value;
+				if (!_originalHintPaths.TryGetValue(include, out value))
+				{
+					_originalHintPaths[include] = hintPath.Value;
+				}
+				else
+				{
+					string newPath = ProjectItemElementHelpers.GetHintPathVersion(projectItemElement);
+					string existingPath = ProjectItemElementHelpers.GetHintPathVersion(value, include);
+					if (existingPath == null && !string.IsNullOrEmpty(newPath))
+					{
+						_originalHintPaths[include] = newPath;
+					}
+					else if (!string.IsNullOrEmpty(existingPath) && !string.IsNullOrEmpty(newPath))
+					{
+						var newVersion = new Version(newPath);
+						var existingVersion = new Version(existingPath);
+						if (existingVersion < newVersion)
+						{
+							_originalHintPaths[include] = hintPath.Value;
+						}
+					}
+				}
+			}
+
 			if (projectItemElement.ContainingProject == _firstElement)
 			{
-				ProjectItemElementHelpers.AddOrUpdateMetaData(projectItemElement, "Private", true.ToString());
+				projectItemElement.Parent.RemoveChild(projectItemElement);
+//				ProjectItemElementHelpers.AddOrUpdateMetaData(projectItemElement, "Private", true.ToString());
+//				projectItemElement.Include = ProjectItemElementHelpers.GetAssemblyName(projectItemElement);
 			}
 			else
 			{
-				ProjectMetadataElement hintPath = ProjectItemElementHelpers.GetHintPath(projectItemElement);
-				if (hintPath != null)
-				{
-				    string include = projectItemElement.Include.Replace(", processorArchitecture=MSIL", string.Empty);
-				    _originalHintPaths[include] = hintPath.Value;
-				}
 				projectItemElement.Include = ProjectItemElementHelpers.GetAssemblyName(projectItemElement);
 				ProjectItemElementHelpers.AddOrUpdateMetaData(projectItemElement, "Private", false.ToString());
 				ProjectItemElementHelpers.AddOrUpdateMetaData(projectItemElement, "HintPath", @"$(OutputPath)");
@@ -120,7 +145,7 @@ namespace MSBuildFixer.Fixes
 				case CopyStyle.MoveAllToFirstProject:
 					foreach (KeyValuePair<string, string> originalHintPath in _originalHintPaths)
 					{
-						ProjectItemElement projectItemElement = _firstElement.Items.FirstOrDefault(x=>x.Include.Contains(originalHintPath.Key));
+						ProjectItemElement projectItemElement = _firstElement.Items.FirstOrDefault(x=>x.Include.Equals(originalHintPath.Key) || x.Include.StartsWith($"{originalHintPath.Key},"));
 						if (projectItemElement != null)
 						{
 							ProjectItemElementHelpers.AddOrUpdateMetaData(projectItemElement, "Private", true.ToString());

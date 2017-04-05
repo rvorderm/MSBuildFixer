@@ -12,20 +12,15 @@ namespace MSBuildFixer
 	{
 		static void Main(string[] args)
 		{
+			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			ConfigureLogs();
 
 			foreach (string solutionPath in SolutionConfiguration.Instance.Solutions)
 			{
-				try
-				{
-					Log.Information("Creating walker for {solutionPath}", solutionPath);
-					SolutionWalker projectFixer = SolutionWalker.CreateWalker(solutionPath);
-					projectFixer.VisitSolution();
-				}
-				catch (Exception e)
-				{
-					Log.Fatal(e, "SolutionWalker for {solutionPath} ate it.", solutionPath);
-				}
+				Log.Information("Creating walker for {solutionPath}", solutionPath);
+				SolutionWalker projectFixer = SolutionWalker.CreateWalker(solutionPath);
+				projectFixer.VisitSolution();
+				
 			}
 
 			Log.Information("Finished");
@@ -33,6 +28,11 @@ namespace MSBuildFixer
 			{
 				Console.ReadLine();
 			}
+		}
+
+		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		{
+			Log.Fatal(e.ExceptionObject as Exception, "SolutionWalker ate it.");
 		}
 
 		private static void ConfigureLogs()
