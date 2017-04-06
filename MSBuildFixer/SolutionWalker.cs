@@ -202,6 +202,7 @@ namespace MSBuildFixer
 //			new ListUntrackedProjectFiles().AttachTo(walker);
 			Attach<ListProjectsWithReferences>(!string.IsNullOrEmpty(ReportsConfiguration.Instance.ReferenceRegex), walker);
 			Attach<ListCircularDependencies>(ReportsConfiguration.Instance.ListCircularDependencies, walker);
+			Attach<ProjectReferenceCounter>(ReportsConfiguration.Instance.CountProjectReferences && !ReportsConfiguration.Instance.ListCircularDependencies, walker);
 			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
 			Attach<FixFileEncoding>(FixesConfiguration.Instance.ProjectFileEncodings, walker);
 			new FixIncode10().AttachTo(walker);

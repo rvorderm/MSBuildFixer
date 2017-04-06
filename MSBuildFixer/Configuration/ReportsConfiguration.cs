@@ -24,5 +24,7 @@ namespace MSBuildFixer.Configuration
 				return level;
 			}
 		}
+
+		public bool CountProjectReferences { get; set; }
 	}
 }

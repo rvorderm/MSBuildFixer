@@ -3,10 +3,10 @@ using MSBuildFixer.Configuration;
 using MSBuildFixer.Helpers;
 using Serilog;
 using Serilog.Context;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MSBuildFixer.Reports
 {
@@ -14,18 +14,13 @@ namespace MSBuildFixer.Reports
 	{
 		private readonly Dictionary<string, List<string>> cycles = new Dictionary<string, List<string>>();
 		private readonly Dictionary<string, HashSet<string>> edgeSets = new Dictionary<string, HashSet<string>>();
-		private readonly HashSet<string> sources = new HashSet<string>();
-
+		private ProjectReferenceCounter sourceFinder;
 		public void AttachTo(SolutionWalker walker)
 		{
-			walker.OnVisitProjectRootItem += Walker_OnVisitProjectRootItem;
+			sourceFinder = new ProjectReferenceCounter();
+			sourceFinder.AttachTo(walker);
 			walker.OnVisitProjectItem_ProjectReference += Walker_OnVisitProjectItem_ProjectReference;
 			walker.OnAfterVisitSolution += Walker_OnAfterVisitSolution;
-		}
-
-		private void Walker_OnVisitProjectRootItem(ProjectRootElement rootElement)
-		{
-			sources.Add(rootElement.FullPath);
 		}
 
 		private void Walker_OnAfterVisitSolution(SolutionFile solutionFile)
@@ -34,7 +29,7 @@ namespace MSBuildFixer.Reports
 			{
 				Log.Information("Beginning search for circular references.");
 
-				foreach (string source in sources)
+				foreach (string source in sourceFinder.GetProjects((x,y)=>y==0))
 				{
 					var cycle = new List<string>();
 					DFS(source, cycle);
@@ -82,9 +77,6 @@ namespace MSBuildFixer.Reports
 			if (!edgeSets.TryGetValue(projectRootElement.FullPath, out dependencies))
 				edgeSets[projectRootElement.FullPath] = dependencies = new HashSet<string>();
 			dependencies.Add(path);
-
-			//This is how we figure out what isn't referenced by anything for a DFS search later
-			if (sources.Contains(path)) sources.Remove(path);
 		}
 	}
 }

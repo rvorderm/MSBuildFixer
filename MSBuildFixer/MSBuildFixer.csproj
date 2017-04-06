@@ -120,6 +120,7 @@
     <Compile Include="Fixes\FixXCopy.cs" />
     <Compile Include="Helpers\PathHelpers.cs" />
     <Compile Include="Helpers\ProjectRootElementHelpers.cs" />
+    <Compile Include="Reports\ProjectReferenceCounter.cs" />
     <Compile Include="Reports\ListCircularDependencies.cs" />
     <Compile Include="Reports\ListProjectsWithReferences.cs" />
     <Compile Include="Reports\ListUntrackedProjectFiles.cs" />
