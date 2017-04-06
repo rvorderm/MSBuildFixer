@@ -41,8 +41,14 @@ namespace MSBuildFixer.Helpers
 		public void SavePackageFile(XmlDocument xmlDocument)
 		{
 			if (xmlDocument == null) return;
+			if (!File.Exists(_packageFilePath)) return;
 			if (xmlDocument.InnerText.Equals(File.ReadAllText(_packageFilePath))) return;
-			xmlDocument.Save(_packageFilePath);
+			XmlNodeList xmlNodeList = xmlDocument.SelectNodes("//package");
+			if (xmlNodeList != null && xmlNodeList.Count == 0) File.Delete(_packageFilePath);
+			else
+			{
+				xmlDocument.Save(_packageFilePath);
+			}
 		}
 
 		public XmlDocument GetPackageDocument()
@@ -99,6 +105,18 @@ namespace MSBuildFixer.Helpers
 		{
 			if (!string.IsNullOrEmpty(version)) xmlElement.Attributes["version"].Value = version;
 			if (!string.IsNullOrEmpty(targetFramework)) xmlElement.Attributes["targetFramework"].Value = targetFramework;
+		}
+
+		public void Remove(string packageName)
+		{
+			Actions.Add(x=>Remove_Action(x, packageName));
+		}
+
+		private void Remove_Action(XmlDocument xmlDocument, string packageName)
+		{
+			IEnumerable<XmlElement> xmlElements = GetElements(xmlDocument, new Regex(packageName));
+			foreach (XmlElement xmlElement in xmlElements)
+				xmlElement.ParentNode.RemoveChild(xmlElement);
 		}
 	}
 }

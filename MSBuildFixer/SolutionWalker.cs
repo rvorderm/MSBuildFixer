@@ -204,7 +204,7 @@ namespace MSBuildFixer
 			Attach<ListCircularDependencies>(ReportsConfiguration.Instance.ListCircularDependencies, walker);
 			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
 			Attach<FixFileEncoding>(FixesConfiguration.Instance.ProjectFileEncodings, walker);
-//			new FixIncode10().AttachTo(walker);
+			new FixIncode10().AttachTo(walker);
 			return walker;
 		}
 

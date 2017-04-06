@@ -3,7 +3,10 @@ using MSBuildFixer.Configuration;
 using MSBuildFixer.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Xml;
 
 namespace MSBuildFixer.Fixes
 {
@@ -22,6 +25,7 @@ namespace MSBuildFixer.Fixes
 		private readonly Dictionary<string, string> _originalHintPaths = new Dictionary<string, string>();
 		private readonly HashSet<string> _visitedIncludes = new HashSet<string>();
 		private readonly Dictionary<string, ProjectItemElement> _visitedElements = new Dictionary<string, ProjectItemElement>();
+		private Dictionary<string, Dictionary<Version, string>> _packageFiles;
 		public CopyStyle CopyStyle { get; set; } = FixesConfiguration.Instance.CopyStyle;
 
 		public void OnVisitProjectItem(ProjectItemElement projectItemElement)
@@ -88,7 +92,7 @@ namespace MSBuildFixer.Fixes
 			{
 				projectItemElement.Include = ProjectItemElementHelpers.GetAssemblyName(projectItemElement);
 				ProjectItemElementHelpers.AddOrUpdateMetaData(projectItemElement, "Private", false.ToString());
-				ProjectItemElementHelpers.AddOrUpdateMetaData(projectItemElement, "HintPath", @"$(OutputPath)");
+				ProjectItemElementHelpers.AddOrUpdateMetaData(projectItemElement, "HintPath", "$(OutputPath)");
 			}
 		}
 
@@ -114,10 +118,38 @@ namespace MSBuildFixer.Fixes
 		public void AttachTo(SolutionWalker walker)
 		{
 		    if (FixesConfiguration.Instance.CopyStyle == CopyStyle.DoNothing) return;
+			walker.OnOpenSolution += Walker_OnOpenSolution;
 			walker.OnVisitProjectItem_Reference += OnVisitProjectItem;
 			walker.OnVisitProjectItem_ProjectReference += OnVisitProjectItem;
 			walker.OnAfterVisitSolution += Walker_OnAfterVisitSolution;
 			walker.OnVisitProjectRootItem += Walker_OnVisitProjectRootItem;
+		}
+
+		private void Walker_OnOpenSolution(string solutionPath)
+		{
+			if (CopyStyle != CopyStyle.MoveAllToFirstProject) return;
+			string solutionDirectory = Path.GetDirectoryName(solutionPath);
+			string nugetConfigPath = Path.Combine(solutionDirectory, "nuget.config");
+			if (!File.Exists(nugetConfigPath)) return;
+			var nugetConfig = new XmlDocument();
+			nugetConfig.Load(nugetConfigPath);
+			XmlNode xmlNode = nugetConfig.SelectSingleNode("//add[@key='repositoryPath']");
+			if (xmlNode == null) return;
+			XmlAttribute xmlNodeAttribute = xmlNode.Attributes["value"];
+			string packagesFolder = Path.Combine(solutionDirectory, xmlNodeAttribute.Value);
+			_packageFiles = new Dictionary<string, Dictionary<Version, string>>();
+			foreach (string filePath in Directory.EnumerateFiles(packagesFolder, "", SearchOption.AllDirectories))
+			{
+				string fileName = Path.GetFileName(filePath);
+				FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(filePath);
+				var version = new Version(fileVersionInfo.FileVersion);
+				Dictionary<Version, string> innerDictionary;
+				if (!_packageFiles.TryGetValue(fileName, out innerDictionary))
+				{
+					_packageFiles[fileName] = innerDictionary = new Dictionary<Version, string>();
+				}
+				innerDictionary[version] = filePath;
+			}
 		}
 
 		private void Walker_OnVisitProjectRootItem(ProjectRootElement rootElement)
@@ -143,6 +175,8 @@ namespace MSBuildFixer.Fixes
 					}
 					break;
 				case CopyStyle.MoveAllToFirstProject:
+
+					var packageConfigHelper = new PackageConfigHelper(_firstElement.FullPath);
 					foreach (KeyValuePair<string, string> originalHintPath in _originalHintPaths)
 					{
 						ProjectItemElement projectItemElement = _firstElement.Items.FirstOrDefault(x=>x.Include.Equals(originalHintPath.Key) || x.Include.StartsWith($"{originalHintPath.Key},"));
@@ -154,7 +188,11 @@ namespace MSBuildFixer.Fixes
 						{
 							ProjectItemElement itemElement = _firstElement.AddItem("Reference", originalHintPath.Key);
 							ProjectItemElementHelpers.AddOrUpdateMetaData(itemElement, "Private", true.ToString());
-							ProjectItemElementHelpers.AddOrUpdateMetaData(itemElement, "HintPath", originalHintPath.Value);
+							if (!originalHintPath.Value.Equals(@"$(OutputPath)"))
+							{
+								ProjectItemElementHelpers.AddOrUpdateMetaData(itemElement, "HintPath", originalHintPath.Value);
+
+							}
 						}
 					}
 					break;
