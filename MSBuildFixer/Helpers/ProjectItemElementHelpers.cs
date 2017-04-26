@@ -27,7 +27,7 @@ namespace MSBuildFixer.Helpers
 				}
 				return value;
 			}
-			return null;
+			return projectItemElement.Include;
 		}
 
 		public static bool IsStrongName(string include)

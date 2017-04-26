@@ -16,9 +16,9 @@ namespace MSBuildFixer.Helpers
 			return GetProperties(rootElement, "AssemblyName").FirstOrDefault()?.Value;
 		}
 
-		public static IEnumerable<ProjectPropertyElement> GetProperties(ProjectRootElement rootElement, string assemblyname)
+		public static IEnumerable<ProjectPropertyElement> GetProperties(ProjectRootElement rootElement, string propertyName)
 		{
-			return rootElement.Properties.Where(x=>x.Name.Equals(assemblyname));
+			return rootElement.Properties.Where(x=>x.Name.Equals(propertyName));
 		}
 
 		public static void AddProjectReference(ProjectRootElement projectRootElement, ProjectInSolution project)

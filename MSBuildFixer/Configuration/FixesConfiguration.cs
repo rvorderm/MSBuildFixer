@@ -11,6 +11,7 @@ namespace MSBuildFixer.Configuration
 		public IEnumerable<ProjectReferenceReplacement> ProjectReferenceReplacements { get; set; }
 		public bool ProjectFileEncodings { get; set; }
 		public bool ProjectReferences { get; set; }
+		public bool FixIncode10 { get; set; }
 		public ReferenceVersionType ReferenceVersionType { get; set; } = ReferenceVersionType.None;
 		public bool ReferenceVersion => ReferenceVersionType != ReferenceVersionType.None;
 

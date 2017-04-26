@@ -41,7 +41,7 @@ namespace MSBuildFixer.Reports
 			{
 				Holder holder = counts[path];
 				holder.Count++;
-				holder.References.Add(path);
+				holder.References.Add(projectItemElement.ContainingProject.FullPath);
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace MSBuildFixer.Reports
 				{
 					Holder holder = counts[projectMetadataElement.Value];
 					holder.Count++;
-					holder.References.Add(projectMetadataElement.Value);
+					holder.References.Add(projectItemElement.ContainingProject.FullPath);
 				}
 			}
 			else
@@ -66,7 +66,7 @@ namespace MSBuildFixer.Reports
 				{
 					Holder holder = counts[projectMetadataElement.Value];
 					holder.Count++;
-					holder.References.Add(projectMetadataElement.Value);
+					holder.References.Add(projectItemElement.ContainingProject.FullPath);
 				}
 			}
 		}

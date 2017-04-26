@@ -104,6 +104,7 @@ namespace MSBuildFixer
 		public delegate void VisitProjectItemHandler(ProjectItemElement projectItemElement);
 		public event VisitProjectItemHandler OnVisitProjectItem_Reference;
 		public event VisitProjectItemHandler OnVisitProjectItem_Compile;
+		public event VisitProjectItemHandler OnVisitProjectItem_None;
 		public event VisitProjectItemHandler OnVisitProjectItem_ProjectReference;
 		public event VisitProjectItemHandler OnVisitProjectItem_Other;
 
@@ -117,6 +118,9 @@ namespace MSBuildFixer
 					break;
 				case "Compile":
 					OnVisitProjectItem_Compile?.Invoke(projectItemElement);
+					break;
+				case "None":
+					OnVisitProjectItem_None?.Invoke(projectItemElement);
 					break;
 				case "ProjectReference":
 					OnVisitProjectItem_ProjectReference?.Invoke(projectItemElement);
@@ -205,7 +209,7 @@ namespace MSBuildFixer
 			Attach<ProjectReferenceCounter>(ReportsConfiguration.Instance.CountProjectReferences && !ReportsConfiguration.Instance.ListCircularDependencies, walker);
 			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
 			Attach<FixFileEncoding>(FixesConfiguration.Instance.ProjectFileEncodings, walker);
-			new FixIncode10().AttachTo(walker);
+			Attach<FixIncode10>(FixesConfiguration.Instance.FixIncode10, walker);
 			return walker;
 		}
 
