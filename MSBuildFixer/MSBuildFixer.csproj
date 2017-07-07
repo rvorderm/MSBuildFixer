@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\CreateImportsConfiguration.cs" />
     <Compile Include="Configuration\ExclusionConfiguration.cs" />
     <Compile Include="Configuration\FixesConfiguration.cs" />
     <Compile Include="Configuration\ReportsConfiguration.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Fixes\FixCopyToOutputDirectory.cs" />
     <Compile Include="Fixes\FixCopyLocal.cs" />
     <Compile Include="Fixes\FixFileEncoding.cs" />
+    <Compile Include="Fixes\FixCreateImports.cs" />
     <Compile Include="Fixes\FixPackages.cs" />
     <Compile Include="Fixes\FixIncode10.cs" />
     <Compile Include="Fixes\FixReferenceVersion.cs" />

@@ -209,7 +209,8 @@ namespace MSBuildFixer
 			Attach<ProjectReferenceCounter>(ReportsConfiguration.Instance.CountProjectReferences && !ReportsConfiguration.Instance.ListCircularDependencies, walker);
 			Attach<FixReplaceProjectReferences>(FixesConfiguration.Instance.ProjectReferenceReplacements.Any(), walker);
 			Attach<FixFileEncoding>(FixesConfiguration.Instance.ProjectFileEncodings, walker);
-			Attach<FixIncode10>(FixesConfiguration.Instance.FixIncode10, walker);
+//			Attach<FixIncode10>(FixesConfiguration.Instance.FixIncode10, walker);
+			Attach<FixCreateImports>(CreateImportsConfiguration.Instance.Imports.Any(), walker);
 			return walker;
 		}
 
@@ -219,12 +220,14 @@ namespace MSBuildFixer
 			Attach<T>(copyLocalToggle.FeatureEnabled, walker);
 		}
 
-		public static void Attach<T>(bool shouldAttach, SolutionWalker walker)
+		public static T Attach<T>(bool shouldAttach, SolutionWalker walker)
 			where T : IFix, new()
 		{
-			if (!shouldAttach) return;
+			if (!shouldAttach) return default(T);
 			Log.Information("Attaching a fix of type {typeof}", typeof(T));
-			new T().AttachTo(walker);
+			var fix = new T();
+			fix.AttachTo(walker);
+			return fix;
 		}
 
 		public static void AttachScriptBuilder()

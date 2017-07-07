@@ -29,11 +29,11 @@ namespace MSBuildFixer.Reports
 			{
 				Log.Information("Beginning search for circular references.");
 
-				foreach (string source in sourceFinder.GetProjects((x,y)=>y==0))
-				{
-					var cycle = new List<string>();
-					DFS(source, cycle);
-				}
+//				foreach (string source in sourceFinder.GetProjects((x,y)=>y==0))
+//				{
+//					var cycle = new List<string>();
+//					DFS(source, cycle);
+//				}
 				Log.Information("{count} cycles were found", cycles.Count);
 				foreach (KeyValuePair<string, List<string>> cycle in cycles)
 				{
